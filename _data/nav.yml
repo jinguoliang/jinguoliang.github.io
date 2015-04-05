@@ -1,0 +1,20 @@
+﻿- href: /page/timing.html
+  icon: fa fa-clock-o
+  title: Timeline
+
+- href: /page/category.html
+  icon: fa fa-tags
+  title: Category
+
+- href: /page/read.html
+  icon:  fa fa-book
+  title: Read
+
+- href: /page/link.html
+  icon: fa fa-link
+  title: Link
+
+- href: /page/about.html
+  icon: fa fa-paper-plane-o
+  title: About
+# newblank: true 是否开启一个新的页面
