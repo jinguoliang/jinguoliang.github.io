@@ -1,4 +1,4 @@
-﻿markdown: rdiscount
+﻿markdown: redcarpet
 highlighter: pygments
 permalink: post/:year/:month/:day/:title.html
 paginate: 6
