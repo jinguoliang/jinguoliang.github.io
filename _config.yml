@@ -5,19 +5,19 @@ paginate: 6
 paginate_path: page/:num
 
 blog:
-    name:                                                # 博客名称
-    description:                                         # 博客描述
-    title:                                               # 网页标题
-    url:                                                 # 博客地址
+    name:               Jinux                                           # 博客名称
+    description:        记录生活，享受技术                              # 博客描述
+    title:              Jinux的博客                                     # 网页标题
+    url:                jinguoliang.github.io                           # 博客地址
     duoshuo:                                             # 多说ID（可选）
     tongji:                                              # 百度统计ID（可选）
     qiniu:                                               # 七牛云地址（可选）
 author:
-    name:                                                # 作者名称
-    email:                                               # 邮箱地址
-    weibo:                                               # 微博地址
-    github:                                              # GitHub地址
-    logo:                                                # 头像地址
+    name:               金国梁                                          # 作者名称
+    email:              jinguol999@163.com                              # 邮箱地址
+    weibo:                                                              # 微博地址
+    github:             github.com/jinguoliang                          # GitHub地址
+    logo:               https://avatars3.githubusercontent.com/u/1611550?v=3&s=460   # 头像地址
     douban:
         name:                                            # 豆瓣地址名称（用于获取豆瓣我读页）
         key:                                             # 豆瓣API Key
