@@ -19,5 +19,5 @@ author:
     github:             https://github.com/jinguoliang                          # GitHub地址
     logo:               https://avatars3.githubusercontent.com/u/1611550?v=3&s=460   # 头像地址
     douban:
-        name:                                            # 豆瓣地址名称（用于获取豆瓣我读页）
-        key:                                             # 豆瓣API Key
+        name:           jinuxlife                                       # 豆瓣地址名称（用于获取豆瓣我读页）
+        key:            0f69efed294371792e3dcfc77bca546b                # 豆瓣API Key
