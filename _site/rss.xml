@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RSS - Jinux</title>
+    <description>Jinux - 记录生活，享受技术</description>
+    <link>jinguoliang.github.io</link>
+    <atom:link href="jinguoliang.github.io/page/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Sun, 17 May 2015 15:49:08 +0800</pubDate>
+    <lastBuildDate>Sun, 17 May 2015 15:49:08 +0800</lastBuildDate>
+    <generator>金国梁</generator>
+    
+      <item>
+        <title>Hello World</title>
+        <description>##Hello World
+</description>
+        <pubDate>Sun, 17 May 2015 00:00:00 +0800</pubDate>
+        <link>jinguoliang.github.io/post/2015/05/17/Hello.html</link>
+        <guid isPermaLink="true">jinguoliang.github.io/post/2015/05/17/Hello.html</guid>
+        
+        <category>start</category>
+        
+        <category>hello</category>
+        
+      </item>
+    
+  </channel>
+</rss>
