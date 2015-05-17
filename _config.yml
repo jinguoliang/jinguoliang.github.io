@@ -8,7 +8,7 @@ blog:
     name:               Jinux                                           # 博客名称
     description:        记录生活，享受技术                              # 博客描述
     title:              Jinux的博客                                     # 网页标题
-    url:                jinguoliang.github.io                           # 博客地址
+    url:                http://jinguoliang.github.io                           # 博客地址
     duoshuo:                                             # 多说ID（可选）
     tongji:                                              # 百度统计ID（可选）
     qiniu:                                               # 七牛云地址（可选）
