@@ -85,3 +85,5 @@ Jenkins做两个工作：
 
 1. 持续构建和测试软件项目
 2. 监督外部执行的工作，如cron jobs或者procmail jobs。
+
+[最佳实践](https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+Best+Practices)
