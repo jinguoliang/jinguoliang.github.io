@@ -1,23 +1,48 @@
-﻿markdown: redcarpet
+permalink: /:year/:month/:day/:title.html
+paginate: 10
 highlighter: pygments
-permalink: post/:year/:month/:day/:title.html
-paginate: 6
-paginate_path: page/:num
+markdown: redcarpet
 
-blog:
-    name:               Jinux                                           # 博客名称
-    description:        记录生活，享受技术                              # 博客描述
-    title:              Jinux的博客                                     # 网页标题
-    url:                http://jinguoliang.github.io                           # 博客地址
-    duoshuo:                                             # 多说ID（可选）
-    tongji:                                              # 百度统计ID（可选）
-    qiniu:                                               # 七牛云地址（可选）
-author:
-    name:               金国梁                                          # 作者名称
-    email:              jinguol999@163.com                              # 邮箱地址
-    weibo:                                                              # 微博地址
-    github:             https://github.com/jinguoliang                          # GitHub地址
-    logo:               https://avatars3.githubusercontent.com/u/1611550?v=3&s=460   # 头像地址
-    douban:
-        name:           jinuxlife                                       # 豆瓣地址名称（用于获取豆瓣我读页）
-        key:            0f69efed294371792e3dcfc77bca546b                # 豆瓣API Key
+# 作者信息
+author: 
+  name: John Jin
+  email: jinguol999@163.com
+  link: http://jinguoliang.github.io
+#  weibo: http://weibo.com/orangeissweet
+  github: http://github.com/jinguoliang
+#  music: http://site.douban.com/linanya
+#  linkedin: https://www.linkedin.com/pub/anya-lin/81/91/232
+
+# 站点信息
+title: 金国梁的博客
+description: 如果说我装一下x,我会觉得舒服,那也无妨
+url: http://jinguoliang.github.io
+rss_url: /pages/atom.xml
+
+# gavatar头像及Favicon
+gavatar: /public/img/head.png
+favicon: /public/img/head.png
+
+# google analytics 设置
+ga:
+  id:  UA-64152187-1
+  url: jinguoliang.github.io
+
+# disqus 设置
+#disqus:
+        #  shortname: painterlin
+
+# 主题设置，自动激活某个标签
+active: 读书
+
+# 首页除了最新文章外显示分类
+cates: 
+  - Android
+  - Linux
+
+# 中文本地化
+locals:
+  tags: 标签
+  about: 关于
+  newest: 最新文章
+  archive: 归档

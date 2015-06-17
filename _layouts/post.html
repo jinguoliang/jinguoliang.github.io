@@ -1,32 +1,25 @@
 ---
-layout: blog
-post: true
+layout: base
 ---
+<div class="row">
+  <div class="col-md-13 aside3-title">
+    <br>
+    <h2 id="#identifier">{{ page.title }}</h2>
+    {{ page.date | date:"%Y年%m月%d日" }}
+  </div>
+  <div class="col-md-13 aside3-content">
+    <hr>
+    <div id="content">
+      {{ content }}
+    </div>
+    <hr>
+    {% include disqus.html %}
+  </div>
+  <!-- 目录 -->
+  <div id="content_table" style="position:fixed;right:20px;top:120px;display:none;">
+    <div class="panel panel-success">
+      <div class="panel-body" id="nav"></div>
+    </div>
+  </div>
+</div>
 
-<header class="post-header">
-  <h1 class="post-title"><a href="{{ page.url }}">{{ page.title }}</a></h2>
-  <p class="post-meta">
-    <i class="fa fa-calendar"></i>
-    {{ page.date | date: "%Y" }}年{{ page.date | date: "%m" }}月{{ page.date | date: "%d" }}日
-    <i class="space"></i>
-    <i class="fa fa-tags"></i>
-    <a class="post-category" href="/page/category.html#{{ page.categories }}">{{ page.categories }}</a>	
-  </p>
-</header>
-<div class="post-main">
-{{ content }}
-</div>
-{% include share.html %}
-<div class="pagination">
-{% if page.previous %}
-<a class="pagination-item newer" href="{{ BASE_PATH }}{{ page.previous.url }}"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{{ page.previous.title }}</a>
-{% else %}
-<span class="pagination-item newer">上一篇&nbsp;<i class="fa fa-chain-broken"></i></span>
-{% endif %}
-{% if page.next %}
-<a class="pagination-item older" href="{{ BASE_PATH }}{{ page.next.url }}">{{ page.next.title }}&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
-{% else %}
-<span class="pagination-item older">下一篇&nbsp;<i class="fa fa-chain-broken"></i></span>
-{% endif %}
-</div>
-{% if page.duoshuo != false %}{% include duoshuo.html %}{% endif %}

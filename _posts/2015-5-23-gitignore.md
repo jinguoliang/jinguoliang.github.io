@@ -1,7 +1,7 @@
 ---
 layout: post
 title: gitignore
-categories: 翻译 tools
+categories: 翻译 工具
 tags: git 
 ---
 

@@ -1,8 +1,11 @@
 ---
-title: sitemap.txt
-permalink: sitemap.txt
+title : Sitemap
 ---
-{% for page in site.pages reversed %}
-{{ site.blog.url }}{{ page.url }}{% endfor %}
+
+{% for page in site.pages %}
+  {{site.address}}{{ page.url }}
+{% endfor %}
+
 {% for post in site.posts %}
-{{ site.blog.url }}{{ post.url }}{% endfor %}
+  {{site.address}}{{ post.url }}
+{% endfor %}
