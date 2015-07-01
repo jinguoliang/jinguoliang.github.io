@@ -1,9 +1,10 @@
 ---
 layout: post
-title: [转载]Android 学习资源
+title: <转载> Android 学习资源
 tags: Android 学习 资源
 categories: 学习
 ---
+
 转载自 http://www.zhanghongyang.com/2015/03/30/2015-03-30-android-learn-resources/  
 但是也加入了我子集的更改.吼吼!!(我拷贝了内容,然后编辑成markdown,逐个添加url :( )
 
