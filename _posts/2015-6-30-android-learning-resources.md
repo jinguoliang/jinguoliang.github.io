@@ -66,8 +66,8 @@ I have been developing with Java for a long time and have started developing And
 ##3、值得逛的网站  
 [slideshare](http://www.slideshare.net/)  
 SlideShare世界上最大的幻灯片分享社区。当然了关于Android的ppt也是非常的多，在作者允许的情况下都可以下载，当然了，如果不允许也是支持在线看的。在这里你基本可以找到各种presentation的ppt。例如:google io 什么的。  
-[androidweekly.net](androidweekly.net)  
+[androidweekly.net](http://androidweekly.net)  
 Android Weekly is a free newsletter that helps you to stay cutting-edge with your Android Development.非常值得订阅。  
-[developer.android.com](developer.android.com)  
+[developer.android.com](http://developer.android.com)  
 oh , no reason!  
 大致整理了这么多，多数需要翻墙才能看，以上评价神马的大家当作建议，都是我的个人观点。如果大家有什么好的资源提供，欢迎留言！
