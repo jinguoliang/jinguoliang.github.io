@@ -4,12 +4,12 @@ title: repo全解之自己搭建repo仓库
 tags: repo gpg git manifest android
 category: 工具
 ---
-#repo是什么
+##repo是什么
 
 是什么: Repo是基于git的仓库管理工具,是一个python脚本  
 干什么: Repo整个很多的git仓库,可以做统一的上传,并且可以自动化部分Andoid开发流程  
 
-#repo引导器
+##repo引导器
 
 首先要说一下repo分为两部分, 一部分时一个名叫repo的python文件,另一部分是一个名叫repo.git这么一个git仓库.  
 而这个repo文件好像是一个引导器,一下命令下载它并设置它为可执行:
@@ -48,7 +48,7 @@ For access to the full online help, install repo ("repo init").
 这就说明,这个repo文件是一个引导器,或者是安装器.  
 它要如何安装呢?  
 
-#repo.git gpg签名
+##repo.git gpg签名
 
 我们就按照它的提示来操作,运行:
 
@@ -103,7 +103,7 @@ See 'repo help --all' for a complete list of recognized commands.
 哇,命令这么多了!!  
 此时我们只是有了repo工具,但是要想管理多个git,还需要一个清单,来说明要管理那些git,从哪里拉去等等. 这个任务要依赖manifest.git了,正如之前提到的,在repo init的时候,要通过-u url来指定manifest.git的位置.
 
-#manifests.git
+##manifests.git
 
 使用如下命令:
 
@@ -130,7 +130,7 @@ default.xml内容如下:
 remote可以多个,每个定义了一个远程拉取仓库, fetch是仓库的url, 可以使用".."表示使用repo init -u url里的url  
 default则设置每个项目的默认仓库和默认分支  
 project定义了一个项目,它指明一个远程仓库,和clone到本地来后的目录名称. name为项目的远程仓库名,以上代码拉取的项目是git://localhost/helo 
-#要管理的仓库
+##要管理的仓库
 要管理的仓库是普通的git.
 当以上一切准备完毕.
 我们就可以
@@ -150,15 +150,15 @@ hello  repo
 
 远程仓库被拉取到了本地.
 
-#总结
+##总结
 
 其实吧, 我平时用了好多git库来存储笔记和项目, 我住的地方木有网络,然后我要从我的笔记和公司电脑同步数据,就只能通过u盘,于是就研究怎么clone本地的git仓库,当git仓库多了,我每次都要一个一个同步麻烦,所以就想到repo,因为之前做手机系统一直的时候用到过,然后就是捣鼓,当我最终弄出来的时候发现,没有review,我的提交根本递交不到我的git仓库里来,于是就无语了.不过呢,学到了东西.实际也是可以用它来同步的,只是有点杀鸡用牛刀了,不如写个简单的脚本.
 
-#一些问题
+##一些问题
 
 1. repo只能用在Android吗?
 
-#参考
+##参考
 
 http://source.android.com/source/developing.html  使用repo  
 http://source.android.com/source/using-repo.html  使用repo  
