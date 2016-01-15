@@ -12,6 +12,7 @@ var fs = require('fs')
   , List = require('term-list');
 
 
+var picDir = '../../public/img/';
 function main() {
   var rl = readline.createInterface({
     input: process.stdin,
@@ -23,6 +24,21 @@ function main() {
     getBookInfo(answer);
     rl.close();
   });
+
+  /*
+	var bookfile = '../../_posts/读书/2016-01-6-book_List.md';
+	var json = readYaml(bookfile);
+	*/
+}
+
+function readYaml(path) {
+	fs.readFile(path, function(err, fileContents) {
+	  fileContents = fileContents.toString()
+	  console.log('\n')
+	  console.log(fileContents);
+	  console.log('\noutputs:\n')
+	  console.log(yaml.eval(fileContents))
+	})
 }
 
 function getBookInfo(url) {
@@ -30,15 +46,16 @@ function getBookInfo(url) {
 		// the whole of webpage data has been collected. parsing time!
 		var $ = cheerio.load(html);
 		var infoNode = $('div.subject.clearfix');
-		infoNode.find('a.nbg').each(function($this){
-			var picUrl = $(this).attr('href');
-			console.log("Get book face:" + picUrl);
-			request(picUrl).pipe(fs.createWriteStream("./pic.jpg"));
-		});
 		var infoText = infoNode.find('div#info').text().replace(/\s+/g,'');
 		console.log(infoText);
 		var hints = getHints(infoNode.find('span.pl'), $);
 		var infoMap = mapInfo(infoText, hints);
+		var title = $('div#wrapper h1 span').text();
+		infoNode.find('a.nbg').each(function($this){
+			var picUrl = $(this).attr('href');
+			console.log("Get book face:" + picUrl);
+			request(picUrl).pipe(fs.createWriteStream(picDir+ title +'.jpg'));
+		});
 		
 	});
 }
@@ -50,7 +67,6 @@ function mapInfo(text, keys) {
 	for(var i=0;i<keys.length;i++){
 		var p = text.indexOf(keys[i], start);	
 		start = p + 1;
-		console.log(keys[i] +"--"+ p);
 		poss.push(p);
 	}
 	for(var i=0;i< keys.length;i++){
@@ -61,6 +77,7 @@ function mapInfo(text, keys) {
 			val = text.substring(poss[i]+keys[i].length, poss[i+1]);	
 		}
 		infoMap[keys[i]] =  val;
+		console.log(keys[i] +"--"+ val);
 	}
 	return infoMap;
 }
