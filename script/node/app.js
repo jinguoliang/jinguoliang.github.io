@@ -2,29 +2,32 @@
 var fs = require('fs')
   , path = require('path')
   , fmt = require('util').format
-  , readline = require('readline')
   , request = require('request')
   , cheerio = require('cheerio')
   , progress = require('request-progress')
   , ProgressBar = require('progress')
   , open = require('open')
   , colors = require('colors')
-  , List = require('term-list');
+  , List = require('term-list')
+  , askQuestions = require('ask-all-questions')
+  , yaml = require('write-yaml');
 
-
-var picDir = '../../public/img/';
+var year;
+var bookfile;
 function main() {
-  var rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
   console.log('请输入豆瓣书籍 url：');
-  var ask = 'url:';
-  rl.question(ask, function(answer) {
-    getBookInfo(answer);
-    rl.close();
+  askQuestions([{name: 'year', question: 'year:'},
+		{name: 'url', question: 'url:'}])
+  	.then(
+	  function(answer) {
+	  year = answer['year'];
+	if ('2016' === year) {
+		bookfile = '../../_posts/读书/2016-01-6-book_List.md';
+	} else {
+		bookfile = '../../_posts/读书/2015-06-25-Book_List.md';
+	}
+    getBookInfo(answer['url']);
   });
-
 }
 
 function readYaml(path, f) {
@@ -105,13 +108,25 @@ function getBookInfo(url) {
 		info['link'] = url;
 		info['cover'] = picUrl;
 
-		var bookfile = '../../_posts/读书/2016-01-6-book_List.md';
 		readYaml(bookfile, function(tree){
 			tree['books'].push(info);
 			console.log(tree);
+			writeToYaml(bookfile, tree)
 		});
 		
 	});
+}
+
+function writeToYaml(f, jsonTree) {
+	var tmp = '/tmp/jsontoyamltmp';
+	fs.writeFileSync(f, '---\n');	
+
+	yaml.sync(tmp, jsonTree);
+	
+	var source = fs.readFileSync(tmp);
+	fs.writeFileSync(f, source, {flag:'a'});
+
+	fs.appendFileSync(f, '---\n');	
 }
 
 function mapInfo(text, keys) {
@@ -145,4 +160,3 @@ function getHints(nodes, $) {
 }
 
 main();
-
