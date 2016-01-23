@@ -5,6 +5,13 @@ category: 读书
 tags: 学习 阅读
 keywords: 阅读 书单 2016 读书 学习
 books:
+  - title: 高效能程序员的修炼
+    status: 在读
+    author: ':[美]JeffAtwood'
+    publisher: 人民邮电出版社
+    language: ''
+    link: 'http://book.douban.com/subject/24868904/'
+    cover: 'http://img3.douban.com/lpic/s27292170.jpg'
   - title: 秘密花园
     status: 在读
     author: '美国 F.H.伯内特 '

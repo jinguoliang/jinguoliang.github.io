@@ -50,7 +50,7 @@ function readYaml(path, f) {
 				return [content.substring(0,i), content.substring(i+2)];
 			}(content);
 			var key = kv[0].trim();
-			var value = kv[1];
+			var value = kv[1].replace(/\'/g,'');
 			var lineStruct = [indent, has, key, value];
 			var lastArray;
 			// 3. 逐行转化为json数据
