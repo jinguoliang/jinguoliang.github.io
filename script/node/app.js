@@ -1,5 +1,5 @@
-'use strict'
 var fs = require('fs')
+  , askAllQuestions = require('ask-all-questions')
   , path = require('path')
   , fmt = require('util').format
   , request = require('request')
@@ -9,14 +9,14 @@ var fs = require('fs')
   , open = require('open')
   , colors = require('colors')
   , List = require('term-list')
-  , askQuestions = require('ask-all-questions')
   , yaml = require('write-yaml');
+  
 
 var year;
 var bookfile;
 function main() {
-  console.log('请输入豆瓣书籍 url：');
-  askQuestions([{name: 'year', question: 'year:'},
+  //console.log('请输入豆瓣书籍 url：');
+  askAllQuestions([{name: 'year', question: 'year:'},
 		{name: 'url', question: 'url:'}])
   	.then(
 	  function(answer) {
