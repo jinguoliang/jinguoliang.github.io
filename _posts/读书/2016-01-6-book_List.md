@@ -13,12 +13,13 @@ books:
     link: 'http://book.douban.com/subject/24868904/'
     cover: 'http://img3.douban.com/lpic/s27292170.jpg'
   - title: 秘密花园
-    status: 在读
+    status: 已读
     author: '美国 F.H.伯内特 '
     publisher: ''
     language: 中文
     link: ' http://book.douban.com/subject/2349930/'
     cover: 'http://img3.douban.com/lpic/s2812100.jpg'
+    description: '讲述了一个花园对两个孩子的美好影响'
   - title: 程序员的思维修炼
     status: 在读
     author: ':AndyHunt'
@@ -31,8 +32,8 @@ books:
     author: ' 托马斯・内格尔 '
     publisher: 当代中国出版社
     language: 中文
-    link: ' http://book.douban.com/subject/1227966/'
-    cover: 'http://img4.douban.com/lpic/s1779976.jpg'
+    link: 'http://book.douban.com/subject/1227966/'
+    cover: 'http://img3.douban.com/lpic/s1779976.jpg'
   - title: 大数据时代
     status: 在读
     author: 维克托•迈尔•舍恩伯格
