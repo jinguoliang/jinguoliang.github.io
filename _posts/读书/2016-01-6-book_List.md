@@ -2,7 +2,7 @@
 layout: book
 title: 2016年书单
 category: 读书
-tags: 学习 阅读
+tags: 阅读
 keywords: 阅读 书单 2016 读书 学习
 books:
   - title: 高效能程序员的修炼

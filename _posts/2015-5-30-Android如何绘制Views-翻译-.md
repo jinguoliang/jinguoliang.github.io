@@ -2,7 +2,7 @@
 layout: post
 title: Android如何绘制Views（翻译）
 categories: 编程 翻译
-tags: Android View ViewGroup ViewRoot
+tags: Android
 type: 翻译 Android
 ---
 
