@@ -1,7 +1,7 @@
 ---
 layout: post
 title: repo全解之自己搭建repo仓库
-tags: repo gpg git manifest android
+tags: repo git Android
 category: 工具
 ---
 ##repo是什么

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: <转载> Android 学习资源
-tags: Android 学习 资源
+tags: Android 资源
 categories: 学习
 ---
 

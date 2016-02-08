@@ -2,7 +2,7 @@
 layout: post
 title: 阅读代码：AsyncTask
 category: 编程
-tags: 代码 Android AsyncTask 异步 开源
+tags: Android
 ---
 
 * 阅读代码系列的文章都是我阅读代码过程中记录下来的只言片语，读者可能需要对照着代码来看才能看懂。  

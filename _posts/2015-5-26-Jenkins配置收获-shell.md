@@ -2,7 +2,7 @@
 layout: post
 title: Jenkins配置总结
 categories: 工具 
-tags: jenkins bash shell android
+tags: jenkins android
 ---
 
 ##背景

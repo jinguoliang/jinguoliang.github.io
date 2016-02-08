@@ -1,8 +1,8 @@
 ---
 layout: post
 title: <翻译> 触摸模式(Touch Mode)
-categories: 翻译 编程
-tags: Android Touch View Focus 
+categories: 翻译
+tags: Android 
 ---
 
 为Android设计和开发用户接口与普通的桌面环境有很大不同.因为Android运行在手机设备上,应用设计者和开发者必须处理大量的约束,而这些约束并不总是很明显.为了帮助你开发和设计更好的应用,我们正在发布一些关于用户接口的文章.在这个系列里,我们会向你介绍一些设计指导和工具,开发技巧并解释Android UI工具套件的基本原则.我们的目的很简单:帮助你去设计和开发好的用户体验.一开始,我想先介绍*触摸模式*,它是UI工具套件最重要的原则.  
