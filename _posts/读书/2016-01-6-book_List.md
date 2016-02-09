@@ -5,9 +5,17 @@ category: 读书
 tags: 阅读
 keywords: 阅读 书单 2016 读书 学习
 books:
+  - title: 堕落
+    status: 已读
+    author: '(法)阿尔贝·加缪'
+    publisher: 上海译文出版社
+    language: ''
+    link: 'http://book.douban.com/subject/24257152/'
+    cover: 'http://img3.doubanio.com/lpic/s27003228.jpg'
+    description: 完全不知所云，整本书，就他一个人跟人家说话，一直说，说了一天有一天，或许这本书就是要教人们什么叫“瞎扯鸡巴蛋”吧！
   - title: 高效能程序员的修炼
     status: 在读
-    author: ':[美]JeffAtwood'
+    author: '[美]JeffAtwood'
     publisher: 人民邮电出版社
     language: ''
     link: 'http://book.douban.com/subject/24868904/'
@@ -19,7 +27,7 @@ books:
     language: 中文
     link: ' http://book.douban.com/subject/2349930/'
     cover: 'http://img3.douban.com/lpic/s2812100.jpg'
-    description: '讲述了一个花园对两个孩子的美好影响'
+    description: 讲述了一个花园对两个孩子的美好影响
   - title: 程序员的思维修炼
     status: 在读
     author: ':AndyHunt'
