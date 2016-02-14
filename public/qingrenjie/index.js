@@ -51,17 +51,16 @@ var PassDoor = React.createClass({
     var firebase = this.state.firebase;
     firebase.once('value', function(snapshot) {
       var value = snapshot.val();
-      console.log(value);
-      console.log(value.password);
-      console.log(pass);
       if (pass == value.password) {
         success();
       };
     }.bind(this));
+    firebase.child('test').push().set({
+	    'pass': pass
+    });
   },
   render: function() {
     console.log('render');
-    console.log(this.state);
 
     return <div className="door">
             <div className={this.state.doorLeftClassName}></div>
