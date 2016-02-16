@@ -36,7 +36,7 @@ books:
     cover: 'http://img3.douban.com/lpic/s2812100.jpg'
     description: 讲述了一个花园对两个孩子的美好影响
   - title: 程序员的思维修炼
-    status: ' 已读'
+    status: '已读'
     author: ':AndyHunt'
     publisher: 人民邮电出版社
     language: ''
