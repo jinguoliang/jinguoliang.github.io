@@ -5,9 +5,16 @@ category: 读书
 tags: 阅读
 keywords: 阅读 书单 2016 读书 学习
 books:
+  - title: 天才在左 疯子在右
+    status:  已读
+    author: ':高铭'
+    publisher: 武汉大学出版社
+    language: ''
+    link: 'http://book.douban.com/subject/4242172/'
+    cover: 'http://img3.doubanio.com/lpic/s6340977.jpg'
   - title: 堕落
     status: 已读
-    author: '(法)阿尔贝·加缪'
+    author: (法)阿尔贝·加缪
     publisher: 上海译文出版社
     language: ''
     link: 'http://book.douban.com/subject/24257152/'
@@ -29,7 +36,7 @@ books:
     cover: 'http://img3.douban.com/lpic/s2812100.jpg'
     description: 讲述了一个花园对两个孩子的美好影响
   - title: 程序员的思维修炼
-    status: 在读
+    status: ' 已读'
     author: ':AndyHunt'
     publisher: 人民邮电出版社
     language: ''
