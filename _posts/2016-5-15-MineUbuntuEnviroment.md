@@ -1,9 +1,11 @@
 ---
 layout: post
-title: Ubuntu16.04上Android环境搭建
+title: 在Ubuntu16.04上
 category: 编程
 tags: Ubuntu
 ---
+
+这篇文章记录了我在Ubuntu16.04上环境的配置搭建步骤，跟遇到的问题，当然它们不仅仅适用于16.04,希望对您有所帮助 
 
 #Android Studio  
 - [下载Android Studio](http://www.android-studio.org/)
@@ -31,5 +33,4 @@ tags: Ubuntu
     > 打开/etc/passwd
     > 将你的用户最后的bash改成zsh
 
-
-
+这里应该有一个脚本来自动完成整套搭建过程的......
