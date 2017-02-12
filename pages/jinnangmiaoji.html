@@ -193,7 +193,7 @@ titlename: 锦囊妙计
 		if (question.trim().length == 0) {
 			answer = "你得输点东西"	
 		} else if (question.trim()[question.length - 1] != "?"
-				|| question.trim()[question.length - 1] != "？") {
+				&& question.trim()[question.length - 1] != "？") {
 			answer = "你应该问个好问题，至少的带个问号"
 		} else {
 			var i = parseInt(Math.random() * answers.length)
