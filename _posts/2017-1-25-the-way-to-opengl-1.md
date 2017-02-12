@@ -95,7 +95,7 @@ tags: OpenGL
 1. GLSurfaceView.RENDERMODE_WHEN_DIRTY 只在创建和调用GLSurfaceView的requestRender方法时才会导致渲染，即onDrawFrame被调用
 2. GLSurfaceView.RENDERMODE_CONTINUOUSLY 见名知意，会持续渲染，说道这我们也知道，GLSurfaceView的渲染模式默认值是RENDERMODE_CONTINUOUSLY
 
-###　来它两句OpenGL尝尝鲜
+### 来它两句OpenGL尝尝鲜
 
 你可能会发现，onDrawFrame里除了打印log，还调用两个语句。这两个语句就是OpenGL的语句了。  
 我们使用OpenGL ES2.0,所以所用使用OpenGL的地方都使用GLES20来调用静态属性或者方法。  
