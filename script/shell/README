@@ -1,0 +1,9 @@
+installEnv:
+	将当前路径添加到path， 以便执行脚本方便
+
+jekyll-craft:
+	在jekyll网站根目录执行，生成一个craft目录并打开一个文档编辑
+
+jeyll-publish:
+
+	在jekyll网站根目录执行， 生成将craft的文档移到_post目录

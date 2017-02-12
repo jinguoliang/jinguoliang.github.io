@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo export PATH='$PATH':`pwd` >> ~/.zshrc  
+
+. ~/.zshrc
