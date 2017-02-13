@@ -1,7 +1,7 @@
 ---
 layout: post
 title: OpenGL登堂入室之路0
-category: 学习
+category: 编程 
 tags: OpenGL
 ---
 
