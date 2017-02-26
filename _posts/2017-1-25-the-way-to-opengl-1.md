@@ -55,7 +55,7 @@ tags: OpenGL
 
 第三步 在对应的Activity里findView，找到GLSurfaceView,并且给它设置Render
 
-{% highlight  java %}
+{% highlight  java linenos %}
         GLSurfaceView surfaceView = (GLSurfaceView)findViewById(R.id.surfaceView);
         surfaceView.setRenderer(new GLSurfaceView.Renderer() {
             @Override
@@ -103,7 +103,7 @@ tags: OpenGL
 
 接着说这两个语句：
 
-{% highlight java %}
+{% highlight java linenos %}
 GLES20.glClearColor(1f,1f,0f,1f);
 GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 {% endhighlight %}
@@ -117,4 +117,4 @@ GLES20.glClearColor(1f,1f,0f,1f);　则决定了每次清空上次的绘制内�
 
 ---
 
-我们的这个教程，需要你的动手做，一定要实践
+我们的这个教程，需要你的动手做，一定要实践。代码在[这里](https://github.com/jinguoliang/RoadToOpenGLOnAndroid/tree/branch-step1)
