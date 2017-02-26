@@ -16,7 +16,7 @@ OpenGL的学习，门槛就是特别高，因为有太多的概念。本教程�
 
 在我们开始画第一个点时，首先调整一下我们的项目结构，因为之后我们所有的绘制操作全在Render里，所以我们会单独定义一个Render类：MRender  
 
-{% highlight  java %}
+{% highlight java linenos %}
 public class MRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -41,13 +41,13 @@ public class MRender implements GLSurfaceView.Renderer {
 
 别忘了：  
 
-{% highlight  java %}
+{% highlight  java linenos %}
 surfaceView.setRenderer(new MRender());
 {% endhighlight %}
 
 另外，还需要在它之前调用：  
 
-{% highlight java %}
+{% highlight java linenos %}
 surfaceView.setEGLContextClientVersion(2);
 {% endhighlight %}
 
@@ -68,7 +68,7 @@ surfaceView.setEGLContextClientVersion(2);
 3. 绘制
 
 ### 第一步，加载数据
-{% endhighlight java %}
+{% highlight java linenos %}
     private void loadVertex() {
         mVertexBuffer = ByteBuffer.allocateDirect(VERTEX.length * 4)
                 .order(ByteOrder.nativeOrder())
@@ -83,7 +83,7 @@ surfaceView.setEGLContextClientVersion(2);
 
 下面是就是所谓的加载数据并上传到GPU，是调用了我们自定义的两个方法，见名知意：
 
-{% highlight  java %}
+{% highlight  java linenos %}
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Log.e(TAG, "onSurfaceCreated");
@@ -94,7 +94,7 @@ surfaceView.setEGLContextClientVersion(2);
 
 下面详细说明这两个方法：
 
-{% highlight java %}
+{% highlight java linenos %}
     /**
      * 加载程序
      */
@@ -118,7 +118,7 @@ OpenGL里有对象的概念，此对象是一个数据结构，是OpenGL里专�
 
 我们在onDrawFrame函数里：
 
-{% highlight java %}
+{% highlight java linenos %}
         // 清空颜色为黑色
         GLES20.glClearColor(0f, 0f, 0f, 1f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
