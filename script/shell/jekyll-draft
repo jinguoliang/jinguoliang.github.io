@@ -14,5 +14,13 @@ fi
 
 today=`date +%Y-%m-%d`
 
-vi draft/$today-$title.md
+echo """
+---
+layout: post
+title: 
+category: 
+---
+""" >> draft/$today-$title.md
+
+vi draft/$today-$title.md +2
 
