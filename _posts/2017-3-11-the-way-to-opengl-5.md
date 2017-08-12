@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OpenGL登堂入室之路-5-画三个三角形
+title: OpenGL登堂入室之路5-画三个三角形
 category: 编程
 tags: OpenGL
 ---
