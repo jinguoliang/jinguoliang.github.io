@@ -1,8 +1,6 @@
 permalink: /:year/:month/:day/:title.html
 paginate: 5
 #highlighter: pygments
-markdown: redcarpet
-#markdown: Kramdown 
 
 # 作者信息
 author: 
