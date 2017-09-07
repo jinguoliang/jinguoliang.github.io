@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+
+<div id="comments"></div>
+<script type="text/javascript">
+	const gitment = new Gitment({
+	  id: '$page.name', // optional
+	  owner: 'jinguoliang',
+	  repo: 'jinguoliang.github.io',
+	  oauth: {
+	    client_id: 'f9df2f46096735e117aa',
+	    client_secret: 'eb23b472d522e5e7c2b8418d2c9992d9c8f13f47',
+	  },
+	  // ...
+	  // For more available options, check out the documentation below
+	})
+
+	gitment.render('comments')
+</script>
