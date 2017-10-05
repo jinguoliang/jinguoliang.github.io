@@ -1,7 +1,7 @@
 # Site Settings
 encoding: UTF-8
 exclude: ["*.gem", "*.gemspec", "Gemfile", "Gemfile.lock", "node_modules", "Rakefile", "starter-kit", "vendor"]
-lang: en # Language code as defined in _data/i18n.yml. en, en-gb, en-us, zh, zh-cn, zh-tw etc.
+lang: zh # Language code as defined in _data/i18n.yml. en, en-gb, en-us, zh, zh-cn, zh-tw etc.
 permalink: /blog/:year/:month/:day/:title/
 
 whitelist: [jekyll-feed, jekyll-redirect-from, jekyll-seo-tag, jekyll-sitemap]
@@ -23,33 +23,20 @@ sass:
 # Site Data
 url: # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: # the subpath of your site, e.g. /blog
-title: Simple Texture
-description: "A gem-based responsive simple texture styled Jekyll theme."
+title: 空谷之兰
+description: "记录一些心得体会"
 keywords: 'jekyll,theme,gem-based,blog'
 author:
-  name:
-  job_title:
-  location:
-  email:
+  name: Jinux
+  job_title: 软件工程师
+  location: 北京
+  email: jinguol999@163.com
   social_links:
-    - name: facebook
-      url:
     - name: github
-      url: https://github.com/yizeng/jekyll-theme-simple-texture
-    - name: instagram
-      url:
-    - name: linkedin
-      url:
-    - name: stackoverflow
-      url:
-    - name: twitter
-      url: 
-    - name: vk
-      url:
+      url: https://github.com/jinguoliang
 home:
-  section1: <h1>Simple Texutre</h1>
-  section2: <h2>A gem-based responsive simple texture styled Jekyll theme</h2>
-  section3: <div class="social-links"><a class="ico-github btn" href="https://github.com/yizeng/jekyll-theme-simple-texture" title="View on GitHub"></a></div>
+  section1: <h1>空谷之兰</h1>
+  section2: <h2>空谷幽静之中，找寻那一份清香之气</h2>
 blog:
   cc_license: http://creativecommons.org/licenses/by-sa/4.0/ # A link to CC License of your choice.
   cc_license_image: /assets/images/theme/cc-by-sa.png # An image of your CC License. 
