@@ -1,3 +1,0 @@
-User-Agent: *
-
-Sitemap: http://jinguoliang.github.io/sitemap.txt
