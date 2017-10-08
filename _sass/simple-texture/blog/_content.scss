@@ -472,12 +472,8 @@
 
                 &:hover {
                     color: $color-text;
-                    border: 1px solid $color-text;
-                    background-color: $color-hover;
 
                     span {
-                        border: 1px solid $color-text;
-                        background-color: $color-hover;
                     }
                 }
 
@@ -486,7 +482,6 @@
                     font-weight: bold;
 
                     position: relative;
-                    top: -2px;
 
                     display: inline-block;
 
@@ -494,10 +489,6 @@
 
                     vertical-align: middle;
 
-                    border: 1px solid $color-text;
-                    -webkit-border-radius: 10px;
-                       -moz-border-radius: 10px;
-                            border-radius: 10px;
                     background-color: $color-inline-code-background;
                 }
             }
@@ -593,7 +584,6 @@
                     color: $color-text;
 
                     &:hover span {
-                        background-color: $color-hover;
                     }
                 }
 
@@ -612,11 +602,9 @@
                     vertical-align: middle;
                     text-transform: uppercase;
 
-                    color: white;
                     -webkit-border-radius: 10px;
                        -moz-border-radius: 10px;
                             border-radius: 10px;
-                    background-color: $color-hover;
                 }
 
                 li {

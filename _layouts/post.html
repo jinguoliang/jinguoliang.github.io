@@ -13,6 +13,12 @@ layout: blog
             </header>
             <div class="bd article-content">
                 <div class="entry-content">
+                    <div itemprop="articleBody">
+                        {{ content }}
+                    </div>
+                </div>
+            </div>
+            <footer class="unit-foot">
                     <div class="meta">
                         <p class="date-publish">
                             {{ site.data.i18n[site.lang].published }}:
@@ -43,12 +49,6 @@ layout: blog
                             {% assign tags_list = page.tags | sort %} {% include helpers/tags_list %}
                         </ul>
                     </div>
-                    <div itemprop="articleBody">
-                        {{ content }}
-                    </div>
-                </div>
-            </div>
-            <footer class="unit-foot">
                 <div class="unit-inner unit-foot-inner">
                     <div class="post-buttons">
                         <a class="internal gotop" href="#page" title="{{ site.data.i18n[site.lang].back_to_top }}">{{ site.data.i18n[site.lang].back_to_top }}</a>
