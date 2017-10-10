@@ -9,13 +9,13 @@ tags: Android
 如果对您要帮助我会非常的高兴！！
 * 看代码先了解这个段代码是如何用的非常重要,原因很简单，你只有知道熟知了它的用处，才能在看到它的实现时对此产生共鸣（难怪那样使用！！这样像是为了那样使用的！！原来是这样！！），如果要是以提问的形式写出来就更好了。
 
-##API-21
-##AsyncTask的使用
+## API-21
+## AsyncTask的使用
 1. 我们使用AsyncTask一般都是继承它，然后重新实现几个生命周期，然后实例化它并执行execute（）
 2. onPreExecute（） --> doInBackground()(新线程）--> onPostExecute（）
 3. 当在doInBackground（）里执行publishProgress（）时在新线程里会调用onProgressUpdate
 
-##基本属性
+## 基本属性
 1. CPU_COUNT   = Runtime.getRuntime().availableProcessors();
 2. CORE_POOL_SIZE, MAXIMUM_POOL_SIZE根据cpu数量算出 KEEP_ALIVE = 1
 3. ThreadFactory 使用了AtomicInteger计数线程个数，保证每个线程都有个唯一的名字
@@ -32,7 +32,7 @@ tags: Android
 14. enum Status：  PENDING, RUNNING, FINISHED
 15. 两个原子变量：AtomicBoolean mCancelled， mTaskInvoked
 
-##构造函数
+## 构造函数
 
 1. 实现一个WorkerRunnable  
 	a. mTaskInvoked.set(true); 标识task被调用,这是个原子操作  
@@ -40,7 +40,7 @@ tags: Android
 	c. postResult(doInBackground(mParams)); postResult会从sHandle取得message并传给它数据，然后发送给handler
 2. 实现一个FutureTask，在执行完成后postResultIfNotInvoked（get（））？？？？？
 
-##执行逻辑execute()
+## 执行逻辑execute()
 1. execute → executeOnExecutor(使用默认的执行器） →   
 		1. 如果状态不是pending而是正在执行或完成，则报错，一个task只能执行一次  
 		2. 设置为正在执行然后调用onPreExecute();  参数传给worker，执行器开始执行future。  
@@ -50,7 +50,7 @@ tags: Android
 		1. new Runnable() {r.run(); scheduleNext();}
 		2. r 就是传进来的 Future，构造函数里初始化的那个，构造它时传进了worker
 
-##publishProgress()报告进度
+## publishProgress()报告进度
 1. 向handler发送Progress信息，并传递数据AsyncTaskResult
 2. handler是在主线程的，所以就可以直接调用主线程的onProgressUpdate
 

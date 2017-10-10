@@ -2,12 +2,12 @@
 layout: post
 title: gitignore
 categories: 翻译 工具
-tags: git 
+tags: git
 ---
 
 .gitignore 指定忽略的文件
 
-##模式匹配
+## 模式匹配
 
 1. 空行忽略，只是增加可读性
 2. \#开头 注释
