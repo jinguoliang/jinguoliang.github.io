@@ -6,7 +6,7 @@ tags: 阅读
 keywords: 阅读 书单 2016 读书 学习
 books:
   - title: 你的第一本哲学书
-    status: 在读
+    status: 已读
     author: ' 托马斯・内格尔 '
     publisher: 当代中国出版社
     language: 中文
@@ -20,8 +20,8 @@ books:
     link: 'http://book.douban.com/subject/26340138/'
     cover: 'http://img3.douban.com/lpic/s28049685.jpg'
   - title: 天才在左 疯子在右
-    status: ' 已读'
-    author: ':高铭'
+    status: '已读'
+    author: '高铭'
     publisher: 武汉大学出版社
     language: ''
     link: 'http://book.douban.com/subject/4242172/'
@@ -51,7 +51,7 @@ books:
     description: 讲述了一个花园对两个孩子的美好影响
   - title: 程序员的思维修炼
     status: 已读
-    author: ':AndyHunt'
+    author: 'AndyHunt'
     publisher: 人民邮电出版社
     language: ''
     link: 'http://book.douban.com/subject/5372651/'
