@@ -5,7 +5,7 @@ lang: zh # Language code as defined in _data/i18n.yml. en, en-gb, en-us, zh, zh-
 permalink: /blog/:year/:month/:day/:title/
 
 whitelist: [jekyll-feed, jekyll-redirect-from, jekyll-seo-tag, jekyll-sitemap]
-plugins:
+plugins_dir:
   - jekyll-feed
   - jekyll-redirect-from
   - jekyll-seo-tag
