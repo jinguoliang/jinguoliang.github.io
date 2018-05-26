@@ -1,12 +1,12 @@
 ---
 layout: "post"
-title: "pending_intent"
+title: "彻底认识 PengingIntent"
 date: "2018-05-13 21:22"
 ---
 
-最近在写一个闹钟程序的时候使用到了　PendingIntent, 而且是两个地方用到，一个是　AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下　PendingIntent 了，因为我很好奇一下几个问题:
+最近在写一个闹钟程序的时候使用到了 PendingIntent, 而且是两个地方用到，一个是 AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下 PendingIntent 了，因为我很好奇一下几个问题:
 
-1. 已经有了　Intent, 为什么还有　PendingIntent?
+1. 已经有了 Intent, 为什么还有　PendingIntent?
 2. PendingIntent 也就几个场景用到过，还有其他场景吗？
 3. 它的内部实现。
 
