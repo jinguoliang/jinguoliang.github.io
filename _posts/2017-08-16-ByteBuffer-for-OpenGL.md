@@ -1,11 +1,11 @@
 ---
 layout: post
 title: ByteBuffer for OpenGL
-category: 技术
+category: 编程
 tags: OpenGL nio
 ---
 
-我们在学习OpenGL时，用到了 ByteBuffer 往 OpenGL 传递数据，虽然这里用法很简单，但是ByteBuffer的用法还是很有意思的，所以打算好好研究一下它。但是限于篇幅，我们打算分几部分来说一说。  
+我们在学习OpenGL时，用到了 ByteBuffer 往 OpenGL 传递数据，虽然这里用法很简单，但是ByteBuffer的用法还是很有意思的，所以打算好好研究一下它。但是限于篇幅，我们打算分几部分来说一说。
 如果你只是学习OpenGL时感觉到困惑，那看这一篇就够了，如果你也同我一样对它产生兴趣，那就愉快的研究一下它吧。
 
 ### nio 是什么
@@ -24,7 +24,7 @@ OpenGL 只使用了 nio 中的 Buffer。
 
 ### OpenGL 中的栗子
 
-我们在 OpenGL 的学习中，有几处用到了 Buffer，而实际上，真正算用到的地方，只有下面这一处，就是存储顶点数据的这个地方：  
+我们在 OpenGL 的学习中，有几处用到了 Buffer，而实际上，真正算用到的地方，只有下面这一处，就是存储顶点数据的这个地方：
 {% highlight c %}
 private static final float[] VERTEX = {
             0, 0f, 0.0f,
@@ -38,8 +38,8 @@ private FloatBuffer mVertexBuffer;
 
 。。。
 
-mVertexBuffer = ByteBuffer.allocateDirect(VERTEX.length * 4)  
-    .order(ByteOrder.nativeOrder())   
+mVertexBuffer = ByteBuffer.allocateDirect(VERTEX.length * 4)
+    .order(ByteOrder.nativeOrder())
     .asFloatBuffer()
     .put(VERTEX);
 mVertexBuffer.position(0);

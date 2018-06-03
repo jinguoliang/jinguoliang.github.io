@@ -2,6 +2,8 @@
 layout: "post"
 title: "从源码来看 SharePreference"
 date: "2018-05-27 11:12"
+category: 编程
+tags: SharedPreferences Android 存储
 ---
 
 SharePreference 是 Android 应用保存配置的类，保存键值对，它的使用还是比较简单的，我们只需要跟三个接口打交道：

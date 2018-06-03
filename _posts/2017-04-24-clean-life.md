@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 整理生活 整理人生
-category: 生活
+category: 生活 观点和想法
 tags:  人生 快乐 修身
 ---
 

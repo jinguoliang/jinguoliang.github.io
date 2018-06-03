@@ -1,7 +1,7 @@
 ---
 layout: post
 title: <翻译> Java VS Kotlin
-category: 编程
+category: 编程 翻译
 tags: 语言 Java Kotlin 翻译
 ---
 
