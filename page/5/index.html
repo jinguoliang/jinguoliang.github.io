@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>空谷之兰</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
+<meta property="og:type" content="website">
+<meta property="og:title" content="空谷之兰">
+<meta property="og:url" content="https://jinguoliang.github.io/page/5/index.html">
+<meta property="og:site_name" content="空谷之兰">
+<meta property="og:description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
+<meta property="article:author" content="金国梁">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content=" 随想">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="空谷之兰" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">空谷之兰</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">思绪肆意流淌之地</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://jinguoliang.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-the-way-to-opengl-3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-3/" class="article-date">
+  <time datetime="2017-03-05T00:00:00.000Z" itemprop="datePublished">2017-3-5</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-3/">OpenGL登堂入室之路3-画两个点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文主要知识点：</p>
+<ol>
+<li>如何设置顶点数据</li>
+<li>OpenGL错误检测</li>
+<li>OpenGL的坐标系统</li>
+</ol>
+<h2 id="添加一个顶点的数据"><a href="#添加一个顶点的数据" class="headerlink" title="添加一个顶点的数据"></a>添加一个顶点的数据</h2><p>可能有些同学发现我在搞笑，一个点能画，两个点还不简单，你可能同我一样，直接在顶点数组里添加了一个点的三个坐标，一运行，crash  </p>
+<p>why?????  </p>
+<p>logcat里有报错，但是没有发现什么地方出错了，我们只能根据自己的改动查找相关的地方，修改了顶点数据，不可能导致加载着色器失败，相关语句排除。那就只剩下使用ByteBuffer装载数据（有错就会报出来了），glVertexAttribPointer，glDrawArrays。  </p>
+<p>OpenGL的方法在出错的时候不会报异常，而是要我们手动的调用另一个函数 GLES20.glGetError, 它会返回上一条OpenGL方法执行的错误码，通过判断错误码是否为GLES20.GL_NO_ERROR，判断是否上条语句发生错误。我们对他封装一下,在发生错误是报运行时异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">checkGLError</span><span class="params">(String op)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="keyword">int</span> error = GLES20.glGetError();</span><br><span class="line">	<span class="keyword">if</span> (error != GLES20.GL_NO_ERROR) &#123;  <span class="comment">// 有错误</span></span><br><span class="line">	    String msg = op + <span class="string">": glError 0x"</span> + Integer.toHexString(error);</span><br><span class="line">	    Log.e(TAG, <span class="string">"CheckGLError: "</span> + msg);</span><br><span class="line">	    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(msg);  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在上面，glVertexAttribPointer() 和 glDrawArrays() 后调用用checkGLError(), 发现是 glVertexAttribPointer() 出了问题。通过错误号，在网上可以查到出错信息，你可以自省搜索，这里我们通过这个错误来学习glVertexAttribPointer()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glVertexAttribPointer(mPositionHandle, <span class="number">3</span>, GLES20.GL_FLOAT, <span class="keyword">false</span>,</span><br><span class="line">                <span class="number">3</span> * <span class="number">4</span> , mVertexBuffer);</span><br></pre></td></tr></table></figure>
+
+<p>我们已经知道<em>mPositionHandle</em>相当于是一个指针，通过它，就可以为着色器中的属性设置值，而这个函数的作用正是规定怎样往着色器传递数据:</p>
+<ol>
+<li><em>mPositionHandle</em> 指明数据要给谁，这里传的是顶点坐标数据，传给了shader里的vPosition</li>
+<li><em>3</em> 表示每个顶点传递的一组数据的元素个数，可以是1， 2， 3， 4</li>
+<li><em>GLES20.GL_FLOAT</em> 表示传递的数据类型为float</li>
+<li><em>false</em> 表示定点数据值不标准化(我也不知什么意思，若您知道请不吝赐教)</li>
+<li>3 * 4 表示要传递的数据的大小, 我们之前传递一个点，每个点的3个float，每个float表示4byte</li>
+<li><em>mVertexBuffer</em> 最后的一个当然是数据</li>
+</ol>
+<p>问题就出第五个参数，参数 3 × 4， 3个float， 代表一个点的数据， 现在，我们在数组又添加了一个点的数据，应该是6 * 4， 再抽象一下，VERTEX.length * 4</p>
+<p>现在运行看一下，发现只显示了一个点，为什么？  </p>
+<p>竟然也没有报错, 这个咋整，一个问题，之所以是问题，要么是我们掌握的信息不够，或者错误，要么是我们没高清信息之间的关系。好吧，我就不卖关子了，实际同上面的问题差不多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glDrawArrays(GLES20.GL_POINTS, <span class="number">0</span>, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这个函数，原先第三个参数是1表示画一个点，现在，传了两个点的数据，要画两个点，所以为2, 如果抽象一下，VERTEX.length / 3</p>
+<ol>
+<li>GLES20.GL_POINTS 表示绘制离散的点，之后我们会了解到更多绘制模式</li>
+<li>0 表示从我们之前提供的数据的第几个点的数据开始画，改成1试试吧[坏笑]</li>
+<li>1 表示要绘制几次 尽管我们传了两个点的数据, 但是，如果我们从第0个开始画1个也就只显式一个，所以你懂得</li>
+</ol>
+<p>下面是我们有画一个点到画两个点要改动的代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span>[] VERTEX = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">    <span class="number">0.5f</span>, <span class="number">0f</span>, <span class="number">0f</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">GLES20.glVertexAttribPointer(mPositionHandle, <span class="number">3</span>, GLES20.GL_FLOAT, <span class="keyword">false</span>,</span><br><span class="line">                <span class="number">3</span> * <span class="number">4</span> , mVertexBuffer);</span><br><span class="line"></span><br><span class="line">GLES20.glDrawArrays(GLES20.GL_POINTS, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="OpenGL-坐标系"><a href="#OpenGL-坐标系" class="headerlink" title="OpenGL 坐标系"></a>OpenGL 坐标系</h2><p>看看上面两顶点的数据，它们分别是两个顶点的xyz三个坐标，我们先只考虑二维平面，你可以看到显示的效果，(0, 0, 0)的点在中间，说明原点在屏幕中间。（0.5, 0f, 0f)的点在右侧，说明从原点向有为x轴正方向。<br>你可以试着改变一下坐标，看一下，很容易得到OpenGL的坐标系：</p>
+<ol>
+<li>原点在中央</li>
+<li>x轴的范围是-1 ～ 1</li>
+<li>y轴的范围是-1 ~ 1</li>
+<li>右上角的坐标为（1,1,0）</li>
+</ol>
+<p>剩下一个Z轴坐标系，我相信你能通过自己探索研究出它的规则的。</p>
+<hr>
+<p>end</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-3/" data-id="ck77agx8j001s0vq01qaycs7e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-the-way-to-opengl-2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-2/" class="article-date">
+  <time datetime="2017-02-07T00:00:00.000Z" itemprop="datePublished">2017-2-7</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-2/">OpenGL登堂入室之路2--画个点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="稍等，扯一扯"><a href="#稍等，扯一扯" class="headerlink" title="稍等，扯一扯"></a>稍等，扯一扯</h2><p>OpenGL的学习，门槛就是特别高，因为有太多的概念。本教程的一个任务就是要降低它的门槛，怎么降低呢，就是一小步一小步的走，学习就是得有耐心。  </p>
+<p>走一小步，还不行，还得有及时的明显的反馈，所以，效果还得明显，这能做到吗？答案是“不仅能，而且一定能”。<br>大多数教程，一开始第一个要画的图形是三角形，原因很简单，因为OpenGL ES对OpenGL绘制图形的方式做了阉割，要绘制三维世界的一个面，最基本的图形就是三角形，但是为什么我们不能简单点，再简单点，绘制一个三维世界的一个点呢，一条线呢。  </p>
+<h2 id="好的项目从好的结构开始"><a href="#好的项目从好的结构开始" class="headerlink" title="好的项目从好的结构开始"></a>好的项目从好的结构开始</h2><p>在我们开始画第一个点时，首先调整一下我们的项目结构，因为之后我们所有的绘制操作全在Render里，所以我们会单独定义一个Render类：MRender  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MRender</span> <span class="keyword">implements</span> <span class="title">GLSurfaceView</span>.<span class="title">Renderer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceCreated</span><span class="params">(GL10 gl, EGLConfig config)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceCreated"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceChanged</span><span class="params">(GL10 gl, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceChanged"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDrawFrame</span><span class="params">(GL10 gl)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onDrawFrame"</span>);</span><br><span class="line">        GLES20.glClearColor(<span class="number">1f</span>, <span class="number">1f</span>, <span class="number">0f</span>, <span class="number">1f</span>);</span><br><span class="line">        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>设置Render的地方变成了这样，我们以后几乎所有的工作就是改这个文件了  </p>
+<p>别忘了：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">surfaceView.setRenderer(<span class="keyword">new</span> MRender());</span><br></pre></td></tr></table></figure>
+
+<p>另外，还需要在它之前调用：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">surfaceView.setEGLContextClientVersion(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>设置OpenGL上下文的版本为2.0，不然以后的操作可能会失败</p>
+<h2 id="思考在前"><a href="#思考在前" class="headerlink" title="思考在前"></a>思考在前</h2><p>我们先来自己想一下，要画一个点，我们首先要有一个三维坐标，还要有一个颜色值，然后就绘制了。  </p>
+<h2 id="OpenGL-的绘制过程"><a href="#OpenGL-的绘制过程" class="headerlink" title="OpenGL 的绘制过程"></a>OpenGL 的绘制过程</h2><h3 id="三步走"><a href="#三步走" class="headerlink" title="三步走"></a>三步走</h3><p>那么在OpenGL里怎么实现呢？如果你还记得在<a href="/2017/01/06/opengl-1.html">门外看到</a>的，那该多好:</p>
+<ol>
+<li>加载顶点数据上传到GPU</li>
+<li>加载着色器程序，编译后，上传到GPU</li>
+<li>绘制</li>
+</ol>
+<h3 id="第一步，加载数据"><a href="#第一步，加载数据" class="headerlink" title="第一步，加载数据"></a>第一步，加载数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadVertex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mVertexBuffer = ByteBuffer.allocateDirect(VERTEX.length * <span class="number">4</span>)</span><br><span class="line">            .order(ByteOrder.nativeOrder())</span><br><span class="line">            .asFloatBuffer()</span><br><span class="line">            .put(VERTEX);</span><br><span class="line">    mVertexBuffer.position(<span class="number">0</span>); <span class="comment">// Android里OpenGL使用Buffer作为数据，而不是直接使用数组，至于buffer怎么使用以后会有专门的说明</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二步，加载着色器"><a href="#第二步，加载着色器" class="headerlink" title="第二步，加载着色器"></a>第二步，加载着色器</h3><p>以上代码实际上使用ByteBuffer包装了一下float数组，Android里OpenGL使用Buffer作为数据，而不是直接使用数组，至于buffer怎么使用以后会有专门的说明  </p>
+<p>下面是就是所谓的加载数据并上传到GPU，是调用了我们自定义的两个方法，见名知意：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceCreated</span><span class="params">(GL10 gl, EGLConfig config)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG, <span class="string">"onSurfaceCreated"</span>);</span><br><span class="line">    loadVertex();</span><br><span class="line">    loadProgram();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面详细说明这两个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 加载程序</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadProgram</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mProgram = GLES20.glCreateProgram(); <span class="comment">// 创建一个Program对象，此对象非java里的对象，而是OpenGL里的对象，返回一个int值作为该对象的引用</span></span><br><span class="line">    <span class="keyword">int</span> vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, VERTEX_SHADER); <span class="comment">// 加载顶点着色器，对顶点做处理</span></span><br><span class="line">    <span class="keyword">int</span> fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, FRAGMENT_SHADER); <span class="comment">// 加载颜色着色器，为什么叫颜色着色器，直译过来应该是片着色器呀？因为主要是作颜色变换</span></span><br><span class="line">    GLES20.glAttachShader(mProgram, vertexShader); <span class="comment">// 将着色器绑定到程序对象上</span></span><br><span class="line">    GLES20.glAttachShader(mProgram, fragmentShader);</span><br><span class="line">    GLES20.glLinkProgram(mProgram); <span class="comment">// 连接，编译程序，为什么编译呢，你一会看到那个C语言代码就知道了。</span></span><br><span class="line"></span><br><span class="line">    mPositionHandle = GLES20.glGetAttribLocation(mProgram, <span class="string">"vPosition"</span>); <span class="comment">// 从着色器程序的到属性的位置，从而可以向该属性设置值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OpenGL里有对象的概念，此对象是一个数据结构，是OpenGL里专有的，并不是Java里的对象。<br>以上程序，通知OpenGL创建一个程序对象，并且还会创建两个着色器对象，在着色器对象编译以后，绑定到程序对象，注意，我们并没有操作对象本身，而是使用了一个id，它是OpenGL对象的引用。<br>上面方法最后拿到了一个表示着色器程序里一个属性的引用，从而可以在之后向这个属性赋值，很块就能看到了。  </p>
+<h3 id="第三步，绘制"><a href="#第三步，绘制" class="headerlink" title="第三步，绘制"></a>第三步，绘制</h3><p>我们在onDrawFrame函数里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 清空颜色为黑色</span></span><br><span class="line">GLES20.glClearColor(<span class="number">0f</span>, <span class="number">0f</span>, <span class="number">0f</span>, <span class="number">1f</span>);</span><br><span class="line">GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);</span><br><span class="line">GLES20.glUseProgram(mProgram); <span class="comment">// 使用程序，  还记的状态机吗？在调用这一句后，OpenGL相关的绘制操作就会基于这个Program</span></span><br><span class="line"></span><br><span class="line">GLES20.glEnableVertexAttribArray(mPositionHandle); <span class="comment">// 刚才的顶点位置属性，先使能</span></span><br><span class="line">GLES20.glVertexAttribPointer(mPositionHandle, VERTEX.length, GLES20.GL_FLOAT, <span class="keyword">false</span>,</span><br><span class="line">        VERTEX.length * <span class="number">4</span> , mVertexBuffer);  <span class="comment">// 然后向这个属性设置数据，个参数什么意思呢？</span></span><br><span class="line"></span><br><span class="line">GLES20.glDrawArrays(GLES20.GL_POINTS, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// 这里是真正绘制的方法，GLES20.GL_POINTS表示绘制方式为绘制离散的点，而还有其他方式，比如最常用，绘制三角形，我们传三个顶点数据，就会绘制出一个三角形</span></span><br><span class="line"></span><br><span class="line">GLES20.glDisableVertexAttribArray(mPositionHandle); <span class="comment">// 使顶点属性不可用，这也是，状态机的操作</span></span><br><span class="line"></span><br><span class="line">GLES20.glUseProgram(<span class="number">0</span>); <span class="comment">// 还原程序，不在使用mProgram</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="着色器语言"><a href="#着色器语言" class="headerlink" title="着色器语言"></a>着色器语言</h3><p>剩下的还有顶点数据和GLSL语言的两个字符串没有粘出来，着色器，以后会专门讲的，完整代码看git吧  </p>
+<h3 id="这是个新发现"><a href="#这是个新发现" class="headerlink" title="这是个新发现"></a>这是个新发现</h3><p>这个运行效果是屏幕中间一个点，哦，好吧，我错了，是一个矩形，而且很大，为什么呢？因为这个点太大了，为了让大家看清一点，我们在着色器程序里给点设置了100.0的大小值, 而我之前都是设置5的。这里我们发现，原来OpenGL里所说的点，竟然就是个矩形！  </p>
+<p>下一篇我们讲两个点，而且是可以设置颜色的。说道颜色，你可能突然想起了什么，为什么这一篇没有设颜色。还是因为保证代码简单。这里我们每次draw的时候清空颜色为黑色，然后是在颜色着色器里设置了点的颜色。不要着急，下一篇肯定讲，我保证：）  </p>
+<hr>
+<p>我们的这个教程，需要你的动手做，一定要实践。代码在<a href="https://github.com/jinguoliang/RoadToOpenGLOnAndroid/tree/branch-step2" target="_blank" rel="noopener">这里</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-2/" data-id="ck77agx8f001p0vq0fr1mgvl9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-the-way-to-opengl-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-1/" class="article-date">
+  <time datetime="2017-01-25T00:00:00.000Z" itemprop="datePublished">2017-1-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-1/">OpenGL登堂入室之路1--基本框架</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="声明-OpenGL-ES-版本"><a href="#声明-OpenGL-ES-版本" class="headerlink" title="声明　OpenGL ES 版本"></a>声明　OpenGL ES 版本</h2><p>这第一篇文章，我们先来构建一个Android项目，它包含了每个OpenGL ES项目必须的东西。<br>首先在AndroidManifest里添加如下：  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-feature</span> <span class="attr">android:glEsVersion</span>=<span class="string">"0x00020000"</span> <span class="attr">android:required</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里声明了应用需要OpenGL ES版本为2.0。(为什么版本要这样写呢？)<br>实际上，这个声明不是必须的，没有它也可以正常运行，他的作用是在Google Play下在应用时，Google Play会根据它，来判断设备是否能够安装该应用，比如你的手机不支持OpenGL ES 2.0，Google Play就不会让你下载该应用。  </p>
+<h2 id="两个必须"><a href="#两个必须" class="headerlink" title="两个必须"></a>两个必须</h2><p>下面开始介绍真正必须的两个东西：</p>
+<ol>
+<li>GLSurfaceView</li>
+<li>GLSurfaceView.Render</li>
+</ol>
+<p>这一个类，一个接口，就是Android框架支持OpenGL的基础。<br>我们现在先了解GLSurfaceView是一个Android 的View，负责显示，而GLSurfaceView.Render从名字我们就知道它是负责渲染的，我们之后所有的工作几乎都在Render里。<br>还应该声明的一点是Render的方法都是在另一个线程，即非UI线程来执行的，不会阻塞UI线程。  </p>
+<h2 id="动起手来"><a href="#动起手来" class="headerlink" title="动起手来"></a>动起手来</h2><p>接下来，就开始写代码了：</p>
+<p>第一步 先创建一个项目<br>第二步 在自动生成的布局文件里添加GLSurfaceView</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RelativeLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/activity_main"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingBottom</span>=<span class="string">"@dimen/activity_vertical_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingLeft</span>=<span class="string">"@dimen/activity_horizontal_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingRight</span>=<span class="string">"@dimen/activity_horizontal_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingTop</span>=<span class="string">"@dimen/activity_vertical_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">"com.jone.roadtoopenglonandroid.MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">android.opengl.GLSurfaceView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/surfaceView"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第三步 在对应的Activity里findView，找到GLSurfaceView,并且给它设置Render</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">GLSurfaceView surfaceView = (GLSurfaceView)findViewById(R.id.surfaceView);</span><br><span class="line">surfaceView.setRenderer(<span class="keyword">new</span> GLSurfaceView.Renderer() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceCreated</span><span class="params">(GL10 gl, EGLConfig config)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceCreated"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceChanged</span><span class="params">(GL10 gl, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceChanged"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDrawFrame</span><span class="params">(GL10 gl)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onDrawFrame"</span>);</span><br><span class="line">        GLES20.glClearColor(<span class="number">1f</span>,<span class="number">1f</span>,<span class="number">0f</span>,<span class="number">1f</span>);</span><br><span class="line">        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="三个方法"><a href="#三个方法" class="headerlink" title="三个方法"></a>三个方法</h3><p>这里我们可以看到，Render接口有3个方法</p>
+<ol>
+<li>onSurfaceCreated   Surface创建后调用一次</li>
+<li>onSurfaceChanged GLSurfaceView大小改变时会调用一次，刚创建的时候也会调用一次。</li>
+<li>onDrawFrame 绘制要显示的每一帧</li>
+</ol>
+<p>我给每个方法都加了log，发现onSurfaceCreated 和 onSurfaceChanged的确是调用了一次，而onDrawFrame却不断调用  </p>
+<h3 id="渲染模式"><a href="#渲染模式" class="headerlink" title="渲染模式"></a>渲染模式</h3><p>实际上这个行为是可以改变的，通过surfaceView.setRenderMode来设置渲染的模式：</p>
+<ol>
+<li>GLSurfaceView.RENDERMODE_WHEN_DIRTY 只在创建和调用GLSurfaceView的requestRender方法时才会导致渲染，即onDrawFrame被调用</li>
+<li>GLSurfaceView.RENDERMODE_CONTINUOUSLY 见名知意，会持续渲染，说道这我们也知道，GLSurfaceView的渲染模式默认值是RENDERMODE_CONTINUOUSLY</li>
+</ol>
+<h3 id="来它两句OpenGL尝尝鲜"><a href="#来它两句OpenGL尝尝鲜" class="headerlink" title="来它两句OpenGL尝尝鲜"></a>来它两句OpenGL尝尝鲜</h3><p>你可能会发现，onDrawFrame里除了打印log，还调用两个语句。这两个语句就是OpenGL的语句了。<br>我们使用OpenGL ES2.0,所以所用使用OpenGL的地方都使用GLES20来调用静态属性或者方法。<br>你可能注意到Render的三个方法都有个参数GL10 gl，或许你已经知道，它是OpenGL ES 1.0的用法，忽略它就行了，OpenGL 2.0后都使用静态方法。  </p>
+<p>接着说这两个语句：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glClearColor(<span class="number">1f</span>,<span class="number">1f</span>,<span class="number">0f</span>,<span class="number">1f</span>);</span><br><span class="line">GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);</span><br></pre></td></tr></table></figure>
+
+<p>如果不设置，你可以试试，整个GLSurfaceView都是黑色的。而有这两句则会是黄色。为什么？<br>我们首先来说glClear的作用，从名称也可以了解一点它的作用，清空，因为onDrawFrame是多次调用的，如果不调用glClear，则每次绘制的内容都会叠加，这并不是我们期望的，而在每次绘制前glClear，则会清空上次的绘制内容。至于参数，通过标志为来标明要清空的缓存。以后会更深入的了解。<br>GLES20.glClearColor(1f,1f,0f,1f);　则决定了每次清空上次的绘制内容后显示什么颜色，参数分别为ｒｇｂａ,每个参数的取值为0~1f, 我们给ｒ，ｇ设置了１，所以是黄色，透明度设置１为不透明。  </p>
+<p>好，本文结束。</p>
+<hr>
+<p>我们的这个教程，需要你的动手做，一定要实践。代码在<a href="https://github.com/jinguoliang/RoadToOpenGLOnAndroid/tree/branch-step1" target="_blank" rel="noopener">这里</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ck77agx7z001l0vq027zpc435" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-the-way-to-opengl-0" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-0/" class="article-date">
+  <time datetime="2017-01-24T00:00:00.000Z" itemprop="datePublished">2017-1-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-0/">OpenGL登堂入室之路0</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://jinguoliang.github.io/2017/01/06/opengl-1.html">上一篇</a>，我们看见了OpenGL的大门，接下来，我们就开始进入大门，走在了登堂入室之路上  </p>
+<p>我打算将这个教程作成一个系列，为什么呢？因为一直以来，在我想去学习Android上使用OpenGL时，除了官方的sample，就是官方sample的翻译，或者类似的博客，画个三角形，或者画个立方体，后来，有了Android平台的系列教程，但是是基于OpenGL ES1.0的，落后了。有一天我找到了<a href="http://bullteacher.com/category/zh_learnopengl_com" target="_blank" rel="noopener">一个教程</a>，它是讲在Windows上开发OpenGL 3.0的教程，它所讲的内容还是比较简明的，但是并不太适合Android开发者，我希望其他Android开发的朋友不会像我一样，再去学习这个教程，所以我打算写一个Andoid平台的全面OpenGL教程。这个过程也是我自己学习的过程，这个过程肯定也是艰辛的，所以希望这条路上有更多的人参与进来，不断改进，完善，使得它成为Android上学习OpenGL的最佳之选。  </p>
+<p>我会在github上开一个项目，这个项目是会随着每一篇教程学到的知识而不断长大，完善的，每一篇对应git的一个分支（如果你不了解git，请看<a href="http://rogerdudler.github.io/git-guide/index.zh.html" target="_blank" rel="noopener">git-简明指南</a>)  </p>
+<p>我们将在Android上使用OpenGL ES，OpenGL ES 是 OpenGL API的删减版本，专门支持嵌入式设备的版本。  </p>
+<p>Android现在支持OpenGL ES的几个版本如下：  </p>
+<ol>
+<li>OpenGL ES 1.0 和 1.1  –  Android 1.0 以上都支持</li>
+<li>OpenGL ES 2.0  –  Android 2.2(API 8) 以上都支持 3.  OpenGL ES 3.0  –  Android 4.3(API 18) 以上都支持</li>
+<li>OpenGL ES 3.1  –  Android 5.0(API 21) 以上都支持</li>
+</ol>
+<p>我们选择 OpenGL ES 2.0 来学习。因为现在它最流行，3.0有些设备部支持，1.0已经落后了。</p>
+<p>让我们迈开小步，一点一点成长吧</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ck77agx7x001j0vq0ax11er08" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-opengl-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/opengl-1/" class="article-date">
+  <time datetime="2017-01-06T00:00:00.000Z" itemprop="datePublished">2017-1-6</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/opengl-1/">OpenGL 入门</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="OpenGL-入门（实际是看见大门）"><a href="#OpenGL-入门（实际是看见大门）" class="headerlink" title="OpenGL 入门（实际是看见大门）"></a>OpenGL 入门（实际是看见大门）</h2><p>一直对OpenGL感兴趣，但是之前了解过它两次，也写过例子，但是没弄懂，最近工作需要，学习了一下，找到了一个好的教程，才算弄明白了一点，这篇文章只是开个头，试着按照我的理解将OpenGL的基本原理讲明白，希望读者反馈，一块讨论：）</p>
+<h3 id="从哪开始"><a href="#从哪开始" class="headerlink" title="从哪开始"></a>从哪开始</h3><p>学习一个东西，最快的方式应该是先从宏观的角度去了解它，起点当然是官方网站和Wiki，这里是最正确的一手资料。</p>
+<p>OpenGL 是 open graphics library 的缩写。从名字来看，它是一个库， 但是它只是一个 API（application programming interface），只是一套规范，用来渲染 2D 或者 3D 向量图形的。为什么是向量图形，以后会会讲到，先来把它的用途说完，它是通常用来与GPU交互，实现硬件加速。”通常”，你懂得他的意思吧？因为它就是一套接口，如果你要实现它不与GPU交互那也是可以的。要去实现它的是那些生产显卡GPU的厂商,这样，他的GPU被叫做支持OpenGL。</p>
+<p>硬件加速是什么意思？ 硬件加速是借助硬件模块来替代 <strong>运行在通用目的的CPU上的</strong> 软件算法。注意加粗的部分，没有这个修饰，就很难理解了，因为所有软件算法都是运行在硬件上的，是吧？这里的意思，CPU是通用目的的，而GPU是专门处理图像的，所以GPU的图像处理操作要比CPU块，不然也没它事了。</p>
+<p> 这样，我们知道OpenGL操作GPU， GPU在显卡上，显卡有现存，而我们平时编程只是跟内存打交道， 当然还有CPU，我们是摆脱不掉他的。所以我们在进行OpenGL开发时，就牵扯到CPU， GPU， 内存， 显存，还有文件存储系统。</p>
+<h3 id="状态机–给我发个红包，我笑给你看"><a href="#状态机–给我发个红包，我笑给你看" class="headerlink" title="状态机–给我发个红包，我笑给你看"></a>状态机–给我发个红包，我笑给你看</h3><p>OpenGL 本身是一个大的状态机，这只鸡有多大， 大到我们总是在它肚子里，哈哈，开个玩笑，不过也算贴切。</p>
+<p>我们先来理解什么是状态机。 数学上有有限状态机， 用来描述有限个状态，而且这些状态之间会相互转换。 形象一点，一个烤面包机也算一个状态机，有没有插电两种状态，有没有打开开关两个状态, 有没有插入面包两个状态。这些状态，都会因为一些行为而改变，比如插入插销，烤面包机就由未插电状态变成插电状态。而某些状态会支持某些行为，如只有插电，插入面包，打开开关，这时才能够加热面包。<br>下面还有个图简单的不能再简单的状态机：  </p>
+<p><img src="/public/img/state_machine.png" alt=""><br>这是我画的，还挺有感觉：）  </p>
+<p>一个大开关，里边有三个按钮，这就表示了6种状态，而每个按钮的拨动，都会导致大开关的状态转换，这就是状态机。</p>
+<p>OpenGL里有个Context的概念，而这个Context，中文译为上下文。我们在进行 OpenGL 开发时， 会设置某些选项，操作某些缓冲，这些操作并没有指明是对谁，但是实际上是改变了当前上下文的状态， 然后进行绘制，绘制出来的图像是那种状态下的样子。</p>
+<p>然后，当切换了上下文时，之前的配置就都无效了。  </p>
+<p>这就像我们本来看着一个正在烤着面包的面包机，突然目光转向一个电都没插，开关没开的烤面包机，然后插电，插面包，打开，这一系列的操作的对象都不用指明是那个烤面包机，但是，读起来却明白是它，这就是上下文的作用。</p>
+<h3 id="对象–状态的集合-数据的容器"><a href="#对象–状态的集合-数据的容器" class="headerlink" title="对象–状态的集合,数据的容器"></a>对象–状态的集合,数据的容器</h3><p>OpenGL 里也有对象， 但是此对象并不是面向对象编程语言里的对象，更不是你妈让你找的对象，而是一个可选项的集合，此集合是OpenGL状态的一个子集。如图：</p>
+<p><img src="/public/img/state_machine_with_object.png" alt="">  </p>
+<p>我们可以把控制灯光的两个开关看做一个对象，控制风扇的一个开关看做一个对象，这样这个状态机就有两个对象。</p>
+<p>无论何时何地，我们都像下面这样使用对象：  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OpenGL的状态</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">OpenGL_Context</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ...</span><br><span class="line">    object * object_Window_Target;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建对象</span></span><br><span class="line">GLuint objectId = <span class="number">0</span>;</span><br><span class="line">glGenObject(<span class="number">1</span>, &amp;objectId);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把对象绑定到环境</span></span><br><span class="line">glBindObject(GL_WINDOW_TARGET, objectId);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置当前绑定到GL_WINDOW_TARGET的对象的选项</span></span><br><span class="line">glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_WIDTH, <span class="number">800</span>);</span><br><span class="line">glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_HEIGHT, <span class="number">600</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把上下文目标重设为默认</span></span><br><span class="line">glBindObject(GL_WINDOW_TARGET, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>  
+
+<p>（代码来自：<a href="http://bullteacher.com/2-opengl.html" target="_blank" rel="noopener">五十弦翻译的教程</a>，啥叫禁止演义）</p>
+<h3 id="OpenGL如何工作的"><a href="#OpenGL如何工作的" class="headerlink" title="OpenGL如何工作的"></a>OpenGL如何工作的</h3><p>前面已经提到过，OpenGL总共牵扯到计算机的5个大部分，它们分别是：<br>CPU，内存，GPU，显存，外存, 主要干了三个大事：</p>
+<ol>
+<li>CPU将数据从内存复制到显存</li>
+<li>CPU将着色器程序上传到GPU</li>
+<li>通知GPU运行着色器程序，处理数据</li>
+</ol>
+<p>下面一个图来表示 OpenGL 是如何工作的：</p>
+<p><img src="/public/img/OpenGL_how_work.png" alt="">  </p>
+<p>根据以上我们说的三个大事，和图片所示，我们就可以解释几个语句块</p>
+<p>上传顶点数据的代码：  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是在内存中的数据</span></span><br><span class="line">GLfloat vertices[] = &#123;</span><br><span class="line">    <span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="comment">// Left  </span></span><br><span class="line">     <span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="comment">// Right</span></span><br><span class="line">     <span class="number">0.0f</span>,  <span class="number">0.5f</span>, <span class="number">0.0f</span>  <span class="comment">// Top   </span></span><br><span class="line">&#125;;</span><br><span class="line">GLuint VBO; <span class="comment">// Vertex Buffer Object， 这是一个缓存对象</span></span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;VBO); <span class="comment">// 这时候才真正在显存创建了一个对象，VBO是它在内存中的一个引用，这时候，也分配了空间也有引用，但是依然不能操作它，因为，它跟OpenGLContext还没有关系</span></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, VBO); <span class="comment">// 这里真正产生了关系，将缓存对象绑定到了GL_ARRAY_BUFFER这么一个数组缓存目标上，为什么是目标，因为，之后我们就通过操作它来影响显存中的缓存对象。</span></span><br><span class="line"><span class="comment">// 这里数据传送路径是这样的：内存-&gt;CPU-&gt;GPU-&gt;显存</span></span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, <span class="number">0</span>); <span class="comment">// 这里解绑刚才的缓存对象，之后的对GL_ARRAY_BUFFER的操作就不会影响上边创建的缓存对象了。</span></span><br></pre></td></tr></table></figure>  
+
+<p>上面我们上传了顶点数据到显存，下面我们上传着色器程序到GPU，着色器程序是什么，我们暂时只需要知道，它会在GPU执行，处理我们上传到显存的数据就行了：  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通知GPU分配一个顶点类型的着色器</span></span><br><span class="line">GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);</span><br><span class="line"><span class="comment">// 将内存里的源代码指定给它(不知道有没有上传到显存)</span></span><br><span class="line">glShaderSource(vertexShader, <span class="number">1</span>, &amp;vertexShaderSource, <span class="literal">NULL</span>);</span><br><span class="line"><span class="comment">// 编译着色器</span></span><br><span class="line">glCompileShader(vertexShader);</span><br><span class="line"></span><br><span class="line">...省略颜色着色器的代码，一般都会有这两个着色器，也可能有其他</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个着色器程序</span></span><br><span class="line">GLuint shaderProgram = glCreateProgram();</span><br><span class="line"><span class="comment">// 将顶点着色器跟颜色着色器添加到着色器程序</span></span><br><span class="line">glAttachShader(shaderProgram, vertexShader);</span><br><span class="line">glAttachShader(shaderProgram, fragmentShader);</span><br><span class="line"><span class="comment">// 链接着色器程序</span></span><br><span class="line">glLinkProgram(shaderProgram);</span><br><span class="line"><span class="comment">// 这样就准备好了着色器程序</span></span><br></pre></td></tr></table></figure>  
+
+<p>下面是绘制代码部分:  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glUseProgram(shaderProgram); <span class="comment">// 通知GPU使用shaderProgram着色器程序, 这里算是切换上下文，之后的GPU运行的都是这个Program</span></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, VBO); <span class="comment">// 设置当前的GL_ARRAY_BUFFER数组缓存对象, 这里也是切换上下文，之后使用的数组数据，来自VBO</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>); <span class="comment">// 这时候，它会自动的去拿GL_ARRAY_BUFFER里的数据，使用shaderProgram这个着色器程序，进行绘制</span></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, <span class="number">0</span>); <span class="comment">// 解绑顶点数据</span></span><br><span class="line"><span class="comment">// 不在使用shaderProgram着色器程序</span></span><br><span class="line">glUseProgram(shaderProgram);</span><br></pre></td></tr></table></figure>  
+
+<p>当然，OpenGL的基本概念还有很多，这里这篇文章知识让你远远的看一看它的全貌，如果喜欢，请继续关注, 如果您能提出宝贵的意见，不胜感激。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ck77agxe800bd0vq0c090hz4w" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-MineUbuntuEnviroment" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/MineUbuntuEnviroment/" class="article-date">
+  <time datetime="2016-05-15T00:00:00.000Z" itemprop="datePublished">2016-5-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/MineUbuntuEnviroment/">在 Ubuntu 上</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇文章记录了我在 Ubuntu 上初始环境的配置搭建步骤，跟遇到的问题，当然它们不仅仅适用于16.04,希望对您有所帮助</p>
+<h1 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h1><ul>
+<li><p><a href="http://www.android-studio.org/" target="_blank" rel="noopener">下载Android Studio</a></p>
+</li>
+<li><p>安装java sdk：使用apt安装openjdk-8-sdk，我安装java9失败，就安装了java8,也不行，然后把所有java相关的都删除了，然后安装8成功，9依然失败</p>
+</li>
+<li><p>Android Sdk里有些工具是32位的所以需要安装对x32位的支持：</p>
+<blockquote>
+<p>sudo apt-get install -y libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1</p>
+</blockquote>
+</li>
+<li><p>adb 竟然支持我的两个设备，之前是需要配置的！！</p>
+</li>
+</ul>
+<h1 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h1><ul>
+<li>sudo apt install vim</li>
+<li>安装vim 插件管理器：<a href="https://github.com/tpope/vim-pathogen" target="_blank" rel="noopener">pathogen</a> <a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="noopener">Vundle</a></li>
+<li>安装vim 对 markdown的支持,因为写博客要用到<a href="https://github.com/plasticboy/vim-markdown" target="_blank" rel="noopener">markdown</a></li>
+</ul>
+<h1 id="Jekyll"><a href="#Jekyll" class="headerlink" title="Jekyll"></a>Jekyll</h1><ul>
+<li>Jekyll 是一个静态网站生成器，生成的静态网站可以放在github上</li>
+<li>Jekyll 是使用ruby写的，所以先安装新版本的ruby，然后用gem安装jekyll</li>
+</ul>
+<h1 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h1><ul>
+<li><p>据说zsh很强大，但是太复杂，这倒是可以理解的，但是的确因此让它不能流行</p>
+</li>
+<li><p>于是<a href="https://github.com/robbyrussell/oh-my-zsh/" target="_blank" rel="noopener">oh-my-zsh</a>出现，它让zsh不难么复杂，于是我们就用zsh来替代我们使用的bash</p>
+</li>
+<li><p>如果你想让你的用户shell默认就是zsh：</p>
+<blockquote>
+<p>打开/etc/passwd<br>将你的用户最后的bash改成zsh</p>
+</blockquote>
+</li>
+</ul>
+<p>这里应该有一个脚本来自动完成整套搭建过程的……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ck77agx7u001g0vq0el3q34jg" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-kiss" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/kiss/" class="article-date">
+  <time datetime="2016-03-01T00:00:00.000Z" itemprop="datePublished">2016-3-1</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/kiss/">what&#39;s KISS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="What-does-KISS-stand-for"><a href="#What-does-KISS-stand-for" class="headerlink" title="What does KISS stand for?"></a>What does KISS stand for?</h2><p><a href="https://people.apache.org/~fhanik/kiss.html" target="_blank" rel="noopener">https://people.apache.org/~fhanik/kiss.html</a></p>
+<p>The KISS is an abbreviation of Keep It Stupid Simple or Keep It Simple, Stupid</p>
+<h2 id="What-does-that-mean"><a href="#What-does-that-mean" class="headerlink" title="What does that mean?"></a>What does that mean?</h2><p>This principle has been a key, and a huge success in my years of software engineering. A common problem among software engineers and developers today is that they tend to over complicate problems.</p>
+<p>Typically when a developer is faced with a problem, they break it down into smaller pieces that they think they understand and then try to implement the solution in code. I would say 8 or 9 out of 10 developers make the mistake that they don’t break down the problem into small enough or understandable enough pieces. This results in very complex implementations of even the most simple problems, another side effect is spagetthi code, something we tought only BASIC would do with its goto statements, but in Java this results in classes with 500-1000 lines of code, methods that each have several hundreds of lines.<br>This code clutter is a result of the developer realizing exception cases to his original solution while he is typing in code. These exception cases would have solved if the developer had broken down the problem further.</p>
+<h2 id="How-will-I-benefit-from-KISS"><a href="#How-will-I-benefit-from-KISS" class="headerlink" title="How will I benefit from KISS"></a>How will I benefit from KISS</h2><ul>
+<li>You will be able to solve more problems, faster.</li>
+<li>You will be able to produce code to solve complex problems in fewer lines of code</li>
+<li>You will be able to produce higher quality code</li>
+<li>You will be able to build larger systems, easier to maintain</li>
+<li>You’re code base will be more flexible, easier to extend, modify or refactor when new requirements arrive</li>
+<li>You will be able to achieve more than you ever imagined</li>
+<li>You will be able to work in large development groups and large projects since all the code is stupid simple</li>
+</ul>
+<h2 id="How-can-I-apply-the-KISS-principle-to-my-work"><a href="#How-can-I-apply-the-KISS-principle-to-my-work" class="headerlink" title="How can I apply the KISS principle to my work"></a>How can I apply the KISS principle to my work</h2><p>There are several steps to take, very simple, but could be challenging for some. As easy as it sounds, keeping it simple, is a matter of patience, mostly with yourself.</p>
+<ul>
+<li>Be Humble, don’t think of yourself as a super genius, this is your first mistake<br>By being humble, you will eventually achieve super genius status =), and even if you don’t, who cares! your code is stupid simple, so you don’t have to be a genius to work with it.</li>
+<li>Break down your tasks into sub tasks that you think should take no longer than 4-12 hours to code</li>
+<li>Break down your problems into many small problems. Each problem should be able to be solved within one or a very few classes</li>
+<li>Keep your methods small, each method should never be more than 30-40 lines. Each method should only solve one little problem, not many uses cases<br>If you have a lot of conditions in your method, break these out into smaller methods.<br>Not only will this be easier to read and maintain, but you will find bugs a lot faster.<br>You will learn to love Right Click+Refactor in your editor.</li>
+<li>Keep your classes small, same methodology applies here as we described for methods.</li>
+<li>Solve the problem, then code it. Not the other way around<br>Many developers solve their problem while they are coding, and there is nothing wrong doing that. As a matter of fact, you can do that and still adhere to the above statement.<br>If you have the ability to mentally break down things into very small pieces, then by all means, do that while you are coding. But don’t be afraid of refactor your code over and over and over and over again. Its the end result that counts, and number of lines is not a measurement, unless you measure that fewer is better of course.</li>
+<li>Don’t be afraid to throw away code. Refactoring and recoding are two very important areas. As you come across requirements that didn’t exist, or you weren’t aware of when you wrote the code to begin with you might be able to solve the old and the new problems with an even better solution.<br>If you had followed the advice above, the amount of code to rewrite would have been minimal, and if you hadn’t followed the advice above, then the code should probably be rewritten anyway.</li>
+<li>And for all other scenarios, try to keep it as simple as possible, this is the hardest behavior pattern to apply to, but once you have it, you’ll look back and will say, I can’t imagine how I was doing work before.</li>
+</ul>
+<h2 id="Are-there-any-examples-of-the-KISS-principle"><a href="#Are-there-any-examples-of-the-KISS-principle" class="headerlink" title="Are there any examples of the KISS principle"></a>Are there any examples of the KISS principle</h2><p>There are many, and I will look for some really great one to post here. But I will leave you with the following thought:</p>
+<p>Some of the world’s greatest algorithms are always the ones with the fewest lines of code. And when we go through the lines of code, we can easily understand them. The innovator of that algorithm, broke down the problem until it was so easy to understand that he/she could implement it.<br>Many great problem solvers were not great coders, but yet they produced great code!</p>
+<h2 id="Does-KISS-only-apply-to-java-coding"><a href="#Does-KISS-only-apply-to-java-coding" class="headerlink" title="Does KISS only apply to java coding"></a>Does KISS only apply to java coding</h2><p>Absolutely not, it applies to many other programming languages and extends to many other areas in your life.<br>The areas that the principle doesn’t apply to are: emotions, love and most importantly, your marriage :)</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck77agx7s001d0vq00rl54wbr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8E%9F%E7%90%86/" rel="tag">原理</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flow" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flow/" class="article-date">
+  <time datetime="2016-02-09T00:00:00.000Z" itemprop="datePublished">2016-2-9</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flow/">番茄工作法图解--心流</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="http://img3.douban.com/view/page_note/large/public/p12671922-1.jpg" alt="pic"></p>
+<p>有一种精神状态称为“心流”，它具有以下特点：明确的目标、集中、专注、自我意识消失、时间感扭曲、直接和即时反馈、能力水平与面对挑战的平衡、个人控制感、工作本身的内在奖励、行为与认知的合一。</p>
+<p>心流是一种创造性的状态。如果保持心流的状态，效率不就提高了吗？不是的。心流状态下缺乏全局观念，创造力与统筹力难以并存。时不时地，我需要纵览全局进行战略决策，部署行动，以便在下一个心流期间能够全身心投入这项行动中。</p>
+<p>在进入心流阶段之前，我扭启一个番茄钟，让它稍后唤醒我，这样我可以暂时换上战略眼光，观察全局，然后再次回到心流中——这就是节奏。另外要记住的是，获得心流状态，进入好整以暇、正襟危坐、全神贯注的姿势，要比东张西望等待灵感有效得多。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/flow/" data-id="ck77agx7o00160vq0cqlb5fta" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-remoter" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/remoter/" class="article-date">
+  <time datetime="2016-02-09T00:00:00.000Z" itemprop="datePublished">2016-2-9</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%B7%A5%E4%BD%9C/">工作</a>►<a class="article-category-link" href="/categories/%E5%B7%A5%E4%BD%9C/%E7%94%9F%E6%B4%BB/">生活</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/remoter/">作一个 Remoter</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>远程办公，一直是我的向往，它是我成为一个自由开发者的过度阶段。</p>
+<p>之前有段时间也关注过,知道这种方式叫做 soho，今天又看到了， 得知这种方式叫remote，还有一本书《Remote》,作者就是写《Rework》 的那两位，他们的公司就是远程办公的人组成的，<br>一直控制着人数，保持着小团队。</p>
+<p>今天记下一些资源，以供自己和读者参考。</p>
+<p>首先推荐37Signals的三本书:</p>
+<p>《Getting Real》、《Rework》、<a href="http://www.jianshu.com/notebooks/41672/latest" target="_blank" rel="noopener">《Remote》</a></p>
+<p>然后是37Signals公司的博客：<br><a href="https://m.signalvnoise.com/" target="_blank" rel="noopener">https://m.signalvnoise.com/</a> 英文的</p>
+<p>他们的创业方法，的确很适合个人开发者。<br><img src="http://cms.csdnimg.cn/article/201311/25/5292c893778be.jpg" alt=""></p>
+<p>相关的网站：</p>
+<p><a href="http://remotechina.xyz/" target="_blank" rel="noopener">http://remotechina.xyz/</a> 这个网站专门推广远程办公，不过好像还没发展起来</p>
+<p>毕业一年，不甘于公司的制度，理想在。</p>
+<p>“有梦为马，既可以朝九晚五，又可以浪迹天涯”</p>
+<p> 技术上升<br> 远程办公<br> 游历世界<br> 自由职业者</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ck77agx7q00190vq057irgo4r" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-advice-for-young-progrommer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/advice-for-young-progrommer/" class="article-date">
+  <time datetime="2016-02-08T00:00:00.000Z" itemprop="datePublished">2016-2-8</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/advice-for-young-progrommer/">&lt;转&gt;给年轻程序员的建议</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>偶尔的，我会被人问道：如何成为一名优秀的程序员，更或者，如何成为一名程序员。每次人们问起，我都力图给出不同的答案。因此，我的答案是各种各样的。下面就是我认为的成为一名优秀的程序员需要做的一些事情。记住，想成为一名程序员，很多条路可走，这里列出的只是我的方法。</p>
+<ol>
+<li><p>解决你自己的问题<br>从外面获取答案和自己解决问题、找到答案，这两种方式是有区别的。当你自己解决一个问题时，你不仅解决了这一个问题，也意味着解决了跟它类似的数百万问题。这是一个先投资后收获的过程。有时，你可能需要花2到3天的时间解决一个问题，这没什么；这是你的前期投资。</p>
+</li>
+<li><p>从做小程序开始<br>我说的小程序，是指100行左右的。目前为止，《Java程序设计教程实验手册(Deitel and Deitel)》这本书是我见过的最好的编程书。从第一章到第十章，里面的所有习题都做一遍。当你做完了这些，你就对编程有了相当的掌握了。</p>
+</li>
+<li><p>仿造软件<br>找一个你喜欢的网站或游戏，把它仿造出来。在你真正的想做一件项目前，先做完这个。这个能促使你学到前沿的编程技术，而且能让你更容易的被招聘公司选中。做3-5个这样的仿制项目后，你就能实现任意的你想要的东西了。</p>
+</li>
+<li><p>每个项目都要学到新东西<br>每次项目都努力使用一些听到过但从未使用过的新东西。没有使用过Jquery，那下次项目中就使用它；没有试过测试驱动开发，下次项目就是你的实验品；你明白我的用意，对吗？</p>
+</li>
+<li><p>说行<br>如果有人请求你为他做些什么东西，记得要说“行”——如果你从来没有给别人做过什么东西的话。我知道你可能会想，我自己还有无数的东西要做呢，但从经验来看，除了把主要时间花在自己有利可图的项目上外，你也应该花一些时间做一些慈善项目。这样做你会得到人们的认可，人们会想着你，如果有机会的会话，他们就会引荐你。</p>
+</li>
+<li><p>交结程序员朋友<br>这是另外一个获得引荐机会的方法。总有机会，你的程序员朋友的盘子装满了，他们需要有人把多余的商业机会接下来。这时他们需要你出现。同样，当你的盘子装不下时，你也需要有人帮你把活接走。</p>
+</li>
+<li><p>成为一个领域专家<br>广闻博识，同时要至少精通其中一项。编程世界很大，没有人能掌握所有东西，所以，要有一个专长。例如，成为一个本地应用或金融软件方面的专家</p>
+</li>
+</ol>
+<p>转载自:<a href="http://www.aqee.net/advice-to-young-programmers/" target="_blank" rel="noopener">http://www.aqee.net/advice-to-young-programmers/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ck77agx7j00120vq0ffz0gkuk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Think-In-Writing/">Think - In - Writing</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E4%BD%9C/">工作</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E4%BD%9C/%E7%94%9F%E6%B4%BB/">生活</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/">学习</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5/">实践</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5/%E8%A7%82%E7%82%B9%E5%92%8C%E6%83%B3%E6%B3%95/">观点和想法</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E8%A7%82%E7%82%B9%E5%92%8C%E6%83%B3%E6%B3%95/">观点和想法</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/%E7%BF%BB%E8%AF%91/">翻译</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BF%BB%E8%AF%91/">翻译</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BF%BB%E8%AF%91/%E5%B7%A5%E5%85%B7/">工具</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/">自由开发者</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/API/" rel="tag">API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jenkins/" rel="tag">Jenkins</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NIO/" rel="tag">NIO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/" rel="tag">github</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nio/" rel="tag">nio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/repo/" rel="tag">repo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%A4%E6%80%A7/" rel="tag">两性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E7%94%9F/" rel="tag">人生</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" rel="tag">仰卧起坐</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%AE%E8%BA%AB/" rel="tag">修身</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%81%A5%E5%BA%B7/" rel="tag">健康</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%99%E4%BD%9C/" rel="tag">写作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%9F%E7%90%86/" rel="tag">原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E6%80%9D/" rel="tag">反思</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%89%E4%BB%96/" rel="tag">吉他</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8C%E5%AD%A6/" rel="tag">同学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9D%9A%E6%8C%81/" rel="tag">坚持</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E8%84%91/" rel="tag">大脑</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" rel="tag">小时候</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B4%E7%BA%AA/" rel="tag">年纪</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8/" rel="tag">应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" rel="tag">心理学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%AB%E4%B9%90/" rel="tag">快乐</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E6%83%B3/" rel="tag">思想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%81%8B%E7%88%B1/" rel="tag">恋爱</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A7%E5%88%B6/" rel="tag">控制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%90%AD%E8%AE%AA/" rel="tag">搭讪</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%B3%95/" rel="tag">方法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="tag">方法论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" rel="tag">村上春树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E4%BB%BF/" rel="tag">模仿</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AF%85%E5%8A%9B/" rel="tag">毅力</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%83%AD%E7%82%B9/" rel="tag">热点</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%90%90%E4%BA%8B/" rel="tag">琐事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%AD%BB/" rel="tag">生死</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" rel="tag">生理学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%AE%E7%9A%84/" rel="tag">目的</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9C%9F%E5%AE%9E/" rel="tag">真实</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9D%A1%E8%A7%89/" rel="tag">睡觉</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag">程序员</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B2%BE%E7%A5%9E/" rel="tag">精神</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E5%A9%9A/" rel="tag">结婚</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%98%E7%94%BB/" rel="tag">绘画</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%8A%E5%A4%A9/" rel="tag">聊天</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" rel="tag">自我完善</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%A6%E8%A1%8C/" rel="tag">苦行</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%9B%80%E7%89%99/" rel="tag">蛀牙</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A8%80%E6%83%85/" rel="tag">言情</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E8%AE%BA/" rel="tag">评论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97/" rel="tag">诗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B5%84%E6%BA%90/" rel="tag">资源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BA%AB%E4%BD%93/" rel="tag">身体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" rel="tag">进化学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%94%BB%E7%82%BC/" rel="tag">锻炼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%85%E8%AF%BB/" rel="tag">阅读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%AE%E7%90%A6/" rel="tag">阮琦</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E4%B9%90/" rel="tag">音乐</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Github/" style="font-size: 10px;">Github</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 15px;">Kotlin</a> <a href="/tags/NIO/" style="font-size: 10px;">NIO</a> <a href="/tags/OpenGL/" style="font-size: 17.5px;">OpenGL</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/git/" style="font-size: 12.5px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 12.5px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 12.5px;">人生</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E4%BF%AE%E8%BA%AB/" style="font-size: 10px;">修身</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 12.5px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10px;">写作</a> <a href="/tags/%E5%8E%9F%E7%90%86/" style="font-size: 10px;">原理</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 15px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BA%94%E7%94%A8/" style="font-size: 10px;">应用</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 12.5px;">心理学</a> <a href="/tags/%E5%BF%AB%E4%B9%90/" style="font-size: 10px;">快乐</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 12.5px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 15px;">思考总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 12.5px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 12.5px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 10px;">碎碎念</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 12.5px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 15px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%84%E8%AE%BA/" style="font-size: 10px;">评论</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 12.5px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 12.5px;">语言</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/">《挪威的森林》读后感</a>
+          </li>
+        
+          <li>
+            <a href="/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/">自由开发者2个月总结</a>
+          </li>
+        
+          <li>
+            <a href="/exponentiallybucketedhistogram/">ExponentiallyBucketedHistogram</a>
+          </li>
+        
+          <li>
+            <a href="/queue-worker/">QueuedWork</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 金国梁<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
