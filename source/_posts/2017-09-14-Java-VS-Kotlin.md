@@ -1,8 +1,14 @@
 ---
 layout: post
 title: <翻译> Java VS Kotlin
-category: 编程 翻译
-tags: 语言 Java Kotlin 翻译
+categories:
+- 编程
+- 翻译
+tags:
+- 语言
+- Java
+- Kotlin
+- 翻译
 ---
 
 要想了解一个新事物，将它与所熟悉的就实物做对比是最好不过的方式了，下文为 Kotlin 官方网站的一篇文章，对 Java 和 Kotlin 做了对比。我根据自己的理解添加了一点解释。原文对每一条都有链接让你去深入了解，很好！！

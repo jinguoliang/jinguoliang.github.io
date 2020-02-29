@@ -1,8 +1,10 @@
 ---
 layout: post
 title: OpenGL登堂入室之路3-画两个点
-category: 编程
-tags: OpenGL
+categories:
+- 编程
+tags:
+- OpenGL
 ---
 
 本文主要知识点：

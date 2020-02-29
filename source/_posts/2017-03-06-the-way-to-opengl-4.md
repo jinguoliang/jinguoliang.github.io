@@ -1,8 +1,10 @@
 ---
 layout: post
 title: OpenGL登堂入室之路4-画三个点
-category: 编程
-tags: OpenGL
+categories:
+- 编程
+tags:
+- OpenGL
 ---
 
 我们画了一个点，两个点，接着画三个点，有些小伙伴可能想到要画三角形了，的确如此，而且是带颜色的三角形。

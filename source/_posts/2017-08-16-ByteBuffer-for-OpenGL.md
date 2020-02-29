@@ -1,8 +1,11 @@
 ---
 layout: post
 title: ByteBuffer for OpenGL
-category: 编程
-tags: OpenGL nio
+categories:
+- 编程
+tags:
+- OpenGL
+- nio
 ---
 
 我们在学习OpenGL时，用到了 ByteBuffer 往 OpenGL 传递数据，虽然这里用法很简单，但是ByteBuffer的用法还是很有意思的，所以打算好好研究一下它。但是限于篇幅，我们打算分几部分来说一说。

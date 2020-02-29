@@ -1,8 +1,10 @@
 ---
 layout: post
 title: OpenGL登堂入室之路2--画个点
-category: 编程
-tags: OpenGL
+categories:
+- 编程
+tags:
+- OpenGL
 ---
 
 ## 稍等，扯一扯

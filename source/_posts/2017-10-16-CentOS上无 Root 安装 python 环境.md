@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "CentOS 上 无 Root 安装 Python"
-category: 编程
-tags: Python 服务器 Root RPM CPIO
+categories:
+- 编程
+tags:
+- Python
+- 服务器
+- Root
+- RPM
+- CPIO
 ---
 
 ## 背景
