@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>空谷之兰</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
+<meta property="og:type" content="website">
+<meta property="og:title" content="空谷之兰">
+<meta property="og:url" content="https://jinguoliang.github.io/page/2/index.html">
+<meta property="og:site_name" content="空谷之兰">
+<meta property="og:description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
+<meta property="article:author" content="金国梁">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content=" 随想">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="空谷之兰" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">空谷之兰</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">思绪肆意流淌之地</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://jinguoliang.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-pending-intent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/pending-intent/" class="article-date">
+  <time datetime="2018-05-13T21:22:00.000Z" itemprop="datePublished">2018-5-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/pending-intent/">彻底认识 PengingIntent</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在写一个闹钟程序的时候使用到了 PendingIntent, 而且是两个地方用到，一个是 AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下 PendingIntent 了，因为我很好奇一下几个问题:</p>
+<ol>
+<li>已经有了 Intent, 为什么还有　PendingIntent?</li>
+<li>PendingIntent 也就几个场景用到过，还有其他场景吗？</li>
+<li>它的内部实现。</li>
+</ol>
+<h2 id="Intent-和-PendingIntent-的区别"><a href="#Intent-和-PendingIntent-的区别" class="headerlink" title="Intent 和 PendingIntent 的区别"></a>Intent 和 PendingIntent 的区别</h2><h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>Intent 是意图的意思。Android 中的　Intent 正是取自这个意思，它是一个消息对象，通过它，Android 系统的四大组件能够方便的通信，并且保证解耦。</p>
+<p>Intent 可以说明某种意图，携带一种行为和相应的数据，发送到目标组件。</p>
+<p>IntentFilter 与 Intent 配套使用，它声明了一个组件接受某个　Intent。</p>
+<h3 id="PendingIntent"><a href="#PendingIntent" class="headerlink" title="PendingIntent"></a>PendingIntent</h3><p>PendingIntent 是对 Intent 的封装，关键的不同在于：</p>
+<blockquote>
+<p>A组件 创建了一个 PendingIntent 的对象然后传给 B组件，B 在执行这个 PendingIntent 的 send 时候，它里面的 Intent 会被发送出去，而接受到这个 Intent 的 C 组件会认为是 A 发的。</p>
+<p>B 以 A 的权限和身份发送了这个 Intent。</p>
+</blockquote>
+<p>比如，我们的 Activity 如果设置了 exported = false，其他应用如果使用 Intent 就访问不到这个 Activity，但是使用 PendingIntent 是可以的。</p>
+<p>综上所述，PendingIntent 有两个特点：</p>
+<ol>
+<li>将某个动作的触发时机交给其他应用</li>
+<li>让那个应用代表自己去执行那个动作(权限都给他了)</li>
+</ol>
+<h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><h3 id="获取-PendingIntent"><a href="#获取-PendingIntent" class="headerlink" title="获取 PendingIntent"></a>获取 PendingIntent</h3><ol>
+<li>getActivity</li>
+<li>getActivities</li>
+<li>getBroadcast</li>
+<li>getService</li>
+<li>getForegroundService</li>
+</ol>
+<blockquote>
+<p>为什么没有 getContentProvider?<br>我猜测，ContentProvider 作为一个数据源，太重要了，相当于是把数据直接暴露出去了</p>
+</blockquote>
+<p>它们的参数都相同，都是四个：Context， requestCode, Intent, flags。Context 不必多说，要想让其他组件代替自己办事，当然要将自己的上下文传给它。action, requestCode 和 Intent 共同来标志一个行为的唯一性，什么意思呢?</p>
+<p>简单的说，我们通过相同的方法(action), 相同的 requestCode 和相同的 Intent 获取到的 PendingIntent, 虽然可能不是同一个对象，但是，却是代表同一个东西，之所以这样看 flags 参数就知道了。</p>
+<p>FLAG_ONE_SHOT: 只执行一次， 在调用了 send 以后自动调用 cancel，不能在调用 send 了。<br>FLAG_NO_CREATE: 不创建新的，如果我们之前设置过，这次就能获取到，否则，返回 null。<br>FLAG_CANCEL_CURRENT: 如果之前设置过，就取消掉, 重新创建个新的<br>FLAG_UPDATE_CURRENT: 如果之前设置过，就更新它。更新什么呢，Intent 的 Extras<br>FLAG_IMMUTABLE: 设置 Intent 在 send 的时候不能更改</p>
+<h3 id="发送-PendingIntent"><a href="#发送-PendingIntent" class="headerlink" title="发送 PendingIntent"></a>发送 PendingIntent</h3><p>send 是触发 PendingIntent 包含的行为，它有很多重载形式，我们通常的开发用不到他，除非我们做桌面程序开发或者 Android Framework 开发。<br>这里我们只是大体说明一下，可以传给它一个 Intent 来对它原来的 Intent 做修改，但是如果目标设置了 FLAG_IMMUTABLE 则给参数忽略。可以设置 callback 当发送完成获得回调，并且可以通过设置handler决定回调发生的线程。</p>
+<h3 id="取消-PendingIntent"><a href="#取消-PendingIntent" class="headerlink" title="取消 PendingIntent"></a>取消 PendingIntent</h3><p>只有设置 PendingIntent 的原来的应用可以取消它，发送方只能发送，当一个 PendingIntent 被取消后，发送则不会成功。</p>
+<h2 id="PendingIntent-的使用场景"><a href="#PendingIntent-的使用场景" class="headerlink" title="PendingIntent 的使用场景"></a>PendingIntent 的使用场景</h2><p>已知的使用场景是:</p>
+<ol>
+<li>通知，在点击通知时执行调起本应用的操作，当然也可以执行其他操作</li>
+<li>闹钟，定时执行某个操作</li>
+<li>桌面小部件，点击小部件时执行某个操作</li>
+</ol>
+<p>通知，闹钟，桌面小部件，都是运行在其他应用中的，但是给我们的感知就像是我们自己的应用的一部分。</p>
+<h2 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h2><p>大体的原理是: A应用希望让B应用帮忙触发一个行为，这是跨应用的通信，需要 Android 系统作为中间人，这里的中间人就是 ActivityManager。 A应用创建建 PendingIntent，在创建 PendingIntent 的过程中，向 ActivityManager 注册了这个 PendingIntent，所以，即使A应用死了，当它再次苏醒时，只要提供相同的参数，还是可以获取到之前那个 PendingIntent 的。当 A 将 PendingIntent 调用系统 API 比如 AlarmManager.set()，实际是将权限给了B应用，这时候， B应用可以根据参数信息，来从 ActivityManager 获取到 A 设置的 PendingIntent。</p>
+<hr>
+<p>匹配 PendingIntent 相同时，需要匹配 Intent 相同，Intent 如何匹配相同的？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck779fr8r004j39p9fkfigf22" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-first-month" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/first-month/" class="article-date">
+  <time datetime="2018-05-06T00:00:00.000Z" itemprop="datePublished">2018-5-6</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/">自由开发者</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/first-month/">第一个月总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://i.loli.net/2018/05/13/5af83a9db0b48.jpg" alt="5af83a9db0b48"></p>
+<h2 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h2><p>现在，我开始以“自由开发者”自居，其实我是讨厌贴标签的，但是我还是会去尝试，看看自己是不是真的讨厌。讨厌贴标签，是因为克里希那穆提的言论，他说，当你贴标签的时候，你就不能看到实像，比如当我们看到一个花时，我们就知道有花瓣，红色的，而不是真正看看这朵花。这倒是有道理，但我们的生活就是这样的，这让我们的生活简单了很多，但同时也忽略了很多。</p>
+<h2 id="自由开发者的起点"><a href="#自由开发者的起点" class="headerlink" title="自由开发者的起点"></a>自由开发者的起点</h2><p>从北京回到泰安，基本没有编程，甚至看书都很少，一个原因是没有个工作的地方，更重要的原因是心态。在家感觉就是很闹心，而且的确也是闹心，要看孩子，还有不知道哪里出来的事情。</p>
+<p>不过从泰安到了日照，整个作息就调整好了，早上6点多起床，7点半去吃早餐，8点班开始编程工作，到11点半，去吃午饭，下午会比较自由，有时候会出去走走，大部分时间会看书，学习Inkscape，练习吉他。晚上则是看个电影，或者继续下午的事情。本来晚上计划写作的，始终没有进行，可能对写作还是不够重视吧。一般会在晚上10点上床睡觉，但是后来谁的比较完了，而且早睡也睡不着。</p>
+<h2 id="租房"><a href="#租房" class="headerlink" title="租房"></a>租房</h2><p>只使用 Airbnb 来找房子，我的第一个次找房子，在日照这种三四线城市，也是幸运，找到了一个新上的房源，去了以后，跟他说住一个月，他倒很愿意，最后商定一个月1000，虽然在日照也算贵了，不过，我觉得还是很值得，因为虽然只租了一个卧室，但是整个三室一厅基本没人来住，而且新房子非常干净。不过只也导致我之后租房子期望值太高。</p>
+<p>当我到济南租的地方时，没想到是专门的租房机构，将一个大的房子分成20多个小房间，而且那个地方周围吃饭好贵，车水马龙，额，我是真的讨厌这样的环境。不过型号小卧室里还是挺温馨的，尤其是那个大大的靠背，真舒服。</p>
+<h2 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h2><p>我的编程工作就是做一个日记软件，每天从8点班到11点半3个小时。一开始的时候使用番茄闹钟，但是番茄闹钟总听不到，要么忘了开始，要么忘了结束。最后索性不使用番茄闹钟了，这样倒是好了一些，但是在那一组几个小时也是不健康的，需要再调整。</p>
+<p>项目的进度，还算可以，不过开始发现 UI 是个大问题， 很大的问题，怎么调都感觉不好看。我寄希望于 Material Design，但是却没有实际的去贯彻它的设计规范，这是接下来需要重视的。</p>
+<p>项目架构上现在基本定型，使用 Dagger 后，模块划分的很好，添加功能简直不能再上了，疯狂添加类。刚才说道UI设计是个大的问题，现在发现UI的实现上也是个大的问题，要真要实现一个效果，也能做到，但是会严重破坏代码的结构。这也是需要重视的问题。</p>
+<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><p>写作还真是个难题，之前关于写作的那些理由都没有动力了，关键是没有那种感觉了。记得之前，当我写完一篇文章，会很有成就感，而且写的时候也会很有感觉，可是现在都没有了，不知道为什么。不过我还是希望找回那种感觉的，所以还是要继续定目标写下去，利用为习惯，微行动，决心获得这个能力。<br>还是需要一些动力的，打算看两篇《为什么要写作》类似的文章，然后，顶一个简答的目标，我的写作目的就是为自己，为了记录下自己的所学，记录下自己的经历。关于所学的文章应该尽量简洁，不求太长，力求知识点的内聚性。关于经历的文章，应该尽量详尽，用小说手法。然后都不求文章的长度，也不求一天都够写完，每天坚持写一两段，写到不想写为止。</p>
+<h2 id="微习惯"><a href="#微习惯" class="headerlink" title="微习惯"></a>微习惯</h2><p>Ｗｏｗ，我的微习惯好像好久没进行了，当然有几个已经成为了习惯，比如弹吉他，读书。其他的有些因为最近的一些事情没有继续下去。</p>
+<p>为什么？</p>
+<p>还是太容易被外界打扰了，尤其是外界的人，亲近的人。这没有其他办法，只有克服。自己做自己，无论在谁面前，该背单词背单词，该写作写作。</p>
+<h2 id="旅游"><a href="#旅游" class="headerlink" title="旅游"></a>旅游</h2><p>从一开始，对于我来说，我的这一年就不是目标，或者说只是顺带旅游，因为专门的旅游也没什么意思，看到美的就拍下来，无论是不是旅游。主要是没有定所的状态，因为老在一个地方会烦，睡觉都睡不着：）在日照的一个月，只是饭后走走，只有一次专门去日照森林公园玩了玩，那天时间有点紧了。</p>
+<h2 id="运动"><a href="#运动" class="headerlink" title="运动"></a>运动</h2><p>Ｅｍｍ，有点忧伤，除了每天早上的起床锻炼，就没了，也偶尔跑跑，但是不满意。主要因为在城市里，真的没有那环境，其实我还是可以在小区里跑的。还有个原因，跑的时间，饭前都饿的不行，没法跑，吃饱了又太撑。<br>还是要定个时间的，比如早上起床后洗刷后。</p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>很不错，又开始写作啦！！</p>
+<p><img src="https://i.loli.net/2018/05/13/5af83ab726e2a.jpg" alt="5af83ab726e2a"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck779fr8p004g39p97jda9zbb" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BA%BA%E7%94%9F/" rel="tag">人生</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-seven-years" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/seven-years/" class="article-date">
+  <time datetime="2018-04-28T00:00:00.000Z" itemprop="datePublished">2018-4-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/seven-years/">暗恋七年的女孩结婚啦</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上周六去参加了一个初中同学的婚礼，我暗恋了她七年，从小六还没有见面就暗恋了，到大二吧！</p>
+<p>尽管我那句表白从来没有说出，但是我才她应该知道吧。</p>
+<p>我们的故事还真是挺多的，毕竟这么多年了。</p>
+<p>首先来说说那个还没见面就暗恋的故事吧，其实是夸张了。事实是这样的，小六暑假要排练鼓号队，我报名参加了，我负责吹号，说来我的学得乐器还真不少，哈哈，当时在半价书屋买了个笛子，能吹《小星星》，小号，我吹的也还不错，当年震得嘴皮子可疼呢！</p>
+<p>回正题，那时候，这个女生也参加了，但是我们不在一个班，我不认识她。鼓号队还有打大鼓的，其中有一个男生，个子高高的，挺帅的，见了面会友善的笑一下，我挺喜欢他的。后来，我们还参加了电脑培训，也是学校组织的，是给我们鼓号队的福利吧。</p>
+<p>巧合的是，我跟这个帅气的大男孩不在一批，用了同一台电脑，那时候刚接触电脑，老师就教教打字，教教Word，我很听，就看看电脑的的文件，各种 Word 文件，然后，我就看到了他写的文字。现在记得好像有个图片，有很多文字，不知道我当时看没看，不记得了，但我却记得一句话，“婷婷天上飞，雪峰地下追”，我记得那个图片就是画的这个情景，但是具体内容就是忘了。我就这样，知道了这个女孩的存在。</p>
+<p>为什么我就喜欢上人家了呢？可能这个我卖下了种子，毕竟我喜欢的又高又帅的男孩喜欢的女孩，我也喜欢，这逻辑很正确。</p>
+<p>后来，那个帅男孩遇到我指责我，说我删了她的文章，啊，这可真是愿望。</p>
+<p>在后来巧合事情发生了，我们在初一重新分班，这个女生跟我分在了一个班，就这样，有了更多故事。</p>
+<p>可能之前我对她只是好奇。</p>
+<p>然而当我们在一个班一段时间，她有时候问我数学题，有一天她跟我说，她喜欢找我给她讲题，我讲题很耐心，不像其他人。我现在相信，我肯定是这时候沦陷的，无法自拔的喜欢上一个肯定自己，高高的大女孩。</p>
+<p>因为她各自比较高，所以在最后一排做，而我，各自比较小，在前排坐，我当时跟他说咱们一桌吧，她同意啦，然后我们跟数学老师说，我就跟她在最后一排了，这一切好像很容易，我一直很害羞的，那时候竟然可以提出这样的请求。主要那时候，数学老师脾气挺好，那我跟她孩子一样。</p>
+<p>然而，我们同桌后还不如之前，真的是距离产生美，我们说的话很少，她也不在问我题，到期末的时候，我们有被分开了，关系也远了一些。</p>
+<p>那时候，我无数次的想要告白，在那每个失眠的晚上，听着铁床吱吱叫，听着同学叽叽歪歪，我在想着她。那就是初恋的感觉吧？</p>
+<p>后来，上高中了，我们分了班，但是我还会去找她们，我会找到另一个伙伴，他们班门口，叫他们两个女生出来，聊聊天，我们四个，初中一个班的，我几乎总是在那傻站着，不说话，只是听他们聊天。</p>
+<p>很快，我们高中毕业了，有一天，我在家里，想要跟她表白，于是拿起电话给她拨通了，等她接起电话，我一句话也说不出，不知道僵了多久，我跟她说了什么忘了。</p>
+<p>然后是大学，大学我依然喜欢着她，然而，那应该是大二，具体什么时候忘掉了，但是我记得那时挺冷的，我穿着新买的衣服去找她，我在日照，她在济南，到了后，她却让我在寒风中等了好久，冻得实在不行，不过最后她来了，她说他在教会包饺子，把我忘了。那时候的确听伤心的，感觉从外凉到了心坎儿里。我们还是逛了逛，从那以后，我就没那么想着她了，我也开始明白，她不过是一个人，而我却一直把她当成我的天使。</p>
+<p>所以大四的某一天，我们四个有聚会，那个男生同学问我对这个女生的看法，我说不算好，其实我们说完，与我心目中的那个天使比不太好。</p>
+<p>人总是会长大，成熟，所以，当我在她婚礼去到她那里，她在电话里跟我说“今天太忙了，把你忘了”的时候，我的心不在凉，我很理解，结婚的确让人很忙，而我也的确对于她没有那么重要。当然，她这样毫无顾忌的跟我说话，我也还算高兴，毕竟我们认识那么多年了，我也了解她了。</p>
+<p>很多事，当我们执着于其中时，我们无法自拔，这没有什么可怪的，尤其是感情。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck779fr8n004c39p96ta1huxj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-CentOS上无 Root 安装 python 环境" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" class="article-date">
+  <time datetime="2017-10-16T00:00:00.000Z" itemprop="datePublished">2017-10-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/">CentOS 上 无 Root 安装 Python</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>工作需要，需要做个爬虫放到服务器上定期怕数据，从本地写好，在发布到服务器的时候，遇到难题了。服务器系统太老了，Python版本2.6，没有 pip，而且还没有  Root 权限，情形可谓十分尴尬。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>我需要一个 Python 环境，并且安装了 Scrapy，怎么办？</p>
+<h2 id="尝试"><a href="#尝试" class="headerlink" title="尝试"></a>尝试</h2><h3 id="尝试使用-easy-install-通过修改安装路径解决"><a href="#尝试使用-easy-install-通过修改安装路径解决" class="headerlink" title="尝试使用 easy_install 通过修改安装路径解决"></a>尝试使用 easy_install 通过修改安装路径解决</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% easy_install --prefix=/home/work/tmppython pip <span class="comment"># pip 不能在 --prefix 前面谈疼</span></span><br></pre></td></tr></table></figure>
+
+<p>要设置 PYTHONPATH=/home/work/tmppython</p>
+<p>这个方法很正，可以安装上 pip，然后修改 pip 的安装路径不就可以安装 scrapy 了嘛，无奈安装失败，可能兼容性问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% pip install --install-option=<span class="string">"--prefix=/home/work/tmppython"</span> scrapy</span><br></pre></td></tr></table></figure>
+
+<p>easy_install 安装 scrapy，同样失败，问题还是一样的，找不到某个模块。估计是 Python2.6 的问题。</p>
+<h3 id="我要重新安装-Python3-4"><a href="#我要重新安装-Python3-4" class="headerlink" title="我要重新安装 Python3.4"></a>我要重新安装 Python3.4</h3><h4 id="1-下载源码包"><a href="#1-下载源码包" class="headerlink" title="1. 下载源码包"></a>1. 下载源码包</h4><p>下载了源码包，我就 configure -&gt; make -&gt; make install，结果当然以失败告终，因为它还依赖其他东西。</p>
+<h4 id="2-装依赖"><a href="#2-装依赖" class="headerlink" title="2. 装依赖"></a>2. 装依赖</h4><p>我能不能直接把 RPM 安装到我指定的目录呢？经查看命令帮助，发现可以，既可以设置下载 RPM 的路径，也可以设置安装路径，但是，为什么 yum 一定要让我以 root 账户运行呢？悲剧！</p>
+<p>后来，从网上找到一种方法，使用 yumdownloader 命令下载需要的 rpm，然后使用 rpm2cpio 将 rpm 转成 cpio 然后 用 cpio 命令将 cpio 数据解压出来。</p>
+<p>最终，就是以这种方式解决了。下面是过程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">% yumdownloader --resolve zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make <span class="comment"># 这回下载所有的这些 rpm 并且还有他们依赖的 rpm</span></span><br><span class="line">% decompressRPM.sh <span class="comment"># 这是我写的脚本，是一条一条的对每一个文件 rpm 都执行命令： rpm2cpio FILE.rpm |cpio -idv</span></span><br><span class="line">% <span class="comment"># 解压出 Python 源码，去到解压出的目录</span></span><br><span class="line">% ./configure --prefix=/path/Python-3.4.1 --libdir=/rpm 解压出的目录/lib</span><br><span class="line">% make</span><br><span class="line">% maek install</span><br></pre></td></tr></table></figure>
+<p>以上是基本的过程，Python 的依赖时我在网上搜到的，解决了我这次问题，不一定能解决你的。现在才发现，服务器如果没有标准真的是很痛苦呀，配环境就搞死人了。</p>
+<h4 id="3-最终的推荐"><a href="#3-最终的推荐" class="headerlink" title="3. 最终的推荐"></a>3. 最终的推荐</h4><p>在写这篇文章的时候，查找资料，无意发现了<a href="https://www.anaconda.com/download/" target="_blank" rel="noopener">这个网址</a>,是一个数据科学平台，它的好处，就是完全打包了一整套的工具，包括 Python3.4，对就是我们想要的 Python3.4。很简单，回答几个问题就装上了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck779fr8l004939p9hvg08c8p" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-谈恋爱就是自我完善" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" class="article-date">
+  <time datetime="2017-10-11T00:00:00.000Z" itemprop="datePublished">2017-10-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>►<a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/">谈恋爱就是自我完善</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近读完了阮琦老师的《魔鬼聊天术》，阮琦老师网上称为魔鬼，他的前两本书我也看过了，分别是《魔鬼搭讪学》和《魔鬼约会学》。<br>从书名就可以看出前两本较多理论，最后一本较多方法，实际也是这样。</p>
+<p>阮琦老师的思想一直很正，而不像其他教把妹的书，总会有让人学坏的感觉。那些书就是以“男人不坏女人不爱”为核心的，虽然这句话不见得错，但是，教唆人们去学坏就是大错特错了。</p>
+<p>阮琦老师科班出身，学心理学，而且是名校的，在毕业后他们有想我们普通人一样亟不可待的找工作，也不是像另一些普通人一样去考研。而是选择了不就业（可能也是迷惑，不知道干什么吧：）），他在这段没有工作的时间，开始搭讪，并且开始了自己的事业。他应用自己的心理学的能力，结合自己的搭讪经历，开始构建自己的搭讪和约会等方面的理论。</p>
+<p>以下是我在阮琦老师的书中学到的：</p>
+<ol>
+<li>搭讪是个概率问题，所以在提高概率的同时，提高基数也是必要的。</li>
+<li>搭讪是去找与自己合得来的人，所以要表现真正的自己的个性，在搭讪的过程中往往表现的不自信，会去掩饰，隐藏，但是阮琦告诉我们要表现出来，因为只有这样才能做到筛选作用，从而找到真正适合自己的人。</li>
+<li>男人和女人的思维方式有很大区别。</li>
+<li>男人和女人的思维区别表现在送花上就很明显了，女人对送花看的很重要，是双方关系升级的标志。</li>
+</ol>
+<p>还有很多，我在蜗牛上看了《魔鬼聊天术》，以下一些摘抄以及我的感悟</p>
+<blockquote>
+<p>所以我才有这样一个观点，如果你克服了当面被拒的深层恐惧，再结合现代文明的海量异性资源，那么搭讪其实是最适合寻找长期关系的交往方式。这跟当下多数人认为搭讪不靠谱的直觉是相反的，但我相信，随着时间的推移我们会看到这个结果。</p>
+</blockquote>
+<p>这对于某些人来说，简直可笑，会忍不住说声：“妈的，装什么装”。但是想一想，你去到一个村庄时，见到个晒太阳大爷，大爷是不是会想你打招呼，问你你是谁呀，从哪来呀，到哪去呀。对于陌生人的兴趣，本来就是很自然的。只是现在的文明除了问题。当然，阮琦老师在书中也提到过，他只喜欢搭讪异性：）。我在旅游的过程中，也是会搭讪的，比如有一次去云南，在石林里，一个买东西的老奶奶，听她讲自己的孩子，听她讲战争年代，在石林里发生的事情。然而，我在搭讪女孩子的时候就不能，同搭讪老奶奶一样，因为我带着目的，带着目的就会怕达不到目的，这就是那深层的恐惧。</p>
+<blockquote>
+<p>追女孩这件事，正确的做法往往不会马上带来好的结果，而错误的做法却可以立即留下不好的印象，在你没有致命吸引力的时候，升级关系就更应该先把现有关系相处好。</p>
+</blockquote>
+<blockquote>
+<p>对方在你心目中的位置决定了你对她的付出，你在对方心目中的位置决定了她对你的付出。而你们的关系由付出少的那一方决定（有点类似于木桶原理）</p>
+</blockquote>
+<p>我们在与异性相处的时候，总是掌握不好那个度，其实，我们看看女孩对我们做了什么就可以了，如果女孩子从来不给我们打电话，说话的时候，从来没什么好的反应，那我们就应该退到陌生人的位置，创造机会尝试推进。</p>
+<blockquote>
+<p>我为昨晚的冲动向你道歉（立场），我当时觉得你好像把我抛弃了（感受），后来我才明白你可能担心我又要把你带回家，所以才早早逃离（认知）。我想了一晚上（状态），我理解你的心情（感受）。虽然我们彼此喜欢，但客观上确实有不合适的地方，真要在一起的话肯定让你承受很多痛苦（认知）。所以我们还是做好朋友吧，我不会再勉强你做你不愿意的事（立场），你也不用再这么害怕我了（请求）。</p>
+</blockquote>
+<blockquote>
+<p>通过这件事也让我进一步理解，理性表白并不是为了最终结果，而是让彼此现有的关系达到“当下最好的状态”</p>
+</blockquote>
+<p>对于表白，分为感性表白和理性表白，以上是理性表白。</p>
+<blockquote>
+<p>就是先不要去揣测对方的动机，不要把时间和精力浪费在这上面。揣测别人动机，其实往往是投射你自己的心理活动–你希望出现的或者你害怕出现的，最终的结果是把对客观情况的判断引向歧途。</p>
+</blockquote>
+<p>在我们追女孩子的时候，因为太关注，总会不自觉的去揣测人家的想法，关注他所有的动态，意淫他的状态和自己有关，这是在投入自己的精力，而且没有好处，完全是自己的心里活动。</p>
+<blockquote>
+<p>好方法让你不犯错，而好心态才会真正让你出彩，因为生活的美好之处恰恰在于它的不确定性。</p>
+</blockquote>
+<blockquote>
+<p>方法就是知道该怎么做，心态则是明白做了也不一定有用。</p>
+</blockquote>
+<p>心态，心态，心态，心态更重要。</p>
+<blockquote>
+<p>先不要在意对方说话的（攻击性）动机，以及对方对自己（负面）评价的潜台词，因为这些都容易破坏你去思考应答的良好心态。最好就假设这个男同事是个有口无心的没头脑男孩，我该如何逗逗他…</p>
+</blockquote>
+<p>还有这种的教我们为人处事的，我们如何能做到坦然幽默应对攻击，那就是不把他当攻击。</p>
+<p>阮琦老师的里面有很多值得大家学习，如果你还单身，更应该好好学习，争取脱单。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" data-id="ck779fr8k004639p95xef0ptu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%81%8B%E7%88%B1/" rel="tag">恋爱</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%90%AD%E8%AE%AA/" rel="tag">搭讪</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%81%8A%E5%A4%A9/" rel="tag">聊天</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" rel="tag">自我完善</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%AE%E7%90%A6/" rel="tag">阮琦</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-读快速阅读术" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" class="article-date">
+  <time datetime="2017-10-11T00:00:00.000Z" itemprop="datePublished">2017-10-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/">读《快速阅读术》</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本书作者从1页读5分钟到每年读700本，真的很牛逼，但是，在书中提了好多次，让我很不爽，我就打算提一次。</p>
+<p>作者印南敦史，从前也很慢，但是就被人叫去写书评。它的这本书虽然很简短，但是却对我影响甚大，因为我就是那个1页读5分钟的人。虽然我不屑跟别人比较阅读时长，但是我还是以读书慢为荣的：）。另外李笑来的一字不落的看书的方式也是影响我的。</p>
+<p>但是作者提出了几个观念，我还是挺信服的。</p>
+<p>作者说，一本书，无论你再怎么慢，读完后，你也不可能都记住，所以，一本书，你只需要从里面学习到哪怕一行，也是很棒的。作者还把读书比作听音乐，听音乐的时候的确不是一个音符一个音符听的。</p>
+<p>作者在解决没有时间读书的问题上有独到的见解，只需要养成多读的习惯，分三步进行：</p>
+<ol>
+<li>在每天同一时间读书</li>
+<li>首选可以快速阅读的书</li>
+<li>今天阅读的书要和昨天的书不同</li>
+</ol>
+<p>作者认为小说，随笔，散文这种故事性较强的书，不应该快速阅读，还有一些书无法快速阅读，比如《计算机程序的构造和解释》每一句都是需要思考的。</p>
+<p>作者主张一天看完一本书，这样可以对正本书有一个完整的理解，不要拖得时间太长，那样会失去兴趣，根据我自己的读书经验，这点非常认同。有时候读的时间长了，最后的唯一目的就是读完它了，完全没有兴趣了。</p>
+<p>作者还提出了“呼吸式阅读法”，分四步：</p>
+<ol>
+<li>“一行采集”，仅摘取最具魅力的片段，摘抄下让你眼镜一亮的佳句</li>
+<li>“一行精华”，采撷最精彩的一行，一本书，选出最最打动你的那一句</li>
+<li>“一行评论”，回味重要段落，对于那些摘抄，给予一行的评价，此为“呼吸式阅读法的呼”</li>
+<li>自我评定读书足迹，作者建议每读完12本书就来回顾一下自己的摘抄和感想，通过反思，能够看清自己的读书喜好。</li>
+</ol>
+<p>作者自己还发明了流水式阅读法，分四步：</p>
+<ol>
+<li>书籍序言和目录就能对正本书了解大概</li>
+<li>仅读每个章的前5行和后5行就能了解这一章的内容</li>
+<li>预想内容，带着问题和期待去读，这样更容易找到细读的内容，而且还很有趣</li>
+<li>随时换挡，缓急有度</li>
+</ol>
+<p>作者还提出，不求记忆的阅读，把阅读当成乐趣，不要有压力负担。</p>
+<p>虽然这本书很短，我也应用了作者的方法，直接忽略了与实体书相关的内容，因为，我只读电子书，不过，我竟然看这本书花了两个多小时，还是好慢。这需要练习。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" data-id="ck779fr8i004339p9ds4dh7mh" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95/" rel="tag">方法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%85%E8%AF%BB/" rel="tag">阅读</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-蛋疼的Atom" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" class="article-date">
+  <time datetime="2017-09-18T00:00:00.000Z" itemprop="datePublished">2017-9-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/">蛋疼的 Atom</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>刚才我的 《Kotlin 的 Any》 这篇文章，在我即将完成的时候，空窥一亏，毁于一旦。我十分悲伤，甚至有点蛋蛋的忧伤。</p>
+<p>事情是这样的，我一直以来都用 Atom 写 Markdown，因为它可以很方便的预览，刚才，我在写作过程中，闲着蛋疼，更新了一下 Atom，当我重新打开时，我发现，今天晚上写的一部分都没有了，我记得在重启 Atom 时，它并没有提醒我，我就以为我保存了，但是现在看来，并没有。</p>
+<p>我做了一些改动，tab 的右上角的小点出现，表示有改动，于是我关闭 Atom，同样没有提示，但是当我打开时，改动和标记改动的小点依然在。可能是升级导致，数据没有恢复，应该会有临时文件的，我燃起了希望。</p>
+<p>然而，我并没有找到，所以，有了这篇充数的文章。</p>
+<p>但是，我们还是要思考一下的。</p>
+<ol>
+<li>如果浏览器不能自动保存，还是要经常自己保存一下的。Android Studio就能自动保存，太爽了。</li>
+<li>一次只干一件事，尤其不要做一些互相影响的事情。</li>
+<li>Atom 是 二十一世纪 的文件编辑器，妹的</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" data-id="ck779fr8h004039p90rxtfkdp" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%90%90%E4%BA%8B/" rel="tag">琐事</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-17-Kotlin的Any" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/17-Kotlin%E7%9A%84Any/" class="article-date">
+  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/17-Kotlin%E7%9A%84Any/">Kotlin 的 Any</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天，我们来看看 Kotlin 里的 Any，它相当于 Java 里的 Object，所有其他的类都默认继承了它。Kotlin 比 Java 的面向对象更彻底， Java 还有基础类型，它们没有继承 Object， Java 的方法也不是对象，而 Kotlin 的方法是对象。</p>
+<p>Any 的构造函数就不多说，就是能构造出它的对象，</p>
+<h3 id="Any-的函数"><a href="#Any-的函数" class="headerlink" title="Any 的函数"></a>Any 的函数</h3><ol>
+<li>equals</li>
+<li>hashCode， 唯一标示这个对象</li>
+<li>toString</li>
+</ol>
+<p>这三个函数跟 Object 里的相同，这里不再详述</p>
+<h3 id="Any-的扩展属性"><a href="#Any-的扩展属性" class="headerlink" title="Any 的扩展属性"></a>Any 的扩展属性</h3><p>javaClass 代表一个对象的运行时 java class（当然只在 JVM 上有这个属性）</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> &lt;T : Any&gt; T.javaClass: Class&lt;T&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个写法还是需要解释一下的，首先，扩展函数的定义形式是这样的，例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> String.wordsCount: <span class="built_in">Int</span></span><br><span class="line">  <span class="keyword">get</span>() &#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>而上面 javaClass 的定义，用到了类型参数，我想说，这真的是太牛逼了，类型参数，指定每个所有继承 Any 的 T 都有 javaClass 这个属性，并且 javaClass 得到的是 T 这个类的 java 运行时 class</p>
+<h3 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h3><h4 id="also"><a href="#also" class="headerlink" title="also"></a>also</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">also</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 会接受一个代码块，这个代码块以 this 为参数，并且返回 this。</p>
+<p>扩展函数跟扩展属性同样使用了类型参数，不过，这样算是 Any 的扩展函数吗？ 当然，一切解释权归官方所有，官方认为是就是了。</p>
+<p>我们知道了扩展函数的好处，扩展函数可以使用类型参数作为 Receiver，从而在子类上调用该扩展函数时，我们拿到的 Receiver 是子类。</p>
+<h4 id="also-和-apply"><a href="#also-和-apply" class="headerlink" title="also 和 apply"></a>also 和 apply</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">apply</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 和 apply 的作用可以说是完全一样，它们都可以执行一个代码块，并且返回 Receiver。但是它们有区别的，传入 also 的代码块，将 Receiver 作为参数，而 apply 将 apply 的 Receiver 作为代码块的 Receiver。文字还是太苍白，让我们举个栗子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> john = Person().apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> lili = Person().also &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就清晰明了了，also 将自己的 Receiver 作为代码块的参数，而当代码块但参数时，可以不写出来，默认这个参数的名字叫 it</p>
+<p>对于我来说，它们在语意上，apply 的代码块内更像过程编程，描述一些有顺序的行为，而 also 的代码块内更像面向对象，给这个 it 发信息，设置一些状态。</p>
+<h4 id="let-和-run"><a href="#let-和-run" class="headerlink" title="let 和 run"></a>let 和 run</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">let</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">run</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">R</span>)</span></span>: R</span><br></pre></td></tr></table></figure>
+
+<p>let/run 的差别 跟 also/apply 的差别相同，还是再说一遍，let 将自己的 Receiver 作为 代码块的参数 而 run 将自己的 Receiver 作为代码块的 Receiver。let/run 与 also/apply 的区别在于返回值， 之前提到，also/apply 的返回值是它们的 Receiver，而 let/run 的返回值是代码块表达式的最后返回值。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result1 = Calculator().run &#123;</span><br><span class="line">   addOne(<span class="number">23</span>)</span><br><span class="line">   addAnother(<span class="number">43</span>)</span><br><span class="line">   compute()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> result2 = Calculator().let &#123;</span><br><span class="line">   it.addOne(<span class="number">23</span>)</span><br><span class="line">   it.addAnother(<span class="number">53</span>)</span><br><span class="line">   it.compute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我发现在语言表达上，它们两个也还是有区别的，run 同 apply 运行一些指令，有顺序的运行。而 let 让它做一些动作，最后，获取一个结果</p>
+<h4 id="takeIf-和-takeUnless"><a href="#takeIf-和-takeUnless" class="headerlink" title="takeIf 和 takeUnless"></a>takeIf 和 takeUnless</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeIf</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeUnless</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br></pre></td></tr></table></figure>
+
+<p>这两个扩展函数都是 kotlin 1.1 版本添。它们都会接受一个断言，在断言返回 true 时 takeIf 返回自己，否则 返回 null；takeUnless 与之相反，在断言返回 false 时返回自己，在断言返回 true 时返回 null。上代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> index = <span class="string">"Kotlin"</span>.indexOf(<span class="string">'K'</span>).takeIf &#123; it &gt; <span class="number">0</span> &#125; ?: <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> personName = person?.Name ?: <span class="string">"no name"</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子里将 takeIf 与 ?. 做了对比，它们都提供了一个默认值的形式。只不过 takeIf/taskUnless 更普遍，可以自己定义条件来决定是否使用默认值。</p>
+<h4 id="to"><a href="#to" class="headerlink" title="to"></a>to</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">infix</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;A, B&gt;</span> A.<span class="title">to</span><span class="params">(that: <span class="type">B</span>)</span></span>: Pair&lt;A, B&gt;</span><br></pre></td></tr></table></figure>
+
+<p>to 比较有趣，它是一个中缀运算符，也就是类似这个样子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person1 = Person().run &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">    name to <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person2 = Person().let &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">    it.name to it</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person = mapOf(person1, person2)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，我们在 run/let 分别使用 to 构造了两个 Pair，而 Pair 正好可以作为 map 的键值对，于是我们构造了一个包含两个人的 map。</p>
+<h4 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString"></a>toString</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Any?.<span class="title">toString</span><span class="params">()</span></span>: String</span><br></pre></td></tr></table></figure>
+
+<p>这个 toString 是一个扩展函数，它并没有比之前那个 toString() 函数高级多少，只是 Receiver 是 Any？ 也就是在 Receiver 为 null 的时候也会调用 toString()。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> name = person.toString()</span><br></pre></td></tr></table></figure>
+
+<p>我们不管 person 到底是不是 null 了。还是为了解决 Java 中的 NullPointerException 的问题。</p>
+<hr>
+<p>还有几个 JavaScript 相关的扩展函数，我们这里没有列出来，如果需要请自行查看。类似了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/17-Kotlin%E7%9A%84Any/" data-id="ck779fr8d003u39p929ak4mhf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Kotlin中的习语" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" class="article-date">
+  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>►<a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/%E7%BF%BB%E8%AF%91/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/">&lt;翻译&gt; Kotlin中的习语</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Kotlin 作为一个实践导向的语言，当然是更加注重实践，它里面有很多习语，也就是经常使用的特定写法，来让开发更加快捷，同时也形成了 Kotlin 的风格。</p>
+<p>Kotlin 鼓励大家推荐自己喜欢的习语，一个的语言升级有可能会加入，这正好跟 Java 相反，Java 就感觉太死板了。</p>
+<h3 id="闲话少说，我们进入正题"><a href="#闲话少说，我们进入正题" class="headerlink" title="闲话少说，我们进入正题"></a>闲话少说，我们进入正题</h3><h4 id="创建-DTO-POJOs-POCOs"><a href="#创建-DTO-POJOs-POCOs" class="headerlink" title="创建 DTO(POJOs/POCOs)"></a>创建 DTO(POJOs/POCOs)</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> email: String)</span><br></pre></td></tr></table></figure>
+
+<p>会提供一个带有以下功能的对象：</p>
+<ol>
+<li>为所有属性生成 Getter 方法，如果属性是可变的，也会生成 Setter 方法</li>
+</ol>
+<ul>
+<li>equals()</li>
+<li>hashCode()</li>
+<li>toString()</li>
+<li>copy()</li>
+<li>为所有属性生成 component1(), component2()…</li>
+</ul>
+<h4 id="方法参数的默认参数"><a href="#方法参数的默认参数" class="headerlink" title="方法参数的默认参数"></a>方法参数的默认参数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">(a: <span class="type">Int</span> = <span class="number">0</span>, b: <span class="type">String</span> = <span class="string">""</span>)</span></span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>拥有了方法默认参数，就可以只赋值必须的几个参数，而其余使用默认，是不是很爽。</p>
+<h4 id="过滤一个列表"><a href="#过滤一个列表" class="headerlink" title="过滤一个列表"></a>过滤一个列表</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> positives = list.filter &#123; x -&gt; x &gt; <span class="number">0</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者更简单一点</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> positives = list.filter &#123; it &gt; <span class="number">0</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="字符串内插值"><a href="#字符串内插值" class="headerlink" title="字符串内插值"></a>字符串内插值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="string">"Name <span class="variable">$name</span>"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>还有更强大的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="string">"Name <span class="subst">$&#123; upperCase(user.Name) &#125;</span>"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>表达式的结果填入字符串</p>
+<h4 id="检查一个实例是某个类的对象"><a href="#检查一个实例是某个类的对象" class="headerlink" title="检查一个实例是某个类的对象"></a>检查一个实例是某个类的对象</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">when</span> (x) &#123;</span><br><span class="line">    <span class="keyword">is</span> Foo -&gt; ...</span><br><span class="line">    <span class="keyword">is</span> Bar -&gt; ...</span><br><span class="line">    <span class="keyword">else</span>   -&gt; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="遍历一个-map"><a href="#遍历一个-map" class="headerlink" title="遍历一个 map"></a>遍历一个 map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ((k, v) <span class="keyword">in</span> map) &#123;</span><br><span class="line">    println(<span class="string">"<span class="variable">$k</span> -&gt; <span class="variable">$v</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>k，v 可以取任意名</p>
+<h4 id="取值范围"><a href="#取值范围" class="headerlink" title="取值范围"></a>取值范围</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">100</span>) &#123; ... &#125;  <span class="comment">// 从 1 到 100</span></span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until <span class="number">100</span>) &#123; ... &#125; <span class="comment">// 从 1 到 99</span></span><br><span class="line"><span class="keyword">for</span> (x <span class="keyword">in</span> <span class="number">2</span>..<span class="number">10</span> step <span class="number">2</span>) &#123; ... &#125; <span class="comment">// 2 4 6 8 10</span></span><br><span class="line"><span class="keyword">for</span> (x <span class="keyword">in</span> <span class="number">10</span> downTo <span class="number">1</span>) &#123; ... &#125;</span><br><span class="line"><span class="keyword">if</span> (x <span class="keyword">in</span> <span class="number">1</span>..<span class="number">10</span>) &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="只读的列表"><a href="#只读的列表" class="headerlink" title="只读的列表"></a>只读的列表</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="只读-Map"><a href="#只读-Map" class="headerlink" title="只读 Map"></a>只读 Map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> map = mapOf(<span class="string">"a"</span> to <span class="number">1</span>, <span class="string">"b"</span> to <span class="number">2</span>, <span class="string">"c"</span> to <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问一个-Map"><a href="#访问一个-Map" class="headerlink" title="访问一个 Map"></a>访问一个 Map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(map[<span class="string">"key"</span>])</span><br><span class="line">map[<span class="string">"key"</span>] = value</span><br></pre></td></tr></table></figure>
+
+<p>这个都算，我就没见过 map 不这样操作的</p>
+<h4 id="懒加载属性"><a href="#懒加载属性" class="headerlink" title="懒加载属性"></a>懒加载属性</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> p: String <span class="keyword">by</span> lazy &#123;</span><br><span class="line">    <span class="comment">// compute the string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个才算是棒，在第一次使用的时候初始化属性</p>
+<h4 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> String.<span class="title">spaceToCamelCase</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="string">"Convert this to camelcase"</span>.spaceToCamelCase()</span><br></pre></td></tr></table></figure>
+
+<p>这也是高能，竟然能对那些司空见惯的对象添加新功能，不知道这是好事还是坏事，凡是自由，都需要限制。</p>
+<h4 id="创建单例"><a href="#创建单例" class="headerlink" title="创建单例"></a>创建单例</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> Resource &#123;</span><br><span class="line">    <span class="keyword">val</span> name = <span class="string">"Name"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上一篇文章，已经和 Java 的单例对比了，简洁！！</p>
+<h4 id="判断非-null-的快捷方式"><a href="#判断非-null-的快捷方式" class="headerlink" title="判断非 null 的快捷方式"></a>判断非 null 的快捷方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> files = File(<span class="string">"Test"</span>).listFiles()</span><br><span class="line"></span><br><span class="line">println(files?.size)</span><br></pre></td></tr></table></figure>
+
+<p>判断 files 如果非 null 则返回 size 的值，否则返回 null</p>
+<h4 id="判断非-null-以及-null-情况的处理方式-的快捷方式"><a href="#判断非-null-以及-null-情况的处理方式-的快捷方式" class="headerlink" title="判断非 null 以及 null 情况的处理方式 的快捷方式"></a>判断非 null 以及 null 情况的处理方式 的快捷方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> files = File(<span class="string">"Test"</span>).listFiles()</span><br><span class="line"></span><br><span class="line">println(files?.size ?: <span class="string">"empty"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>判断 files 如果非 null 则返回 size 的值，否则返回 empty</p>
+<h4 id="在判断是-null-时执行一个语句"><a href="#在判断是-null-时执行一个语句" class="headerlink" title="在判断是 null 时执行一个语句"></a>在判断是 null 时执行一个语句</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"><span class="keyword">val</span> email = <span class="keyword">data</span>[<span class="string">"email"</span>] ?: <span class="keyword">throw</span> IllegalStateException(<span class="string">"Email is missing!"</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="判断输入不是-null-时执行"><a href="#判断输入不是-null-时执行" class="headerlink" title="判断输入不是 null 时执行"></a>判断输入不是 null 时执行</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span>?.let &#123;</span><br><span class="line">    ... <span class="comment">// execute this block if not null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="把可能为空的变量编程不能为空的变量"><a href="#把可能为空的变量编程不能为空的变量" class="headerlink" title="把可能为空的变量编程不能为空的变量"></a>把可能为空的变量编程不能为空的变量</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> mapped = <span class="keyword">data</span>?.let &#123; transformData(it) &#125; ?: defaultValueIfDataIsNull</span><br></pre></td></tr></table></figure>
+
+<h4 id="when-语句-作为一个表达式返回"><a href="#when-语句-作为一个表达式返回" class="headerlink" title="when 语句 作为一个表达式返回"></a>when 语句 作为一个表达式返回</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">transform</span><span class="params">(color: <span class="type">String</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">when</span> (color) &#123;</span><br><span class="line">        <span class="string">"Red"</span> -&gt; <span class="number">0</span></span><br><span class="line">        <span class="string">"Green"</span> -&gt; <span class="number">1</span></span><br><span class="line">        <span class="string">"Blue"</span> -&gt; <span class="number">2</span></span><br><span class="line">        <span class="keyword">else</span> -&gt; <span class="keyword">throw</span> IllegalArgumentException(<span class="string">"Invalid color param value"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="try-catch-也可以作为表达式，有返回值"><a href="#try-catch-也可以作为表达式，有返回值" class="headerlink" title="try/catch 也可以作为表达式，有返回值"></a>try/catch 也可以作为表达式，有返回值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">try</span> &#123;</span><br><span class="line">        count()</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: ArithmeticException) &#123;</span><br><span class="line">        <span class="keyword">throw</span> IllegalStateException(e)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Working with result</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="if-语句也可以作为表达式，-有返回值"><a href="#if-语句也可以作为表达式，-有返回值" class="headerlink" title="if 语句也可以作为表达式， 有返回值"></a>if 语句也可以作为表达式， 有返回值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">(param: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">if</span> (param == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="string">"one"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (param == <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="string">"two"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="string">"three"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="对于返回值为-Unit-的函数，可以使用构造器的风格调用"><a href="#对于返回值为-Unit-的函数，可以使用构造器的风格调用" class="headerlink" title="对于返回值为 Unit 的函数，可以使用构造器的风格调用"></a>对于返回值为 Unit 的函数，可以使用构造器的风格调用</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">arrayOfMinusOnes</span><span class="params">(size: <span class="type">Int</span>)</span></span>: IntArray &#123;</span><br><span class="line">    <span class="keyword">return</span> IntArray(size).apply &#123;</span><br><span class="line">      fill(-<span class="number">1</span>)</span><br><span class="line">      ... <span class="comment">// 其他配置</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我才知道，这个 apply 的高能，它就是为了方便对一个对象做一些配置，来个更好的栗子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">var</span> name: String, <span class="keyword">var</span> age: <span class="built_in">Int</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">wearHat</span><span class="params">()</span></span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">wearCoat</span><span class="params">()</span></span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">....</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> goodMan = Person(<span class="string">"Jin"</span>, <span class="number">27</span>).apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="单一表达式的函数"><a href="#单一表达式的函数" class="headerlink" title="单一表达式的函数"></a>单一表达式的函数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">theAnswer</span><span class="params">()</span></span> = <span class="number">42</span></span><br></pre></td></tr></table></figure>
+
+<p>这个栗子也太简单了，因为 Kotlin 里 If 语句， When 语句， try/catch 语句 都是表达式，所以你懂得。</p>
+<h4 id="使用-“with”-在同一个对象上调用多个方法"><a href="#使用-“with”-在同一个对象上调用多个方法" class="headerlink" title="使用 “with” 在同一个对象上调用多个方法"></a>使用 “with” 在同一个对象上调用多个方法</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Turtle</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">penDown</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">penUp</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">turn</span><span class="params">(degrees: <span class="type">Double</span>)</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">forward</span><span class="params">(pixels: <span class="type">Double</span>)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> myTurtle = Turtle()</span><br><span class="line">with(myTurtle) &#123; <span class="comment">//draw a 100 pix square</span></span><br><span class="line">    penDown()</span><br><span class="line">    <span class="keyword">for</span>(i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">4</span>) &#123;</span><br><span class="line">        forward(<span class="number">100.0</span>)</span><br><span class="line">        turn(<span class="number">90.0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    penUp()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>感觉这和前边那个 apply 类似，都是在一个代码块里，this变成了我们指定的一个对象。不过使用 with 更有过程编程的感觉。</p>
+<h4 id="Java7-的-try-with-resources-在-Kotlin-里也有类似的实现"><a href="#Java7-的-try-with-resources-在-Kotlin-里也有类似的实现" class="headerlink" title="Java7 的 try-with-resources 在 Kotlin 里也有类似的实现"></a>Java7 的 try-with-resources 在 Kotlin 里也有类似的实现</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> stream = Files.newInputStream(Paths.<span class="keyword">get</span>(<span class="string">"/some/file.txt"</span>))</span><br><span class="line">stream.buffered().reader().use &#123; reader -&gt;</span><br><span class="line">    println(reader.readText())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而 Java7 的 try-with-resource 是这样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (BufferedReader br =</span><br><span class="line">                   <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="keyword">return</span> br.readLine();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还是 Kotlin 的比较好看</p>
+<h4 id="对于一个需要泛型类型信息的泛型函数的方便方式"><a href="#对于一个需要泛型类型信息的泛型函数的方便方式" class="headerlink" title="对于一个需要泛型类型信息的泛型函数的方便方式"></a>对于一个需要泛型类型信息的泛型函数的方便方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  public final class Gson &#123;</span></span><br><span class="line"><span class="comment">//     ...</span></span><br><span class="line"><span class="comment">//     public &lt;T&gt; T fromJson(JsonElement json, Class&lt;T&gt; classOfT) throws JsonSyntaxException &#123;</span></span><br><span class="line"><span class="comment">//     ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;<span class="keyword">reified</span> T: Any&gt;</span> Gson.<span class="title">fromJson</span><span class="params">(json: <span class="type">JsonElement</span>)</span></span>: T = <span class="keyword">this</span>.fromJson(json, T::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>我对泛型还真是不太了解，暂不评价，我该去学习泛型了。</p>
+<h4 id="一个可能为-null-的-Boolean-也能直接被-if-条件判断"><a href="#一个可能为-null-的-Boolean-也能直接被-if-条件判断" class="headerlink" title="一个可能为 null 的 Boolean 也能直接被 if 条件判断"></a>一个可能为 null 的 Boolean 也能直接被 if 条件判断</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> b: <span class="built_in">Boolean</span>? = ...</span><br><span class="line"><span class="keyword">if</span> (b == <span class="literal">true</span>) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// `b` is false or null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>以下是一些缩写，有兴趣可以 wiki 一下：</p>
+<ul>
+<li>DTO – Data Transfer Object</li>
+<li>POJO – Plain old Java Object</li>
+<li>POCO – Plain Old CLR Object</li>
+<li>CLR – Comman Language Runtime</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" data-id="ck779fr8f003x39p95ror35sm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-语法糖" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E8%AF%AD%E6%B3%95%E7%B3%96/" class="article-date">
+  <time datetime="2017-09-15T00:00:00.000Z" itemprop="datePublished">2017-9-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E8%AF%AD%E6%B3%95%E7%B3%96/">对语法糖的看法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Kotlin 是一门实践导向的语言，什么意思呢，就是他就是想让程序员用的更爽。所以他用了很多语法糖，来去除一个模板代码，模板代码应该就算是一门语言的习语吧。不如在 Java 里要写个单例，那都需要一下几步：</p>
+<ol>
+<li>将构造函数私有化，不让使用者自己随便创建对象</li>
+<li>在该类内定义一个私有的静态属性，类型为该类</li>
+<li>提供一个公有的静态 getInstance() 方法， 在第一次使用的时候初始化之前那个私有静态属性，并返回，之后就可以不在初始化了，直接使用那个对象就行。</li>
+</ol>
+<p>以上的过程，在代码中是经常出现的，还有几种初始化的方法，我们总选一种比较好的。而在 Kotlin 内，只需要使用 object 关键字修饰 class。</p>
+<p>还是来个栗子吧</p>
+<p>Java 代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;  <span class="comment">// 2</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;   <span class="comment">// 1</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;</span><br><span class="line">       <span class="keyword">synchronized</span> (Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">         <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;</span><br><span class="line">             singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">         &#125;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> singleton;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Kotlin 代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> Singleton &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个对比，可为震撼？</p>
+<p>有些拿语法糖说事，最早我知道语法糖好像是一篇写 Python 的文章，说 Python 有很多语法糖，我很难认同，感觉这就是酸葡萄心理，这个写文章的不是 C 语言开发者，就是 Java 语言开发者。</p>
+<p>大部分对语法糖的指责是它没有给语言添加什么功能，只是对原有语言的封装，可是这有什么呢，原来的语言已经完备了，何必添加功能。语言是人类与机器之间的交流的工具，我们要发着这个工具，添加一些常用语，这是多么好呀，比如我们的缩略语 WTF，lol等等。</p>
+<p>当然，一些编程初学者并不建议学习 Kotlin， 可以先学习 Java 在学习 Kotlin。</p>
+<p>下一篇，我会翻译一下 Kotlin 官网对 Kotlin 习语的整理。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ck779fr89003r39p91m9kfbxt" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Think-In-Writing/">Think - In - Writing</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E4%BD%9C/">工作</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E4%BD%9C/%E7%94%9F%E6%B4%BB/">生活</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/">学习</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5/">实践</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5/%E8%A7%82%E7%82%B9%E5%92%8C%E6%83%B3%E6%B3%95/">观点和想法</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/%E8%A7%82%E7%82%B9%E5%92%8C%E6%83%B3%E6%B3%95/">观点和想法</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/%E7%BF%BB%E8%AF%91/">翻译</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BF%BB%E8%AF%91/">翻译</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BF%BB%E8%AF%91/%E5%B7%A5%E5%85%B7/">工具</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/">自由开发者</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E6%83%B3%E6%B3%95%E5%92%8C%E8%A7%82%E7%82%B9/">想法和观点</a></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/API/" rel="tag">API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jenkins/" rel="tag">Jenkins</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NIO/" rel="tag">NIO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/" rel="tag">github</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nio/" rel="tag">nio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/repo/" rel="tag">repo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%A4%E6%80%A7/" rel="tag">两性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E7%94%9F/" rel="tag">人生</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" rel="tag">仰卧起坐</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%AE%E8%BA%AB/" rel="tag">修身</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%81%A5%E5%BA%B7/" rel="tag">健康</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%99%E4%BD%9C/" rel="tag">写作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%9F%E7%90%86/" rel="tag">原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E6%80%9D/" rel="tag">反思</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%89%E4%BB%96/" rel="tag">吉他</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8C%E5%AD%A6/" rel="tag">同学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9D%9A%E6%8C%81/" rel="tag">坚持</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E8%84%91/" rel="tag">大脑</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" rel="tag">小时候</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B4%E7%BA%AA/" rel="tag">年纪</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8/" rel="tag">应用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" rel="tag">心理学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%AB%E4%B9%90/" rel="tag">快乐</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E6%83%B3/" rel="tag">思想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%81%8B%E7%88%B1/" rel="tag">恋爱</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A7%E5%88%B6/" rel="tag">控制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%90%AD%E8%AE%AA/" rel="tag">搭讪</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%B3%95/" rel="tag">方法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="tag">方法论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" rel="tag">村上春树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E4%BB%BF/" rel="tag">模仿</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AF%85%E5%8A%9B/" rel="tag">毅力</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%83%AD%E7%82%B9/" rel="tag">热点</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%90%90%E4%BA%8B/" rel="tag">琐事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%AD%BB/" rel="tag">生死</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" rel="tag">生理学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%AE%E7%9A%84/" rel="tag">目的</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9C%9F%E5%AE%9E/" rel="tag">真实</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9D%A1%E8%A7%89/" rel="tag">睡觉</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag">程序员</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B2%BE%E7%A5%9E/" rel="tag">精神</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%93%E5%A9%9A/" rel="tag">结婚</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%98%E7%94%BB/" rel="tag">绘画</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%8A%E5%A4%A9/" rel="tag">聊天</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" rel="tag">自我完善</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%A6%E8%A1%8C/" rel="tag">苦行</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%9B%80%E7%89%99/" rel="tag">蛀牙</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A8%80%E6%83%85/" rel="tag">言情</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E8%AE%BA/" rel="tag">评论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97/" rel="tag">诗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B5%84%E6%BA%90/" rel="tag">资源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BA%AB%E4%BD%93/" rel="tag">身体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" rel="tag">进化学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%94%BB%E7%82%BC/" rel="tag">锻炼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%85%E8%AF%BB/" rel="tag">阅读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%AE%E7%90%A6/" rel="tag">阮琦</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E4%B9%90/" rel="tag">音乐</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Github/" style="font-size: 10px;">Github</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 15px;">Kotlin</a> <a href="/tags/NIO/" style="font-size: 10px;">NIO</a> <a href="/tags/OpenGL/" style="font-size: 17.5px;">OpenGL</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/git/" style="font-size: 12.5px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 12.5px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 12.5px;">人生</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E4%BF%AE%E8%BA%AB/" style="font-size: 10px;">修身</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 12.5px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10px;">写作</a> <a href="/tags/%E5%8E%9F%E7%90%86/" style="font-size: 10px;">原理</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 15px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BA%94%E7%94%A8/" style="font-size: 10px;">应用</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 12.5px;">心理学</a> <a href="/tags/%E5%BF%AB%E4%B9%90/" style="font-size: 10px;">快乐</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 12.5px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 15px;">思考总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 12.5px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 12.5px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 10px;">碎碎念</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 12.5px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 15px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%84%E8%AE%BA/" style="font-size: 10px;">评论</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 12.5px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 12.5px;">语言</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/">《挪威的森林》读后感</a>
+          </li>
+        
+          <li>
+            <a href="/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/">自由开发者2个月总结</a>
+          </li>
+        
+          <li>
+            <a href="/exponentiallybucketedhistogram/">ExponentiallyBucketedHistogram</a>
+          </li>
+        
+          <li>
+            <a href="/queue-worker/">QueuedWork</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 金国梁<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
