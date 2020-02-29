@@ -71,96 +71,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-the-way-to-opengl-3" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/the-way-to-opengl-3/" class="article-date">
-  <time datetime="2017-03-05T00:00:00.000Z" itemprop="datePublished">2017-3-5</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/the-way-to-opengl-3/">OpenGL登堂入室之路3-画两个点</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文主要知识点：</p>
-<ol>
-<li>如何设置顶点数据</li>
-<li>OpenGL错误检测</li>
-<li>OpenGL的坐标系统</li>
-</ol>
-<h2 id="添加一个顶点的数据"><a href="#添加一个顶点的数据" class="headerlink" title="添加一个顶点的数据"></a>添加一个顶点的数据</h2><p>可能有些同学发现我在搞笑，一个点能画，两个点还不简单，你可能同我一样，直接在顶点数组里添加了一个点的三个坐标，一运行，crash  </p>
-<p>why?????  </p>
-<p>logcat里有报错，但是没有发现什么地方出错了，我们只能根据自己的改动查找相关的地方，修改了顶点数据，不可能导致加载着色器失败，相关语句排除。那就只剩下使用ByteBuffer装载数据（有错就会报出来了），glVertexAttribPointer，glDrawArrays。  </p>
-<p>OpenGL的方法在出错的时候不会报异常，而是要我们手动的调用另一个函数 GLES20.glGetError, 它会返回上一条OpenGL方法执行的错误码，通过判断错误码是否为GLES20.GL_NO_ERROR，判断是否上条语句发生错误。我们对他封装一下,在发生错误是报运行时异常：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">checkGLError</span><span class="params">(String op)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="keyword">int</span> error = GLES20.glGetError();</span><br><span class="line">	<span class="keyword">if</span> (error != GLES20.GL_NO_ERROR) &#123;  <span class="comment">// 有错误</span></span><br><span class="line">	    String msg = op + <span class="string">": glError 0x"</span> + Integer.toHexString(error);</span><br><span class="line">	    Log.e(TAG, <span class="string">"CheckGLError: "</span> + msg);</span><br><span class="line">	    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(msg);  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们在上面，glVertexAttribPointer() 和 glDrawArrays() 后调用用checkGLError(), 发现是 glVertexAttribPointer() 出了问题。通过错误号，在网上可以查到出错信息，你可以自省搜索，这里我们通过这个错误来学习glVertexAttribPointer()方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glVertexAttribPointer(mPositionHandle, <span class="number">3</span>, GLES20.GL_FLOAT, <span class="keyword">false</span>,</span><br><span class="line">                <span class="number">3</span> * <span class="number">4</span> , mVertexBuffer);</span><br></pre></td></tr></table></figure>
-
-<p>我们已经知道<em>mPositionHandle</em>相当于是一个指针，通过它，就可以为着色器中的属性设置值，而这个函数的作用正是规定怎样往着色器传递数据:</p>
-<ol>
-<li><em>mPositionHandle</em> 指明数据要给谁，这里传的是顶点坐标数据，传给了shader里的vPosition</li>
-<li><em>3</em> 表示每个顶点传递的一组数据的元素个数，可以是1， 2， 3， 4</li>
-<li><em>GLES20.GL_FLOAT</em> 表示传递的数据类型为float</li>
-<li><em>false</em> 表示定点数据值不标准化(我也不知什么意思，若您知道请不吝赐教)</li>
-<li>3 * 4 表示要传递的数据的大小, 我们之前传递一个点，每个点的3个float，每个float表示4byte</li>
-<li><em>mVertexBuffer</em> 最后的一个当然是数据</li>
-</ol>
-<p>问题就出第五个参数，参数 3 × 4， 3个float， 代表一个点的数据， 现在，我们在数组又添加了一个点的数据，应该是6 * 4， 再抽象一下，VERTEX.length * 4</p>
-<p>现在运行看一下，发现只显示了一个点，为什么？  </p>
-<p>竟然也没有报错, 这个咋整，一个问题，之所以是问题，要么是我们掌握的信息不够，或者错误，要么是我们没高清信息之间的关系。好吧，我就不卖关子了，实际同上面的问题差不多。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glDrawArrays(GLES20.GL_POINTS, <span class="number">0</span>, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<p>这个函数，原先第三个参数是1表示画一个点，现在，传了两个点的数据，要画两个点，所以为2, 如果抽象一下，VERTEX.length / 3</p>
-<ol>
-<li>GLES20.GL_POINTS 表示绘制离散的点，之后我们会了解到更多绘制模式</li>
-<li>0 表示从我们之前提供的数据的第几个点的数据开始画，改成1试试吧[坏笑]</li>
-<li>1 表示要绘制几次 尽管我们传了两个点的数据, 但是，如果我们从第0个开始画1个也就只显式一个，所以你懂得</li>
-</ol>
-<p>下面是我们有画一个点到画两个点要改动的代码:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">float</span>[] VERTEX = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">    <span class="number">0.5f</span>, <span class="number">0f</span>, <span class="number">0f</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">GLES20.glVertexAttribPointer(mPositionHandle, <span class="number">3</span>, GLES20.GL_FLOAT, <span class="keyword">false</span>,</span><br><span class="line">                <span class="number">3</span> * <span class="number">4</span> , mVertexBuffer);</span><br><span class="line"></span><br><span class="line">GLES20.glDrawArrays(GLES20.GL_POINTS, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="OpenGL-坐标系"><a href="#OpenGL-坐标系" class="headerlink" title="OpenGL 坐标系"></a>OpenGL 坐标系</h2><p>看看上面两顶点的数据，它们分别是两个顶点的xyz三个坐标，我们先只考虑二维平面，你可以看到显示的效果，(0, 0, 0)的点在中间，说明原点在屏幕中间。（0.5, 0f, 0f)的点在右侧，说明从原点向有为x轴正方向。<br>你可以试着改变一下坐标，看一下，很容易得到OpenGL的坐标系：</p>
-<ol>
-<li>原点在中央</li>
-<li>x轴的范围是-1 ～ 1</li>
-<li>y轴的范围是-1 ~ 1</li>
-<li>右上角的坐标为（1,1,0）</li>
-</ol>
-<p>剩下一个Z轴坐标系，我相信你能通过自己探索研究出它的规则的。</p>
-<hr>
-<p>end</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-3/" data-id="ck77agx8j001s0vq01qaycs7e" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-the-way-to-opengl-2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/the-way-to-opengl-2/" class="article-date">
@@ -229,7 +139,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-2/" data-id="ck77agx8f001p0vq0fr1mgvl9" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-2/" data-id="ck77al458001p2hq92wxibupz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -308,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ck77agx7z001l0vq027zpc435" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ck77al455001l2hq9247rgi1n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -362,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ck77agx7x001j0vq0ax11er08" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ck77al453001j2hq9drqkhimv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -442,7 +352,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ck77agxe800bd0vq0c090hz4w" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ck77al4cs00bc2hq99j2b4ozp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -519,7 +429,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ck77agx7u001g0vq0el3q34jg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ck77al451001g2hq96jkxet59" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li></ul>
@@ -588,55 +498,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck77agx7s001d0vq00rl54wbr" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck77al44z001d2hq9dee37xyn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8E%9F%E7%90%86/" rel="tag">原理</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flow" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flow/" class="article-date">
-  <time datetime="2016-02-09T00:00:00.000Z" itemprop="datePublished">2016-2-9</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flow/">番茄工作法图解--心流</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="http://img3.douban.com/view/page_note/large/public/p12671922-1.jpg" alt="pic"></p>
-<p>有一种精神状态称为“心流”，它具有以下特点：明确的目标、集中、专注、自我意识消失、时间感扭曲、直接和即时反馈、能力水平与面对挑战的平衡、个人控制感、工作本身的内在奖励、行为与认知的合一。</p>
-<p>心流是一种创造性的状态。如果保持心流的状态，效率不就提高了吗？不是的。心流状态下缺乏全局观念，创造力与统筹力难以并存。时不时地，我需要纵览全局进行战略决策，部署行动，以便在下一个心流期间能够全身心投入这项行动中。</p>
-<p>在进入心流阶段之前，我扭启一个番茄钟，让它稍后唤醒我，这样我可以暂时换上战略眼光，观察全局，然后再次回到心流中——这就是节奏。另外要记住的是，获得心流状态，进入好整以暇、正襟危坐、全神贯注的姿势，要比东张西望等待灵感有效得多。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/flow/" data-id="ck77agx7o00160vq0cqlb5fta" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -686,11 +552,55 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ck77agx7q00190vq057irgo4r" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ck77al44w00192hq94j81026c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
 
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flow" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flow/" class="article-date">
+  <time datetime="2016-02-09T00:00:00.000Z" itemprop="datePublished">2016-2-9</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flow/">番茄工作法图解--心流</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="http://img3.douban.com/view/page_note/large/public/p12671922-1.jpg" alt="pic"></p>
+<p>有一种精神状态称为“心流”，它具有以下特点：明确的目标、集中、专注、自我意识消失、时间感扭曲、直接和即时反馈、能力水平与面对挑战的平衡、个人控制感、工作本身的内在奖励、行为与认知的合一。</p>
+<p>心流是一种创造性的状态。如果保持心流的状态，效率不就提高了吗？不是的。心流状态下缺乏全局观念，创造力与统筹力难以并存。时不时地，我需要纵览全局进行战略决策，部署行动，以便在下一个心流期间能够全身心投入这项行动中。</p>
+<p>在进入心流阶段之前，我扭启一个番茄钟，让它稍后唤醒我，这样我可以暂时换上战略眼光，观察全局，然后再次回到心流中——这就是节奏。另外要记住的是，获得心流状态，进入好整以暇、正襟危坐、全神贯注的姿势，要比东张西望等待灵感有效得多。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/flow/" data-id="ck77al44u00162hq94c0f4nkl" class="article-share-link">Share</a>
+      
+      
     </footer>
   </div>
   
@@ -746,9 +656,52 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ck77agx7j00120vq0ffz0gkuk" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ck77al44o00122hq91frn47w7" class="article-share-link">Share</a>
       
       
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-launchmod" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/launchmod/" class="article-date">
+  <time datetime="2016-02-06T00:00:00.000Z" itemprop="datePublished">2016-2-6</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/launchmod/">Activity的启动模式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>test</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/launchmod/" data-id="ck77al44m000y2hq9e3cuhx4c" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BA%94%E7%94%A8/" rel="tag">应用</a></li></ul>
+
     </footer>
   </div>
   
@@ -800,7 +753,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -811,10 +764,6 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/hello-world/">Hello World</a>
-          </li>
         
           <li>
             <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/">《挪威的森林》读后感</a>
@@ -830,6 +779,10 @@
         
           <li>
             <a href="/queue-worker/">QueuedWork</a>
+          </li>
+        
+          <li>
+            <a href="/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/">今日记简介</a>
           </li>
         
       </ul>
