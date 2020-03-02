@@ -71,6 +71,93 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-pending-intent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/pending-intent/" class="article-date">
+  <time datetime="2018-05-13T21:22:00.000Z" itemprop="datePublished">2018-5-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/pending-intent/">彻底认识 PengingIntent</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在写一个闹钟程序的时候使用到了 PendingIntent, 而且是两个地方用到，一个是 AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下 PendingIntent 了，因为我很好奇一下几个问题:</p>
+<ol>
+<li>已经有了 Intent, 为什么还有　PendingIntent?</li>
+<li>PendingIntent 也就几个场景用到过，还有其他场景吗？</li>
+<li>它的内部实现。</li>
+</ol>
+<h2 id="Intent-和-PendingIntent-的区别"><a href="#Intent-和-PendingIntent-的区别" class="headerlink" title="Intent 和 PendingIntent 的区别"></a>Intent 和 PendingIntent 的区别</h2><h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>Intent 是意图的意思。Android 中的　Intent 正是取自这个意思，它是一个消息对象，通过它，Android 系统的四大组件能够方便的通信，并且保证解耦。</p>
+<p>Intent 可以说明某种意图，携带一种行为和相应的数据，发送到目标组件。</p>
+<p>IntentFilter 与 Intent 配套使用，它声明了一个组件接受某个　Intent。</p>
+<h3 id="PendingIntent"><a href="#PendingIntent" class="headerlink" title="PendingIntent"></a>PendingIntent</h3><p>PendingIntent 是对 Intent 的封装，关键的不同在于：</p>
+<blockquote>
+<p>A组件 创建了一个 PendingIntent 的对象然后传给 B组件，B 在执行这个 PendingIntent 的 send 时候，它里面的 Intent 会被发送出去，而接受到这个 Intent 的 C 组件会认为是 A 发的。</p>
+<p>B 以 A 的权限和身份发送了这个 Intent。</p>
+</blockquote>
+<p>比如，我们的 Activity 如果设置了 exported = false，其他应用如果使用 Intent 就访问不到这个 Activity，但是使用 PendingIntent 是可以的。</p>
+<p>综上所述，PendingIntent 有两个特点：</p>
+<ol>
+<li>将某个动作的触发时机交给其他应用</li>
+<li>让那个应用代表自己去执行那个动作(权限都给他了)</li>
+</ol>
+<h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><h3 id="获取-PendingIntent"><a href="#获取-PendingIntent" class="headerlink" title="获取 PendingIntent"></a>获取 PendingIntent</h3><ol>
+<li>getActivity</li>
+<li>getActivities</li>
+<li>getBroadcast</li>
+<li>getService</li>
+<li>getForegroundService</li>
+</ol>
+<blockquote>
+<p>为什么没有 getContentProvider?<br>我猜测，ContentProvider 作为一个数据源，太重要了，相当于是把数据直接暴露出去了</p>
+</blockquote>
+<p>它们的参数都相同，都是四个：Context， requestCode, Intent, flags。Context 不必多说，要想让其他组件代替自己办事，当然要将自己的上下文传给它。action, requestCode 和 Intent 共同来标志一个行为的唯一性，什么意思呢?</p>
+<p>简单的说，我们通过相同的方法(action), 相同的 requestCode 和相同的 Intent 获取到的 PendingIntent, 虽然可能不是同一个对象，但是，却是代表同一个东西，之所以这样看 flags 参数就知道了。</p>
+<p>FLAG_ONE_SHOT: 只执行一次， 在调用了 send 以后自动调用 cancel，不能在调用 send 了。<br>FLAG_NO_CREATE: 不创建新的，如果我们之前设置过，这次就能获取到，否则，返回 null。<br>FLAG_CANCEL_CURRENT: 如果之前设置过，就取消掉, 重新创建个新的<br>FLAG_UPDATE_CURRENT: 如果之前设置过，就更新它。更新什么呢，Intent 的 Extras<br>FLAG_IMMUTABLE: 设置 Intent 在 send 的时候不能更改</p>
+<h3 id="发送-PendingIntent"><a href="#发送-PendingIntent" class="headerlink" title="发送 PendingIntent"></a>发送 PendingIntent</h3><p>send 是触发 PendingIntent 包含的行为，它有很多重载形式，我们通常的开发用不到他，除非我们做桌面程序开发或者 Android Framework 开发。<br>这里我们只是大体说明一下，可以传给它一个 Intent 来对它原来的 Intent 做修改，但是如果目标设置了 FLAG_IMMUTABLE 则给参数忽略。可以设置 callback 当发送完成获得回调，并且可以通过设置handler决定回调发生的线程。</p>
+<h3 id="取消-PendingIntent"><a href="#取消-PendingIntent" class="headerlink" title="取消 PendingIntent"></a>取消 PendingIntent</h3><p>只有设置 PendingIntent 的原来的应用可以取消它，发送方只能发送，当一个 PendingIntent 被取消后，发送则不会成功。</p>
+<h2 id="PendingIntent-的使用场景"><a href="#PendingIntent-的使用场景" class="headerlink" title="PendingIntent 的使用场景"></a>PendingIntent 的使用场景</h2><p>已知的使用场景是:</p>
+<ol>
+<li>通知，在点击通知时执行调起本应用的操作，当然也可以执行其他操作</li>
+<li>闹钟，定时执行某个操作</li>
+<li>桌面小部件，点击小部件时执行某个操作</li>
+</ol>
+<p>通知，闹钟，桌面小部件，都是运行在其他应用中的，但是给我们的感知就像是我们自己的应用的一部分。</p>
+<h2 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h2><p>大体的原理是: A应用希望让B应用帮忙触发一个行为，这是跨应用的通信，需要 Android 系统作为中间人，这里的中间人就是 ActivityManager。 A应用创建建 PendingIntent，在创建 PendingIntent 的过程中，向 ActivityManager 注册了这个 PendingIntent，所以，即使A应用死了，当它再次苏醒时，只要提供相同的参数，还是可以获取到之前那个 PendingIntent 的。当 A 将 PendingIntent 调用系统 API 比如 AlarmManager.set()，实际是将权限给了B应用，这时候， B应用可以根据参数信息，来从 ActivityManager 获取到 A 设置的 PendingIntent。</p>
+<hr>
+<p>匹配 PendingIntent 相同时，需要匹配 Intent 相同，Intent 如何匹配相同的？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck7aagcxh004r37kg4pdug01g" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Intent/" rel="tag">Intent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PendingIntent/" rel="tag">PendingIntent</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-first-month" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/first-month/" class="article-date">
@@ -118,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck7aaf3o0004ozqpz72p9bvcj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck7aagcxf004o37kg044gdpz5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
@@ -180,7 +267,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck7aaf3nz004kzqpz2p9o4eyp" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck7aagcxd004k37kgfk8g1so4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -236,7 +323,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck7aaf3ny004hzqpzeqkehynr" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck7aagcxc004h37kgfhtian4a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
@@ -323,7 +410,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" data-id="ck7aaf3nx004dzqpzdph75nfb" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" data-id="ck7aagcxb004d37kg3vpg4roh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%81%8B%E7%88%B1/" rel="tag">恋爱</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%90%AD%E8%AE%AA/" rel="tag">搭讪</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%81%8A%E5%A4%A9/" rel="tag">聊天</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" rel="tag">自我完善</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%AE%E7%90%A6/" rel="tag">阮琦</a></li></ul>
@@ -393,7 +480,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" data-id="ck7aaf3nw0049zqpz963m1t5q" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" data-id="ck7aagcxa004937kgee3c90q5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95/" rel="tag">方法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%85%E8%AF%BB/" rel="tag">阅读</a></li></ul>
@@ -445,105 +532,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" data-id="ck7aaf3nv0045zqpz5wfmfhug" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" data-id="ck7aagcx9004537kg5fk38wmg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%90%90%E4%BA%8B/" rel="tag">琐事</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-17-Kotlin的Any" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/17-Kotlin%E7%9A%84Any/" class="article-date">
-  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/17-Kotlin%E7%9A%84Any/">Kotlin 的 Any</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天，我们来看看 Kotlin 里的 Any，它相当于 Java 里的 Object，所有其他的类都默认继承了它。Kotlin 比 Java 的面向对象更彻底， Java 还有基础类型，它们没有继承 Object， Java 的方法也不是对象，而 Kotlin 的方法是对象。</p>
-<p>Any 的构造函数就不多说，就是能构造出它的对象，</p>
-<h3 id="Any-的函数"><a href="#Any-的函数" class="headerlink" title="Any 的函数"></a>Any 的函数</h3><ol>
-<li>equals</li>
-<li>hashCode， 唯一标示这个对象</li>
-<li>toString</li>
-</ol>
-<p>这三个函数跟 Object 里的相同，这里不再详述</p>
-<h3 id="Any-的扩展属性"><a href="#Any-的扩展属性" class="headerlink" title="Any 的扩展属性"></a>Any 的扩展属性</h3><p>javaClass 代表一个对象的运行时 java class（当然只在 JVM 上有这个属性）</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> &lt;T : Any&gt; T.javaClass: Class&lt;T&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这个写法还是需要解释一下的，首先，扩展函数的定义形式是这样的，例如：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> String.wordsCount: <span class="built_in">Int</span></span><br><span class="line">  <span class="keyword">get</span>() &#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>而上面 javaClass 的定义，用到了类型参数，我想说，这真的是太牛逼了，类型参数，指定每个所有继承 Any 的 T 都有 javaClass 这个属性，并且 javaClass 得到的是 T 这个类的 java 运行时 class</p>
-<h3 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h3><h4 id="also"><a href="#also" class="headerlink" title="also"></a>also</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">also</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
-
-<p>also 会接受一个代码块，这个代码块以 this 为参数，并且返回 this。</p>
-<p>扩展函数跟扩展属性同样使用了类型参数，不过，这样算是 Any 的扩展函数吗？ 当然，一切解释权归官方所有，官方认为是就是了。</p>
-<p>我们知道了扩展函数的好处，扩展函数可以使用类型参数作为 Receiver，从而在子类上调用该扩展函数时，我们拿到的 Receiver 是子类。</p>
-<h4 id="also-和-apply"><a href="#also-和-apply" class="headerlink" title="also 和 apply"></a>also 和 apply</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">apply</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
-
-<p>also 和 apply 的作用可以说是完全一样，它们都可以执行一个代码块，并且返回 Receiver。但是它们有区别的，传入 also 的代码块，将 Receiver 作为参数，而 apply 将 apply 的 Receiver 作为代码块的 Receiver。文字还是太苍白，让我们举个栗子：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> john = Person().apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> lili = Person().also &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样就清晰明了了，also 将自己的 Receiver 作为代码块的参数，而当代码块但参数时，可以不写出来，默认这个参数的名字叫 it</p>
-<p>对于我来说，它们在语意上，apply 的代码块内更像过程编程，描述一些有顺序的行为，而 also 的代码块内更像面向对象，给这个 it 发信息，设置一些状态。</p>
-<h4 id="let-和-run"><a href="#let-和-run" class="headerlink" title="let 和 run"></a>let 和 run</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">let</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">run</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">R</span>)</span></span>: R</span><br></pre></td></tr></table></figure>
-
-<p>let/run 的差别 跟 also/apply 的差别相同，还是再说一遍，let 将自己的 Receiver 作为 代码块的参数 而 run 将自己的 Receiver 作为代码块的 Receiver。let/run 与 also/apply 的区别在于返回值， 之前提到，also/apply 的返回值是它们的 Receiver，而 let/run 的返回值是代码块表达式的最后返回值。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result1 = Calculator().run &#123;</span><br><span class="line">   addOne(<span class="number">23</span>)</span><br><span class="line">   addAnother(<span class="number">43</span>)</span><br><span class="line">   compute()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> result2 = Calculator().let &#123;</span><br><span class="line">   it.addOne(<span class="number">23</span>)</span><br><span class="line">   it.addAnother(<span class="number">53</span>)</span><br><span class="line">   it.compute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我发现在语言表达上，它们两个也还是有区别的，run 同 apply 运行一些指令，有顺序的运行。而 let 让它做一些动作，最后，获取一个结果</p>
-<h4 id="takeIf-和-takeUnless"><a href="#takeIf-和-takeUnless" class="headerlink" title="takeIf 和 takeUnless"></a>takeIf 和 takeUnless</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeIf</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeUnless</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br></pre></td></tr></table></figure>
-
-<p>这两个扩展函数都是 kotlin 1.1 版本添。它们都会接受一个断言，在断言返回 true 时 takeIf 返回自己，否则 返回 null；takeUnless 与之相反，在断言返回 false 时返回自己，在断言返回 true 时返回 null。上代码：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> index = <span class="string">"Kotlin"</span>.indexOf(<span class="string">'K'</span>).takeIf &#123; it &gt; <span class="number">0</span> &#125; ?: <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> personName = person?.Name ?: <span class="string">"no name"</span></span><br></pre></td></tr></table></figure>
-
-<p>这个例子里将 takeIf 与 ?. 做了对比，它们都提供了一个默认值的形式。只不过 takeIf/taskUnless 更普遍，可以自己定义条件来决定是否使用默认值。</p>
-<h4 id="to"><a href="#to" class="headerlink" title="to"></a>to</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">infix</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;A, B&gt;</span> A.<span class="title">to</span><span class="params">(that: <span class="type">B</span>)</span></span>: Pair&lt;A, B&gt;</span><br></pre></td></tr></table></figure>
-
-<p>to 比较有趣，它是一个中缀运算符，也就是类似这个样子：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person1 = Person().run &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">    name to <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person2 = Person().let &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">    it.name to it</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person = mapOf(person1, person2)</span><br></pre></td></tr></table></figure>
-
-<p>我们可以看到，我们在 run/let 分别使用 to 构造了两个 Pair，而 Pair 正好可以作为 map 的键值对，于是我们构造了一个包含两个人的 map。</p>
-<h4 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString"></a>toString</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Any?.<span class="title">toString</span><span class="params">()</span></span>: String</span><br></pre></td></tr></table></figure>
-
-<p>这个 toString 是一个扩展函数，它并没有比之前那个 toString() 函数高级多少，只是 Receiver 是 Any？ 也就是在 Receiver 为 null 的时候也会调用 toString()。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> name = person.toString()</span><br></pre></td></tr></table></figure>
-
-<p>我们不管 person 到底是不是 null 了。还是为了解决 Java 中的 NullPointerException 的问题。</p>
-<hr>
-<p>还有几个 JavaScript 相关的扩展函数，我们这里没有列出来，如果需要请自行查看。类似了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/17-Kotlin%E7%9A%84Any/" data-id="ck7aaf3nt003yzqpzd7rz1te0" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li></ul>
 
     </footer>
   </div>
@@ -682,10 +674,105 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" data-id="ck7aaf3nu0042zqpz6phnbf4s" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" data-id="ck7aagcx8004237kg21hiayc8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-17-Kotlin的Any" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/17-Kotlin%E7%9A%84Any/" class="article-date">
+  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/17-Kotlin%E7%9A%84Any/">Kotlin 的 Any</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天，我们来看看 Kotlin 里的 Any，它相当于 Java 里的 Object，所有其他的类都默认继承了它。Kotlin 比 Java 的面向对象更彻底， Java 还有基础类型，它们没有继承 Object， Java 的方法也不是对象，而 Kotlin 的方法是对象。</p>
+<p>Any 的构造函数就不多说，就是能构造出它的对象，</p>
+<h3 id="Any-的函数"><a href="#Any-的函数" class="headerlink" title="Any 的函数"></a>Any 的函数</h3><ol>
+<li>equals</li>
+<li>hashCode， 唯一标示这个对象</li>
+<li>toString</li>
+</ol>
+<p>这三个函数跟 Object 里的相同，这里不再详述</p>
+<h3 id="Any-的扩展属性"><a href="#Any-的扩展属性" class="headerlink" title="Any 的扩展属性"></a>Any 的扩展属性</h3><p>javaClass 代表一个对象的运行时 java class（当然只在 JVM 上有这个属性）</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> &lt;T : Any&gt; T.javaClass: Class&lt;T&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个写法还是需要解释一下的，首先，扩展函数的定义形式是这样的，例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> String.wordsCount: <span class="built_in">Int</span></span><br><span class="line">  <span class="keyword">get</span>() &#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>而上面 javaClass 的定义，用到了类型参数，我想说，这真的是太牛逼了，类型参数，指定每个所有继承 Any 的 T 都有 javaClass 这个属性，并且 javaClass 得到的是 T 这个类的 java 运行时 class</p>
+<h3 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h3><h4 id="also"><a href="#also" class="headerlink" title="also"></a>also</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">also</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 会接受一个代码块，这个代码块以 this 为参数，并且返回 this。</p>
+<p>扩展函数跟扩展属性同样使用了类型参数，不过，这样算是 Any 的扩展函数吗？ 当然，一切解释权归官方所有，官方认为是就是了。</p>
+<p>我们知道了扩展函数的好处，扩展函数可以使用类型参数作为 Receiver，从而在子类上调用该扩展函数时，我们拿到的 Receiver 是子类。</p>
+<h4 id="also-和-apply"><a href="#also-和-apply" class="headerlink" title="also 和 apply"></a>also 和 apply</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">apply</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 和 apply 的作用可以说是完全一样，它们都可以执行一个代码块，并且返回 Receiver。但是它们有区别的，传入 also 的代码块，将 Receiver 作为参数，而 apply 将 apply 的 Receiver 作为代码块的 Receiver。文字还是太苍白，让我们举个栗子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> john = Person().apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> lili = Person().also &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就清晰明了了，also 将自己的 Receiver 作为代码块的参数，而当代码块但参数时，可以不写出来，默认这个参数的名字叫 it</p>
+<p>对于我来说，它们在语意上，apply 的代码块内更像过程编程，描述一些有顺序的行为，而 also 的代码块内更像面向对象，给这个 it 发信息，设置一些状态。</p>
+<h4 id="let-和-run"><a href="#let-和-run" class="headerlink" title="let 和 run"></a>let 和 run</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">let</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">run</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">R</span>)</span></span>: R</span><br></pre></td></tr></table></figure>
+
+<p>let/run 的差别 跟 also/apply 的差别相同，还是再说一遍，let 将自己的 Receiver 作为 代码块的参数 而 run 将自己的 Receiver 作为代码块的 Receiver。let/run 与 also/apply 的区别在于返回值， 之前提到，also/apply 的返回值是它们的 Receiver，而 let/run 的返回值是代码块表达式的最后返回值。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result1 = Calculator().run &#123;</span><br><span class="line">   addOne(<span class="number">23</span>)</span><br><span class="line">   addAnother(<span class="number">43</span>)</span><br><span class="line">   compute()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> result2 = Calculator().let &#123;</span><br><span class="line">   it.addOne(<span class="number">23</span>)</span><br><span class="line">   it.addAnother(<span class="number">53</span>)</span><br><span class="line">   it.compute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我发现在语言表达上，它们两个也还是有区别的，run 同 apply 运行一些指令，有顺序的运行。而 let 让它做一些动作，最后，获取一个结果</p>
+<h4 id="takeIf-和-takeUnless"><a href="#takeIf-和-takeUnless" class="headerlink" title="takeIf 和 takeUnless"></a>takeIf 和 takeUnless</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeIf</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeUnless</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br></pre></td></tr></table></figure>
+
+<p>这两个扩展函数都是 kotlin 1.1 版本添。它们都会接受一个断言，在断言返回 true 时 takeIf 返回自己，否则 返回 null；takeUnless 与之相反，在断言返回 false 时返回自己，在断言返回 true 时返回 null。上代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> index = <span class="string">"Kotlin"</span>.indexOf(<span class="string">'K'</span>).takeIf &#123; it &gt; <span class="number">0</span> &#125; ?: <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> personName = person?.Name ?: <span class="string">"no name"</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子里将 takeIf 与 ?. 做了对比，它们都提供了一个默认值的形式。只不过 takeIf/taskUnless 更普遍，可以自己定义条件来决定是否使用默认值。</p>
+<h4 id="to"><a href="#to" class="headerlink" title="to"></a>to</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">infix</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;A, B&gt;</span> A.<span class="title">to</span><span class="params">(that: <span class="type">B</span>)</span></span>: Pair&lt;A, B&gt;</span><br></pre></td></tr></table></figure>
+
+<p>to 比较有趣，它是一个中缀运算符，也就是类似这个样子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person1 = Person().run &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">    name to <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person2 = Person().let &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">    it.name to it</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person = mapOf(person1, person2)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，我们在 run/let 分别使用 to 构造了两个 Pair，而 Pair 正好可以作为 map 的键值对，于是我们构造了一个包含两个人的 map。</p>
+<h4 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString"></a>toString</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Any?.<span class="title">toString</span><span class="params">()</span></span>: String</span><br></pre></td></tr></table></figure>
+
+<p>这个 toString 是一个扩展函数，它并没有比之前那个 toString() 函数高级多少，只是 Receiver 是 Any？ 也就是在 Receiver 为 null 的时候也会调用 toString()。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> name = person.toString()</span><br></pre></td></tr></table></figure>
+
+<p>我们不管 person 到底是不是 null 了。还是为了解决 Java 中的 NullPointerException 的问题。</p>
+<hr>
+<p>还有几个 JavaScript 相关的扩展函数，我们这里没有列出来，如果需要请自行查看。类似了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/17-Kotlin%E7%9A%84Any/" data-id="ck7aagcx7003y37kgdzdvd2j3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li></ul>
 
     </footer>
   </div>
@@ -743,58 +830,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ck7aaf3ns003vzqpzbaa59i48" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ck7aagcx6003v37kgbllocyqp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-被逼死的程序员" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" class="article-date">
-  <time datetime="2017-09-15T00:00:00.000Z" itemprop="datePublished">2017-9-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/">被逼死的程序员</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近一个引起媒体关注的事件是一个程序员被前妻逼死。这个程序员是个 IOS 开发者，做了一个应用，收入不少，他开了公司，这个前妻，向他要钱，恐吓，最终导致这个程序员无路可走，只得自杀。</p>
-<p>我一向不喜欢凑热闹的，但是这几天我憋得不行，我不想说那女的有多坏，多可恶，并不是说我接受了这种事情，见怪不怪了，而是这个程序员的自杀，让我再一次认识到，人的思想的差距有多大。</p>
-<p>尽管我不知道，死亡多么的可怕，死后会怎样，但是，一个正常的人很难去自杀的，因为人类长久的进化，将那些不畏死亡想死亡的基因一次一次的筛选，这时间如此长，筛选次数如此之多，应该让人类完全没有这中想法才对。当然，我也听说过，其他一些自杀的，但是更多听说的是，有些人有心理疾病，他们会自虐，自虐这种基因会流传下来，因为自虐并不会死亡，而只有死亡是筛选边界。</p>
-<p>今天看了一个视频，是台湾的一个重症专家，他说他很适合谈生死，因为他看了太多的死亡。他的一个观点让我印象深刻，人生的意义是什么呢？ 他说，追寻这个问题的答案就是这个问题的答案。说的很绕口，意思是人生是一个过程，而这个过程里，不断去思考一个问题。</p>
-<p>这个被逼死的程序员让我很痛苦，哀其不幸，怒其不争。那个女人恐吓他偷税扣税，灰色收入，为什么不去自首坦白，这一切最坏的结果，没收全部资产，蹲监狱几年，出来依然一条好汉。难道舍不得钱？</p>
-<p>不去揣测其中的原因，我们还是应该去追求那个问题的答案，人生的意义到底是什么？如果一个人如果不想活了，多半是他找到。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" data-id="ck7aaf3nr003szqpzbrb53pzq" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%82%B9/" rel="tag">热点</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E6%AD%BB/" rel="tag">生死</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag">程序员</a></li></ul>
 
     </footer>
   </div>
@@ -847,7 +886,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -858,6 +897,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/kiss/">KISS原理（翻译）</a>
+          </li>
         
           <li>
             <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/">《挪威的森林》读后感</a>
@@ -873,10 +916,6 @@
         
           <li>
             <a href="/queue-worker/">QueuedWork</a>
-          </li>
-        
-          <li>
-            <a href="/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/">今日记简介</a>
           </li>
         
       </ul>
