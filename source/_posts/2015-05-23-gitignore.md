@@ -2,10 +2,10 @@
 layout: post
 title: gitignore
 categories:
-- 翻译
-- 工具
+- 编程
 tags:
 - git
+- 翻译
 ---
 
 .gitignore 指定忽略的文件

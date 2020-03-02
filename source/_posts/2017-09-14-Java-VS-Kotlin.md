@@ -3,7 +3,6 @@ layout: post
 title: <翻译> Java VS Kotlin
 categories:
 - 编程
-- 翻译
 tags:
 - 语言
 - Java

@@ -2,10 +2,10 @@
 layout: post
 title: 第一个月总结
 categories:
-- 自由开发者
+- 生活
 tags:
 - 编程
-- 人生
+- 自由开发者
 - 时间管理
 - 计划
 - 思考总结

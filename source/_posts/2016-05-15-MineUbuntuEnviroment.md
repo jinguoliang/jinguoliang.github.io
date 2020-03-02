@@ -5,6 +5,10 @@ categories:
 - 编程
 tags:
 - Ubuntu
+- VIM
+- Jekyll
+- zsh
+- Android Studio
 ---
 
 这篇文章记录了我在 Ubuntu 上初始环境的配置搭建步骤，跟遇到的问题，当然它们不仅仅适用于16.04,希望对您有所帮助

@@ -2,6 +2,12 @@
 layout: "post"
 title: "这恐怕是史上最简单的上传 AAR 教程"
 date: "2018/05/24 10:19"
+categories:
+- 编程
+tags:
+- Android
+- AAR
+- Gradle
 ---
 
 在做项目的时候，抽出来一些工具方法，然后做其他项目的时候需要使用，只是后就有将这些工具方法抽出来单独形成一个库的需求了。在 Android Studio 里就是 AAR。

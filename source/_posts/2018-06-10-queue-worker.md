@@ -3,9 +3,7 @@ layout: "post"
 title: "QueuedWork"
 date: "2018/06/10 21:36"
 categories:
-- "Think
-- In
-- Writing"
+- 编程
 tags:
 - SharedPrefenrences
 - Android

@@ -2,10 +2,11 @@
 layout: post
 title: Jenkins配置总结
 categories:
-- 工具
+- 编程
 tags:
 - Jenkins
 - Android
+- 工具
 ---
 
 ## 背景

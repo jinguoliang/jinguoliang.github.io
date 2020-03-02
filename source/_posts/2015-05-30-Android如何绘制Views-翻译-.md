@@ -3,10 +3,9 @@ layout: post
 title: Android如何绘制Views（翻译）
 categories:
 - 编程
-- 翻译
 tags:
 - Android
-type: 翻译 Android
+- 翻译
 ---
 
 当一个*Activity*获得焦点时，会被请求去绘制它的布局.Android 框架回去处理绘制的过程，但是*Activity*必须提供布局的层次结构（Hierarchy）的根节点。

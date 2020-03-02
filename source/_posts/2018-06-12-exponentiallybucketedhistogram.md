@@ -3,9 +3,7 @@ layout: "post"
 title: "ExponentiallyBucketedHistogram"
 date: "2018/06/12 20:24"
 categories:
-- "Think
-- In
-- Writing"
+- 编程
 tags:
 - Android
 - 源码

@@ -2,10 +2,10 @@
 layout: post
 title: <转载> Android 学习资源
 tags:
-- Android
 - 资源
 categories:
 - 学习
+- Android
 ---
 
 转载自 http://www.zhanghongyang.com/2015/03/30/2015-03-30-android-learn-resources/
@@ -74,3 +74,6 @@ Android Weekly is a free newsletter that helps you to stay cutting-edge with you
 [developer.android.com](http://developer.android.com)
 oh , no reason!
 大致整理了这么多，多数需要翻墙才能看，以上评价神马的大家当作建议，都是我的个人观点。如果大家有什么好的资源提供，欢迎留言！
+
+2020年加注：  
+从来没看过

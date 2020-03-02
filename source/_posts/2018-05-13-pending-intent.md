@@ -2,6 +2,12 @@
 layout: "post"
 title: "彻底认识 PengingIntent"
 date: "2018/05/13 21:22"
+categories:
+- 编程
+tags:
+- Android
+- Intent
+- PendingIntent
 ---
 
 最近在写一个闹钟程序的时候使用到了 PendingIntent, 而且是两个地方用到，一个是 AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下 PendingIntent 了，因为我很好奇一下几个问题:

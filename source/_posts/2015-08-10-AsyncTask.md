@@ -57,3 +57,6 @@ tags:
 2. handler是在主线程的，所以就可以直接调用主线程的onProgressUpdate
 
 想看更多关注我的blog：http://jinguoliang.github.io
+
+2020年评论：  
+都忘记了自己曾经写过这个，要复习呀，要重复呀，那时候，没有这种能力，现在有了点
