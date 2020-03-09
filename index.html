@@ -71,6 +71,155 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-bdd-in-action-2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/bdd-in-action-2/" class="article-date">
+  <time datetime="2020-03-09T11:26:29.000Z" itemprop="datePublished">2020-3-9</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/bdd-in-action-2/">bdd_in_action_2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="chapter-4"><a href="#chapter-4" class="headerlink" title="chapter 4"></a>chapter 4</h2><p>这一章要来学习如何通过 Feature 提供软件的功能， 会学习一些用来描述和讨论 Feature 的技术。</p>
+<p><img src="/bdd-in-action-2/2020-03-09-11-32-20.png" alt></p>
+<ol>
+<li><p>feature 是帮助用户或其他利益相关者来实现业务目标的软件功能。feature 不是 user story， 但是可以被多个 user story 描述。</p>
+</li>
+<li><p>user story 将 feature 分解成更可管理的部分，从而更容易实现，表达</p>
+</li>
+<li><p>BDD 实践者通过 concrete example 来实现对一个 feature 达成共识。这些用例可以避免歧义和不确定性。</p>
+</li>
+<li><p>管理不确定性在 BDD 实践中举足轻重。有经验的实践者会尽量避免太早明确定义方案，会保持开放选项，直到了解的足够多了才会提交当前最合适的方案。这叫做 Real Options。</p>
+</li>
+<li><p>Deliberate Discovery 通过管理不确定性和忽略来降低项目风险</p>
+</li>
+<li><p>这些用例作为 automated acceptance criteria， 指导开发者实现功能，从而驱动开发进程。</p>
+</li>
+</ol>
+<h3 id="什么是-feature？"><a href="#什么是-feature？" class="headerlink" title="什么是 feature？"></a>什么是 feature？</h3><p>在敏捷项目中， 开发者用了很多词来描述他们想要构建的东西。比如 Epics， capabilities, themes, requirements, features, use cases, user stories。 尽管这些词出来好久了，但也没有明确定义，很多团队还会为此辩论。</p>
+<p><img src="/bdd-in-action-2/2020-03-09-13-32-29.png" alt></p>
+<p>我们真正想要的是能够描述我们认为的用户的需求。我们像以一种用户能够理解的方式表达我们自己， 以便于他们可以尽早检验我们的理解，提供帮助，提供反馈。</p>
+<p>我们使用的词应该能简化我们对用户需求的讨论：</p>
+<ol>
+<li>定期交付有形的，可见的业务价值</li>
+<li>获取反馈，一边我们走在正确的方向上</li>
+</ol>
+<p>这些不同的词，都是在不同的层次将上层需求分解到可管理的大小， 使用那些词依赖与你的项目的大小和复杂性。下面介绍词：</p>
+<ul>
+<li><p>Capabilities 是提供给用户某种能力让他们能实现某种业务目标，或者执行某个有用的任务。不依赖特定的实现。比如“用户可以使用它添加滤镜”。</p>
+</li>
+<li><p>Features 是一种软件功能， 牵扯到实现了， 比如： 在拍摄的时候添加滤镜。</p>
+</li>
+<li><p>当交付 Features， 你可以使用 user stories 分解它， 从而更好管理，更好计划和组织工作。</p>
+</li>
+<li><p>可以使用 examples 来理解 Features 是如何帮助用户的， 引导 user stoies 的工作。</p>
+</li>
+</ul>
+<h4 id="Features-交付-Capabilities"><a href="#Features-交付-Capabilities" class="headerlink" title="Features 交付 Capabilities"></a>Features 交付 Capabilities</h4><p>用户更我们要功能，我们最终交付给他的是实现了某种功能的软件。</p>
+<p>Feature 可以被相对独立的交付，不依赖其他的 Feature，可以被用户单独测试。Feature 可以被用来对某一个发布要包含什么做计划，或者写文档。</p>
+<p>Feature 使用业务术语， 如果写用户手册，就会有 Feature 的介绍。</p>
+<p><img src="/bdd-in-action-2/2020-03-09-14-17-19.png" alt></p>
+<p><img src="/bdd-in-action-2/2020-03-09-15-13-36.png" alt></p>
+<p>下面来距离说明一下描述 Feature 的格式的重要性。</p>
+<blockquote>
+<p>Feature: 线上会员续费<br>In order to 更容易的续费我的会员<br>As a 这个公司的会员<br>I want to 在线续费会员  </p>
+</blockquote>
+<p>简短的一个标题， 避免具体实现。在排期，设计，实现之前，都可以只使用这个标题。</p>
+<p>在需要具体的时候，就可以使用上面的格式。<br>目标是为了提醒你为什么它是必要的，是为了实现某个 capability。帮助我们检查这个 Feature 是否真的有必要。可以问自己一下问题：</p>
+<ol>
+<li>这个 feature 真的能实现这个业务目标？</li>
+<li>如果不能，那它实现什么目标？</li>
+<li>基于我现在所知，它是否还有必要？</li>
+</ol>
+<p><img src="/bdd-in-action-2/2020-03-09-14-48-19.png" alt></p>
+<p>下一步， 标出这个 Feature 会影响的用户， 以它的视角来检视这个 feature。</p>
+<p>最后，描述具体做什么，这时候，还不需要与具体技术实现关联。</p>
+<p>有时候，不是从用户的角度看这个 Feature, 而是从利益相关者，比如同样是上面的 Feature， 可以这样：</p>
+<blockquote>
+<p>Feature: 线上会员续费<br>In order to 减少用户流失带来的销售额下降<br>As a 这个公司的销售主管<br>I want to 在线续费会员  </p>
+</blockquote>
+<p>这里很有趣， 换成从利益相关者的角度看着 Feature， 立马视野开阔了， 可能不必非得这个 Feature 还有其他更好的方式</p>
+<p>另外， 还可以有其他的描述形式：</p>
+<blockquote>
+<p>Feature: 线上会员续费<br>As a 这个公司的会员<br>I want to 在线续费会员<br>So that 更容易的续费我的会员  </p>
+</blockquote>
+<p>最后要说的时候， 没有什么标准的形式， 团队，项目里有统一的形式的好了。（开且不同的形式可能会有不同的关注点，用多种方式探究也不错吧–译者注）</p>
+<h4 id="Feature-可以分解成可以更容易管理的块"><a href="#Feature-可以分解成可以更容易管理的块" class="headerlink" title="Feature 可以分解成可以更容易管理的块"></a>Feature 可以分解成可以更容易管理的块</h4><p>Feature 有时后可能还太大，可能一个迭代里都实现不，所以需要按功能分解成更小的块。这些块叫做 “user stories”。如下图，在分解的时候可能要经过多层分解：</p>
+<p><img src="/bdd-in-action-2/2020-03-09-15-20-02.png" alt></p>
+<p>分解 Feature 有两种策略。一种如上，把一个把一个业务流程分成小的具体一点的业务流程但是不牵扯实现。</p>
+<p>另一种是分解成这个业务流程包括那些步，如下：</p>
+<p><img src="/bdd-in-action-2/2020-03-09-15-32-00.png" alt></p>
+<p>这是危险的，过早的把具体的步骤，可能不是最适合的方案。</p>
+<h4 id="Feature-可以分解成更多的-user-stories"><a href="#Feature-可以分解成更多的-user-stories" class="headerlink" title="Feature 可以分解成更多的 user stories"></a>Feature 可以分解成更多的 user stories</h4><p>user stories 也会将实现细节推迟，等到掌握更多信息时再谈实现</p>
+<h4 id="Feature-不是-user-story"><a href="#Feature-不是-user-story" class="headerlink" title="Feature 不是 user story"></a>Feature 不是 user story</h4><ul>
+<li><p>Feature 是交付给用户或利益相关者的，为了提供某种能力来实现业务目标</p>
+</li>
+<li><p>User Story 是一个计划工具，帮助你为 feature 提供更多细节</p>
+</li>
+</ul>
+<p>Feature 可以在比较的时候写，但是 User Story 可以在邻近实现的时候写。</p>
+<h4 id="Epics-实际就是很大的-user-story，-需要在分，本书不讨论"><a href="#Epics-实际就是很大的-user-story，-需要在分，本书不讨论" class="headerlink" title="Epics 实际就是很大的 user story， 需要在分，本书不讨论"></a>Epics 实际就是很大的 user story， 需要在分，本书不讨论</h4><h4 id="总有例外不是和这个层级结构"><a href="#总有例外不是和这个层级结构" class="headerlink" title="总有例外不是和这个层级结构"></a>总有例外不是和这个层级结构</h4><h3 id="用-examples-实例化-features"><a href="#用-examples-实例化-features" class="headerlink" title="用 examples 实例化 features"></a>用 examples 实例化 features</h3><p>Examples 是 BDD 的核心。在和用户或利益相关者交流时，开发者使用 examples 来加深对 Feature 的理解。扫除不确定性。</p>
+<p>根据 David Kolb 的”基于实验的学习“理论， 有效的学习包含四个步骤：</p>
+<p><img src="/bdd-in-action-2/2020-03-09-16-43-48.png" alt></p>
+<p>书里通过一个例子，通过不断跟一个安全专家询问不同的密码是否安全，最后确定需求  </p>
+<p>感觉没讲清楚呀</p>
+<h3 id="Real-Options："><a href="#Real-Options：" class="headerlink" title="Real Options："></a>Real Options：</h3><p>这是由 Chris Matts 提出， 它的意思是推迟决定，直到最后责任期。</p>
+<p>Option 在经济领域有期权的意思， 之前了解过一点期货，现在发现，一点都没了解。</p>
+<p>Option 给了你一种可能性， 可以以现在的价格去买未来某个时间的商品，也可以不买。</p>
+<p>举个例子， 想象你在未来的三个月里很可能会用到大量的铁， 铁的价格在升高。你不想现在买，因为你不是完全确定，预期三个月后才确定。但是如果再等几个月，铁的价格就涨上去了。为了解决这个困境，你可以以今天的价格购买一个期权来在未来三个月后购买铁。如果铁的价格张了，到时候仍然可以以今天的价格买了。如果价格跌了，或者不需要了，可以选择不是用这个期权。你需要为这个期权付钱，但是只是这些铁的总价的一部分： 这是值得的， 因为它让你直到你确认需要它时才决定是否购买。（这是期权的意义，但是之前了解的时候这个都没有了解到，只以为它就是人们炒钱的东西，当然可能大部分都是为了炒钱吧）</p>
+<p>生活中也有这个原则的例子。比如你想买个两个月后的机票， 但是你不确定能不能去，这时候一个 600 的票不能退，另一个700的票可以退， 这时候如果自己取得概率是 50%，那就要买那个贵的，这样多花了 100， 如果去，那就的确多花了 100， 如果不去， 都退， 那就相当于少损失 600。</p>
+<p>Real Options 是对这个原理的应用。 Chris 总结了这个原理：</p>
+<ol>
+<li>选项有价值</li>
+<li>选项会过期</li>
+<li>在知道为什么了再做决定行动</li>
+</ol>
+<p>下面详细来说明</p>
+<h4 id="选项有价值"><a href="#选项有价值" class="headerlink" title="选项有价值"></a>选项有价值</h4><p>选项是有价值的，因为它们允许你推迟做决定，直到了解的足够多了在决定，这时候成功的概率就更高了。在金融业，股权的价值可以被精确的计算，但是在软件领域，是不可能的。但是，通常你对一个特定的问题直到的可选项越少，保持的你的选项开放就越有价值。</p>
+<p>比如， 你为一个年轻的创业公司制作网站。它们不知道它们的用户体量会是多大。他们直到一开始可能很小，但是它们期望一年后会有数百万用户。</p>
+<p>你有三个选择：</p>
+<ul>
+<li>没有扩展性， 这样，如果达到了百万用户，应用个的架构就需要重构，会是个很大的花费</li>
+<li>创建可扩展性， 但是如果体量上不去，就有点浪费了</li>
+<li>你不去立刻实现一个完全可扩展的架构，但可以在一开始的时候花点时间考虑可扩展性。如果以后不需要扩展，则只浪费了一点调研的时间，如果需要扩展，则可能花更少的费用实现扩展。</li>
+</ul>
+<h4 id="选项会过期"><a href="#选项会过期" class="headerlink" title="选项会过期"></a>选项会过期</h4><p>有交付日期，肯定会有过期， 实现功能是需要时间的， 比如 A 需要 5 天， B 需要 3 天， 如果离交付还有 4 天， 那 A 这个选项就不是个选项了。</p>
+<h4 id="在知道为什么了再做决定行动"><a href="#在知道为什么了再做决定行动" class="headerlink" title="在知道为什么了再做决定行动"></a>在知道为什么了再做决定行动</h4><p>推迟，并不是推迟到截止日期， 而是说当你了解了足够的信息再做决定， 比如两个同样功能的库， 要对每个做调研，了解清楚了再决定选择哪一个。</p>
+<h3 id="Deliberate-Discovery"><a href="#Deliberate-Discovery" class="headerlink" title="Deliberate Discovery"></a>Deliberate Discovery</h3><p>在开发中， 最大的一个风险就是忽视， 所以在开始之前一定要做深入调研，广泛调研，避免忽视一些高效的方法。</p>
+<p>Real Options 帮助你保持选项开放，直到掌握了足够的信息。Deliberate Discovery则帮助你获取这些信息。</p>
+<h3 id="从-examples-到应用：-预览一下"><a href="#从-examples-到应用：-预览一下" class="headerlink" title="从 examples 到应用： 预览一下"></a>从 examples 到应用： 预览一下</h3><p><img src="/bdd-in-action-2/2020-03-09-19-45-56.png" alt></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>BDD 的主要优势在于：</p>
+<ol>
+<li>对业务的交流沟通</li>
+<li>使用用例去驱除假设，构造对问题空间的统一理解。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/bdd-in-action-2/" data-id="ck7kes2j700c12ps0bifs3cqe" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-夜行记" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E5%A4%9C%E8%A1%8C%E8%AE%B0/" class="article-date">
@@ -458,7 +607,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%A4%9C%E8%A1%8C%E8%AE%B0/" data-id="ck7k0yz4c00ch5nv8fh1s1qyq" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%A4%9C%E8%A1%8C%E8%AE%B0/" data-id="ck7kes2ku00ci2ps01cnxf7sy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B0%8F%E8%AF%B4/" rel="tag">小说</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" rel="tag">王小波</a></li></ul>
@@ -488,7 +637,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/read-bdd-in-action/">read_bdd_in_action</a>
+      <a class="article-title" href="/read-bdd-in-action/">读《BDD in Action》（1）</a>
     </h1>
   
 
@@ -573,11 +722,11 @@
 <p>功能点（capability） 是高层的概念，不是实现，它们具有选择不同实现的灵活性。</p>
 <h4 id="哪个-Feature-将会提供最大的-ROI？-用-Purpose-Based-Alignment-Model-找出它来"><a href="#哪个-Feature-将会提供最大的-ROI？-用-Purpose-Based-Alignment-Model-找出它来" class="headerlink" title="哪个 Feature 将会提供最大的 ROI？ 用 Purpose-Based Alignment Model 找出它来"></a>哪个 Feature 将会提供最大的 ROI？ 用 Purpose-Based Alignment Model 找出它来</h4><p>是一个二维相限， 横轴是业务上的重要性， 纵轴是与竞品的不同</p>
 <p><img src="/read-bdd-in-action/2020-03-09-10-07-38.png" alt></p>
-<h3 id="Chapter-4，-我们学到如何通过-BDD-来描述一个-Feature-的细节，这里需要沟通，通过举例子。"><a href="#Chapter-4，-我们学到如何通过-BDD-来描述一个-Feature-的细节，这里需要沟通，通过举例子。" class="headerlink" title="Chapter 4， 我们学到如何通过 BDD 来描述一个 Feature 的细节，这里需要沟通，通过举例子。"></a>Chapter 4， 我们学到如何通过 BDD 来描述一个 Feature 的细节，这里需要沟通，通过举例子。</h3><h3 id="Chapter-5，-如何形式化的描述一个例子，从而消除歧义并可以用于自动化。"><a href="#Chapter-5，-如何形式化的描述一个例子，从而消除歧义并可以用于自动化。" class="headerlink" title="Chapter 5， 如何形式化的描述一个例子，从而消除歧义并可以用于自动化。"></a>Chapter 5， 如何形式化的描述一个例子，从而消除歧义并可以用于自动化。</h3><h3 id="Chapter-6，-介绍工具，自动化"><a href="#Chapter-6，-介绍工具，自动化" class="headerlink" title="Chapter 6， 介绍工具，自动化"></a>Chapter 6， 介绍工具，自动化</h3>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/read-bdd-in-action/" data-id="ck7k0yz1o005c5nv83tw8c2nt" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/read-bdd-in-action/" data-id="ck7kes2hd005c2ps0ad382mle" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BDD/" rel="tag">BDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/" rel="tag">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">测试驱动开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">行为驱动开发</a></li></ul>
@@ -651,7 +800,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck7k0yz03001n5nv8egq69dcj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck7kes2fr001n2ps00b381d9d" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" rel="tag">方法学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -700,7 +849,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ck7k0yz1n00595nv8b5soeqyh" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ck7kes2hc00592ps0fmn8g5fo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" rel="tag">村上春树</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A8%80%E6%83%85/" rel="tag">言情</a></li></ul>
@@ -754,7 +903,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ck7k0yz1l00565nv86db8fp8w" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ck7kes2hb00562ps09be0gkhs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%A6%E8%A1%8C/" rel="tag">苦行</a></li></ul>
@@ -831,7 +980,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ck7k0yz1k00545nv8cvi39jcd" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ck7kes2ha00542ps09rgxhw2c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -926,7 +1075,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck7k0yz3u00bz5nv8g5sbgpt5" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck7kes2j600bz2ps0621qcsan" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -982,7 +1131,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ck7k0yz1i00515nv87ona6x7s" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ck7kes2h900512ps0hwon7wj7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" rel="tag">今日记</a></li></ul>
@@ -1050,109 +1199,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ck7k0yz1h004y5nv834n107ay" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ck7kes2h7004y2ps0hzab0h19" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%89%E4%BB%96/" rel="tag">吉他</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E4%BB%BF/" rel="tag">模仿</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%98%E7%94%BB/" rel="tag">绘画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E4%B9%90/" rel="tag">音乐</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-applay-commit" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/applay-commit/" class="article-date">
-  <time datetime="2018-05-27T11:12:00.000Z" itemprop="datePublished">2018-5-27</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/applay-commit/">从源码来看 SharePreference</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>SharePreference 是 Android 应用保存配置的类，保存键值对，它的使用还是比较简单的，我们只需要跟三个接口打交道：</p>
-<ol>
-<li>SharedPreferences 负责读取配置(getXXX())，从 Context#getSharedPreferences 获取对象</li>
-<li>Editor 负责保存配置(putXXX()), 最后要使用 (apply/commit 提交配置)，从 SharedPreferences.editor 获取对象</li>
-<li>OnSharedPreferenceChangeListener 负责监听配置变化，需要传给 SharedPreferences</li>
-</ol>
-<p>需要特别注意的是，SharePreference 特别声明该类不支持跨进程。在老版本是允许的，是一个坑。</p>
-<h2 id="获取-SharedPreferences-对象"><a href="#获取-SharedPreferences-对象" class="headerlink" title="获取 SharedPreferences 对象"></a>获取 SharedPreferences 对象</h2><p>Contex 的实现类 <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ContextImpl.java" target="_blank" rel="noopener">ContextImpl</a></p>
-<p>在 getSharedPreferences(String name, int mode) 方法里：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (ContextImpl<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mSharedPrefsPaths == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mSharedPrefsPaths = <span class="keyword">new</span> ArrayMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    file = mSharedPrefsPaths.get(name);</span><br><span class="line">    <span class="keyword">if</span> (file == <span class="keyword">null</span>) &#123;</span><br><span class="line">        file = getSharedPreferencesPath(name);</span><br><span class="line">        mSharedPrefsPaths.put(name, file);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里使用 synchronized 防止并发访问 mSharedPrefsPaths 这样每个线程得到的都是相同的 mSharedPrefsPaths，并能根据 name 获取到自己正确的文件名。getSharedPreferencesPath 会根据 name 生成文件路径。我们跟进这个方法发现配置文件保存目录为 data/shared_prefs。</p>
-<p>继续，进到重载方法 getSharedPreferences(File file, int mode) 方法里：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (ContextImpl<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> ArrayMap&lt;File, SharedPreferencesImpl&gt; cache = getSharedPreferencesCacheLocked();</span><br><span class="line">  sp = cache.get(file);</span><br><span class="line">  <span class="keyword">if</span> (sp == <span class="keyword">null</span>) &#123;</span><br><span class="line">      checkMode(mode);</span><br><span class="line">      <span class="keyword">if</span> (getApplicationInfo().targetSdkVersion &gt;= android.os.Build.VERSION_CODES.O) &#123;</span><br><span class="line">          <span class="keyword">if</span> (isCredentialProtectedStorage()</span><br><span class="line">                  &amp;&amp; !getSystemService(UserManager<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">                          .<span class="title">isUserUnlockingOrUnlocked</span>(<span class="title">UserHandle</span>.<span class="title">myUserId</span>())) </span>&#123;</span><br><span class="line">              <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"SharedPreferences in credential encrypted "</span></span><br><span class="line">                      + <span class="string">"storage are not available until after user is unlocked"</span>);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      sp = <span class="keyword">new</span> SharedPreferencesImpl(file, mode);</span><br><span class="line">      cache.put(file, sp);</span><br><span class="line">      <span class="keyword">return</span> sp;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ((mode &amp; Context.MODE_MULTI_PROCESS) != <span class="number">0</span> ||</span><br><span class="line">  getApplicationInfo().targetSdkVersion &lt; android.os.Build.VERSION_CODES.HONEYCOMB) &#123;</span><br><span class="line">  <span class="comment">// If somebody else (some other process) changed the prefs</span></span><br><span class="line">  <span class="comment">// file behind our back, we reload it.  This has been the</span></span><br><span class="line">  <span class="comment">// historical (if undocumented) behavior.</span></span><br><span class="line">  sp.startReloadIfChangedUnexpectedly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们发现，有做了一个 缓存，之前是 name -&gt; File, 现在是 File -&gt; SharedPreferencesImpl, 同样进行了同步。下面对存储加密并且没有解开的情况抛异常，接下来的一个判断解决了我们开头的那个 “特别注意”， 我们忽略了一个参数 mode，这个参数有一个可选值为 Context.MODE_MULTI_PROCESS， 在 HONEYCOMB 之前，其他进程在我们之后修改了配置，我们会重新加载它，先在不做处理，也不推荐使用这个参数了。</p>
-<p>这样，我们得到了 SharedPreferencesImpl 的对象。</p>
-<h2 id="如果要我去实现一个-SharedPreferences"><a href="#如果要我去实现一个-SharedPreferences" class="headerlink" title="如果要我去实现一个 SharedPreferences"></a>如果要我去实现一个 SharedPreferences</h2><p>接口已经有了，如果让我们去实现他们，我们可能会实现的非常简单。</p>
-<ol>
-<li>首先打算用 HashMap 来存储键值对，作为内存缓存。</li>
-<li>实现那些获取值的方法。</li>
-<li>存储为 xml，在初始化 SharedPreference 的时候读取解析成 HashMap。</li>
-<li>感觉都不需要 单独有个 Editor，为什么不直接在 SharePreference 里定义写的方法呢？</li>
-<li>对于写的方法也不过是对 HashMap 的 put。</li>
-<li>apply/commit 分别实现异步和同步的把 HashMap 保存为 xml。</li>
-</ol>
-<p>是不是很简单？考虑到并发，我们需要把读和写的操作加锁。</p>
-<p>好，下面就把我的想法和 SharedPreferencesImpl 实现比较一下，它的实现实在是太复杂了。我们要去探索它复杂背后的原由。</p>
-<h2 id="SharedPreferencesImpl"><a href="#SharedPreferencesImpl" class="headerlink" title="SharedPreferencesImpl"></a>SharedPreferencesImpl</h2><p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java" target="_blank" rel="noopener">这是 SharedPreferencesImpl 的源码</a></p>
-<p>SharedPreferencesImpl 所有代码都在上面一个文件中，只有一个队列的代码单独为一个文件，最后在讨论它。</p>
-<p>我们上面考虑到的步骤，它都实现了，下面我们就一次来看看。</p>
-<h3 id="加载数据到内存"><a href="#加载数据到内存" class="headerlink" title="加载数据到内存"></a>加载数据到内存</h3><p>它的确使用了 Map 来缓存数据，从文件解析 xml 来加载数据，在构造函数里调用了 startLoadFromDisk() 来加载， 它里面 new 了一个新线程 调用了 loadFromDisk()。在它里面，的确做了解析 xml 成 map 的步骤。</p>
-<h3 id="访问操作"><a href="#访问操作" class="headerlink" title="访问操作"></a>访问操作</h3><p>在获取 SharedPreferencesImpl 之前，也就是文章开头介绍的两个同步，对于特定名称的配置，实际上保证了单例。但是因为 loadFromDisk() 是在单独线程执行完成的，也就是说数据还没有读取完成，构造函数就返回了，也就可以调用 get 方法了，这肯定出问题，所以所有的访问操作，你会看到都是如下的样式：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">XXXX</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">        awaitLoadedLocked();</span><br><span class="line">        <span class="keyword">return</span> mMap.XXXX(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>关键就在 awaitLoadedLocked()，它会判断如果还没有加载完成就会一直等待，并且如果加载过程中出现异常，这时候也会报错。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (!mLoaded) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mLock.wait();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException unused) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mThrowable != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(mThrowable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>着我们就知道，如果我们的配置文件如果太大，加载过程就会很长，如果我们的访问操作在UI线程就可能倒置界面卡顿，虽然只有一次。</p>
-<h3 id="为什么要有个专门的-Editor"><a href="#为什么要有个专门的-Editor" class="headerlink" title="为什么要有个专门的 Editor"></a>为什么要有个专门的 Editor</h3><p>我们先来把简单的打扫完成，EditImpl 内使用一个 HashMap 来存储修改了的键值对，所有的写操作除了 clear 使用了一个专门的属性来保存，其他操作都是作用在这个 HashMap 上。</p>
-<p>而关键的逻辑在 commitToMemory() 里， commit 和 apply 都是调用了它。实现将加载的 map 和修改的 map 做差，然后将结果存到了专门的一个 内部类里 MemoryCommitResult。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (mEditorLock) &#123;</span><br><span class="line">    <span class="keyword">boolean</span> changesMade = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (mClear) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!mapToWriteToDisk.isEmpty()) &#123;</span><br><span class="line">            changesMade = <span class="keyword">true</span>;</span><br><span class="line">            mapToWriteToDisk.clear();</span><br><span class="line">        &#125;</span><br><span class="line">        mClear = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; e : mModified.entrySet()) &#123;</span><br><span class="line">        String k = e.getKey();</span><br><span class="line">        Object v = e.getValue();</span><br><span class="line">        <span class="comment">// "this" is the magic value for a removal mutation. In addition,</span></span><br><span class="line">        <span class="comment">// setting a value to "null" for a given key is specified to be</span></span><br><span class="line">        <span class="comment">// equivalent to calling remove on that key.</span></span><br><span class="line">        <span class="keyword">if</span> (v == <span class="keyword">this</span> || v == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mapToWriteToDisk.containsKey(k)) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            mapToWriteToDisk.remove(k);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (mapToWriteToDisk.containsKey(k)) &#123;</span><br><span class="line">                Object existingValue = mapToWriteToDisk.get(k);</span><br><span class="line">                <span class="keyword">if</span> (existingValue != <span class="keyword">null</span> &amp;&amp; existingValue.equals(v)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mapToWriteToDisk.put(k, v);</span><br><span class="line">        &#125;</span><br><span class="line">        changesMade = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (hasListeners) &#123;</span><br><span class="line">            keysModified.add(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    mModified.clear();</span><br><span class="line">    <span class="keyword">if</span> (changesMade) &#123;</span><br><span class="line">        mCurrentMemoryStateGeneration++;</span><br><span class="line">    &#125;</span><br><span class="line">    memoryStateGeneration = mCurrentMemoryStateGeneration;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>先看 mClear 标志，如果清空，直接把 mapToWriteToDiskWriteToDisk 清空，mapToWriteToDiskWriteToDisk 是谁，就是 mMap，当前的配置键值对。接下来遍历 mModified，这个遍历完全放在判断 mClear 的 else 里嘛！不过考虑到监听值得变化，还是不能放到 else 里的，对于提交修改的key，在 clear 的时候还是会收到修改的回调，但是如果只是 clear 了，不会收到修改的回调。这部分逻辑在 notifyListeners(final MemoryCommitResult mcr)：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Looper.myLooper() == Looper.getMainLooper()) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = mcr.keysModified.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">      <span class="keyword">final</span> String key = mcr.keysModified.get(i);</span><br><span class="line">      <span class="keyword">for</span> (OnSharedPreferenceChangeListener listener : mcr.listeners) &#123;</span><br><span class="line">          <span class="keyword">if</span> (listener != <span class="keyword">null</span>) &#123;</span><br><span class="line">              listener.onSharedPreferenceChanged(SharedPreferencesImpl.<span class="keyword">this</span>, key);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// Run this function on the main thread.</span></span><br><span class="line">  ActivityThread.sMainThreadHandler.post(() -&gt; notifyListeners(mcr));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里还保证了回调一定在 UI 线程，这写法很棒，判断如果不是在主线成，就在主线程再调一遍自己。尤其是使用了 lambda，更加有没。</p>
-<h3 id="apply-和-commit-实现区别"><a href="#apply-和-commit-实现区别" class="headerlink" title="apply() 和 commit() 实现区别"></a>apply() 和 commit() 实现区别</h3><p>commit() 里：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">SharedPreferencesImpl.<span class="keyword">this</span>.enqueueDiskWrite(</span><br><span class="line">    mcr, <span class="keyword">null</span> <span class="comment">/* sync write on this thread okay */</span>);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    mcr.writtenToDiskLatch.await();</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">        Log.d(TAG, mFile.getName() + <span class="string">":"</span> + mcr.memoryStateGeneration</span><br><span class="line">                + <span class="string">" committed after "</span> + (System.currentTimeMillis() - startTime)</span><br><span class="line">                + <span class="string">" ms"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">notifyListeners(mcr);</span><br><span class="line"><span class="keyword">return</span> mcr.writeToDiskResult;</span><br></pre></td></tr></table></figure>
-
-<p>在提交内存后，也就是将修改事假到当前键值对map后，生成了一个 MemoryCommitResult 对象，在传给 enqueueDiskWrite() 后，会被传给 Runnable 里执行的 writeToFile(), 紧接着把 Runnable 入队列。</p>
-<p>接下来，入队列后，调用 mcr.writtenToDiskLatch.await()，实现同步，这就是为什么说 commit 是同步的。writtenToDiskLatch 是一个 CountDownLatch，会在 mcr 的 setDiskWriteResult 被调用后，通知阻塞的线程运行，而 setDiskWriteResult 在上面的 writeToFile() 方法内，将改变后的配置写入完成后调用。</p>
-<p>上面是 commit 如何实现同步保存的，下面再看看 apply 如何实现异步的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> MemoryCommitResult mcr = commitToMemory();</span><br><span class="line"><span class="keyword">final</span> Runnable awaitCommit = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                mcr.writtenToDiskLatch.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (DEBUG &amp;&amp; mcr.wasWritten) &#123;</span><br><span class="line">                Log.d(TAG, mFile.getName() + <span class="string">":"</span> + mcr.memoryStateGeneration</span><br><span class="line">                        + <span class="string">" applied after "</span> + (System.currentTimeMillis() - startTime)</span><br><span class="line">                        + <span class="string">" ms"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">QueuedWork.addFinisher(awaitCommit);</span><br><span class="line">Runnable postWriteRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            awaitCommit.run();</span><br><span class="line">            QueuedWork.removeFinisher(awaitCommit);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">SharedPreferencesImpl.<span class="keyword">this</span>.enqueueDiskWrite(mcr, postWriteRunnable);</span><br></pre></td></tr></table></figure>
-
-<p>它同样的先提交改动到内存，返回一个 MemoryCommitResult 的对象，然后在 Runnable 里等待写入文件完成，把这个 Runnable 加入了 QueuedWork。接下来，又在一个 postWriteRunnable 里执行之前那个 awaitCommit， 并从QueuedWork移除刚才设置的它， 为什么呢？</p>
-<p>Android为了让在一个页面设置的配置在其他界面生效采取了一个机制，就是要保证在当前界面不可见时一定要保证配置保存完毕。所以在 ActivityThread 里的处理服务停止和 Activity 停止的地方调用了 QueuedWork 的 waitToFinish, 它里面就会遍历，所有的通过  addFinisher 添加的 Runnable。 而在每个写入操作完成后，当然可以移除了。</p>
-<hr>
-<blockquote>
-<p>官方源码：<br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java</a><br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/QueuedWork.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/QueuedWork.java</a><br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ActivityThread.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ActivityThread.java</a><br>墙裂推荐这篇文章，太好了，我得好好学习了<br><a href="http://weishu.me/2016/10/13/sharedpreference-advices/" target="_blank" rel="noopener">请不要滥用SharedPreference</a></p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ck7k0yz3e00bx5nv8d0gz1ydc" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li></ul>
 
     </footer>
   </div>
@@ -1218,11 +1268,15 @@
       <ul>
         
           <li>
+            <a href="/bdd-in-action-2/">bdd_in_action_2</a>
+          </li>
+        
+          <li>
             <a href="/%E5%A4%9C%E8%A1%8C%E8%AE%B0/">夜行记</a>
           </li>
         
           <li>
-            <a href="/read-bdd-in-action/">read_bdd_in_action</a>
+            <a href="/read-bdd-in-action/">读《BDD in Action》（1）</a>
           </li>
         
           <li>
@@ -1231,10 +1285,6 @@
         
           <li>
             <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/">《挪威的森林》读后感</a>
-          </li>
-        
-          <li>
-            <a href="/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/">自由开发者2个月总结</a>
           </li>
         
       </ul>
