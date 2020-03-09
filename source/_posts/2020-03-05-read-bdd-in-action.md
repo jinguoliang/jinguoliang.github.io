@@ -1,5 +1,5 @@
 ---
-title: read_bdd_in_action
+title: 读《BDD in Action》（1）
 date: 2020-03-05 11:15:04
 tags: 
 - BDD
@@ -143,11 +143,3 @@ Impact Mapping 将 业务目标， 牵扯到的人员， Feature 的关联可视
 是一个二维相限， 横轴是业务上的重要性， 纵轴是与竞品的不同
 
 ![](2020-03-05-read-bdd-in-action/2020-03-09-10-07-38.png)
-
-
-
-### Chapter 4， 我们学到如何通过 BDD 来描述一个 Feature 的细节，这里需要沟通，通过举例子。
-### Chapter 5， 如何形式化的描述一个例子，从而消除歧义并可以用于自动化。
-### Chapter 6， 介绍工具，自动化
-
-
