@@ -1,7 +1,13 @@
 ---
-title: bdd_in_action_2
+title: 读《BDD in Action》（2）
 date: 2020-03-09 11:26:29
-tags:
+tags: 
+- BDD
+- TDD
+- 行为驱动开发
+- 测试驱动开发
+categories:
+- 读书笔记
 ---
 
 ## chapter 4
