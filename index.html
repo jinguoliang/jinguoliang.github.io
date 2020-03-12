@@ -141,11 +141,57 @@
 <li>Page Object 应该暴露状态</li>
 <li>也可以导航到其他页面</li>
 </ol>
+<h1 id="Chapter9-非-UI-验收测试"><a href="#Chapter9-非-UI-验收测试" class="headerlink" title="Chapter9 非 UI 验收测试"></a>Chapter9 非 UI 验收测试</h1><p>业务逻辑包括：</p>
+<ul>
+<li>用户的某个行为会导致什么业务输出  </li>
+<li>你的应用或者业务与竟品有什么不同， 与要替换的旧的比有什么好的  </li>
+<li>应用什么业务规则  </li>
+<li>需要对用户做什么业务限制</li>
+</ul>
+<p>非UI测试主要如下几种：</p>
+<p><img src="/bdd-in-action-4/2020-03-12-10-21-01.png" alt></p>
+<ul>
+<li>针对与 controller 的测试<br><img src="/bdd-in-action-4/2020-03-12-10-31-50.png" alt></li>
+<li>直接针对业务逻辑的测试</li>
+<li>对远程服务的测试<br>现在比较流行的 SOA， 面向服务的架构， 就是将单独的功能的服务单独提供出来， 一般使用 Restful 接口。</li>
+</ul>
+<p>非功能性需求：</p>
+<p>一般包括性能需求， 安全需求， 稳定性需求， 访问性需求等</p>
+<h1 id="Chapter10-BDD-和单元测试"><a href="#Chapter10-BDD-和单元测试" class="headerlink" title="Chapter10 BDD 和单元测试"></a>Chapter10 BDD 和单元测试</h1><p>TDD （Test-Driven Development） 测试驱动开发的两个基本原则：</p>
+<ol>
+<li>先写一个失败的测试，指明功能代码要实现的功能  </li>
+<li>重构来去掉重复，提高代码质量</li>
+</ol>
+<p>它的最大的好处在于在写代码之前，促使用户去思考要写的代码的目标</p>
+<p>BDD 可以再所有不同的层次来用于说明行为， 既可以说明一个业务需求的行为， 也可以说明一个类的行为</p>
+<p>BDD 是建立在 TDD 实践之上</p>
+<p>一些实践：</p>
+<ol>
+<li>从外向内的开发确保代码交付所需要的行为</li>
+<li>使用共享的领域语言来实现统一的理解达成共识</li>
+<li>用例来更清楚的描述行为</li>
+<li>再高层级和更细节的层次都描述系统的行为</li>
+</ol>
+<p>从外向内的开发的一般步骤：</p>
+<ol>
+<li>从一个高层的验收测试开始</li>
+<li>写 step 文件</li>
+<li>实现 step， 考虑底层代码应该如何实现</li>
+<li>根据 step 的实现，写单元测试来说明底层代码的行为</li>
+<li>实现代码</li>
+</ol>
+<p><img src="/bdd-in-action-4/2020-03-12-12-15-40.png" alt></p>
+<p>在写某个单元测试，但是实现它需要另一个类或者方法时，通常有三种做法：</p>
+<ol>
+<li>立刻实现这个类或者方法， 这适合比较简单的情况，可以把正在写的单元测试用 @Ignore 标记，从而保证总是只有一个单元测试需要完成  </li>
+<li>实现一个最小版本的类， 等会再回来， 这时候当前的测试实际是一个集成测试  </li>
+<li>使用一个假的（fake， stub， mock），直到当前测试完成，再回来</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/bdd-in-action-4/" data-id="ck7n3j10n005j2ws55yu6f60k" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/bdd-in-action-4/" data-id="ck7oe4px8005j2aq191bug439" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BDD/" rel="tag">BDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/" rel="tag">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WebDriver/" rel="tag">WebDriver</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">测试驱动开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">行为驱动开发</a></li></ul>
@@ -211,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/bdd-in-action-3/" data-id="ck7n3j10m005g2ws54noa2a58" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/bdd-in-action-3/" data-id="ck7oe4px7005g2aq169vt2n8o" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BDD/" rel="tag">BDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/" rel="tag">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">测试驱动开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">行为驱动开发</a></li></ul>
@@ -366,7 +412,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/bdd-in-action-2/" data-id="ck7n3j13700cn2ws5eshdhb4k" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/bdd-in-action-2/" data-id="ck7oe4pzv00cn2aq19iv1emcz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BDD/" rel="tag">BDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/" rel="tag">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">测试驱动开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">行为驱动开发</a></li></ul>
@@ -765,7 +811,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%A4%9C%E8%A1%8C%E8%AE%B0/" data-id="ck7n3j15700d92ws56ws5cdnx" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%A4%9C%E8%A1%8C%E8%AE%B0/" data-id="ck7oe4q2200d92aq1b1es559p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B0%8F%E8%AF%B4/" rel="tag">小说</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" rel="tag">王小波</a></li></ul>
@@ -884,7 +930,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/read-bdd-in-action/" data-id="ck7n3j10k005c2ws554y4h4c8" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/read-bdd-in-action/" data-id="ck7oe4px400592aq1hw3xftxx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BDD/" rel="tag">BDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/" rel="tag">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">测试驱动开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag">行为驱动开发</a></li></ul>
@@ -958,7 +1004,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck7n3j0z3001n2ws54xoedc88" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ck7oe4pvq001n2aq14xjpbfpu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" rel="tag">方法学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -1007,7 +1053,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ck7n3j10i00592ws5a02t76z4" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ck7oe4px100562aq16pbx4f8j" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" rel="tag">村上春树</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A8%80%E6%83%85/" rel="tag">言情</a></li></ul>
@@ -1061,7 +1107,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ck7n3j10h00562ws5b82k1cvy" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ck7oe4px000542aq18mqb0umf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%A6%E8%A1%8C/" rel="tag">苦行</a></li></ul>
@@ -1138,7 +1184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ck7n3j10f00542ws5cnnj1ijd" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ck7oe4px5005c2aq1d2ljczbb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -1233,7 +1279,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck7n3j13000cl2ws50ozdexni" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck7oe4pzo00cl2aq1hxfk2cw7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
