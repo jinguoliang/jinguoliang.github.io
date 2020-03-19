@@ -5,17 +5,20 @@
   
 
   
-  <title>Tag: 梦想 | 空谷之兰</title>
+  <title>每天一点点音视频相关_ffmpeg解包数据示例_part2 | 空谷之兰</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
-<meta property="og:type" content="website">
-<meta property="og:title" content="空谷之兰">
-<meta property="og:url" content="https://jinguoliang.github.io/tags/%E6%A2%A6%E6%83%B3/index.html">
+  <meta name="description" content="昨天我们了解了 ffmpeg 里从视频文件里读取数据的数据结构和方法， 如下：  avformat_alloc_context() 分配一个数据结构，用来存放打开的视频的信息，相当于是创建对象 avformat_open_input(format_context, url, NULL, NULL) 打开 url 指定的视频文件， 读取头信息， 存入 format_context avformat_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="每天一点点音视频相关_ffmpeg解包数据示例_part2">
+<meta property="og:url" content="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/index.html">
 <meta property="og:site_name" content="空谷之兰">
-<meta property="og:description" content="所有思绪尽归空无，味留一丝芬芳便是兰">
+<meta property="og:description" content="昨天我们了解了 ffmpeg 里从视频文件里读取数据的数据结构和方法， 如下：  avformat_alloc_context() 分配一个数据结构，用来存放打开的视频的信息，相当于是创建对象 avformat_open_input(format_context, url, NULL, NULL) 打开 url 指定的视频文件， 读取头信息， 存入 format_context avformat_">
+<meta property="article:published_time" content="2020-03-19T08:58:17.000Z">
+<meta property="article:modified_time" content="2020-03-19T01:34:42.828Z">
 <meta property="article:author" content="金国梁">
-<meta property="article:tag" content="技术">
-<meta property="article:tag" content=" 随想">
+<meta property="article:tag" content="音视频">
+<meta property="article:tag" content="ffmpeg">
+<meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="空谷之兰" type="application/atom+xml">
@@ -69,40 +72,86 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/%E6%A2%A6%E6%83%B3%E7%A0%B4%E7%81%AD%E5%90%8E/" class="archive-article-date">
-  <time datetime="2020-03-13T18:04:21.000Z" itemprop="datePublished">Mar 13</time>
+        <section id="main"><article id="post-每天一点点音视频相关-ffmpeg解包数据示例-part2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" class="article-date">
+  <time datetime="2020-03-19T08:58:17.000Z" itemprop="datePublished">2020-3-19</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/%E6%A2%A6%E6%83%B3%E7%A0%B4%E7%81%AD%E5%90%8E/">梦想破灭后</a>
+    <h1 class="article-title" itemprop="name">
+      每天一点点音视频相关_ffmpeg解包数据示例_part2
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>昨天我们了解了 ffmpeg 里从视频文件里读取数据的数据结构和方法， 如下：</p>
+<ol>
+<li>avformat_alloc_context() 分配一个数据结构，用来存放打开的视频的信息，相当于是创建对象</li>
+<li>avformat_open_input(format_context, url, NULL, NULL) 打开 url 指定的视频文件， 读取头信息， 存入 format_context</li>
+<li>avformat_find_stream_info(format_context, NULL) 读取流的信息， 此后，就可以知道每个轨道的信息了</li>
+<li>av_find_best_stream(format_context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0) 查找指定类型的轨道的 index， 包括音频，视频，字母等</li>
+<li>format_context-&gt;streams[video_index] 拿到了一个流， 就是轨道， 以后的解码操作都是基于轨道的。</li>
+</ol>
+<p>下面详细说说流里包括那些信息：</p>
+<ul>
+<li>AVCodecParameters *codecpar 编码器用到的一些参数， 比如帧的宽，高， 码率等等</li>
+<li>av_dict_get(v_stream-&gt;metadata, “rotate”, m, AV_DICT_MATCH_CASE)， 可以获取一些元数据， 这里可能类似与 Android 里的 MediaFormat 包含的数据</li>
+<li>format_context-&gt;duration 视频时长</li>
+</ul>
+<p>下面， 重点来说明一下， seek 和 读包</p>
+<p>我们在读取视频信息的时候， 可以选择制定在某个时间， 读取数据， 这样就可以不用从头一帧一帧的解码了， 实现进度的跳转。</p>
+<p>av_seek_frame(format_context, -1, seek_to, AVSEEK_FLAG_BACKWARD)</p>
+<p>第二个参数， 可以指定基于某个流进行seek， seek_to 是时间， AVSEEK_FLAG_BACKWARD 是 Seek的模式， 比如， 额， 这个不是我所认识的模式，之前我了解的 seek模式如相对于当前位置seek， 或者绝对时间的seek， 这里的模式却是， 基于 byte 的seek， 可以seek到任何帧， 还是seek 到关键帧等。</p>
+<p>在指定好要读的位置， 下一步，就是开始读了</p>
+<p>在读之前， 县准备好存贮一个 包 数据的结构</p>
+<p>AVPacket * packet = av_packet_alloc()</p>
+<p>av_read_frame(format_context, packet); </p>
+<p>相同的套路：</p>
+<ol>
+<li>分配一个数据结构， 有专门的方法</li>
+<li>填充数据</li>
+</ol>
+<p>至此， 解包完成， 获取到了一个一个的 packet</p>
+<p>明天： 每天一点点音视频相关_ffmpeg解码器</p>
 
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" data-id="ck7y313p9006c0yr2c63o189e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">每天一点点音视频相关_ffmpeg解包数据示例 part1</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         
