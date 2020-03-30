@@ -71,6 +71,83 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-exponentiallybucketedhistogram" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/exponentiallybucketedhistogram/" class="article-date">
+  <time datetime="2018-06-12T20:24:00.000Z" itemprop="datePublished">2018-6-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/exponentiallybucketedhistogram/">ExponentiallyBucketedHistogram</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="接-QueueWork"><a href="#接-QueueWork" class="headerlink" title="接 QueueWork"></a>接 QueueWork</h3><p>在看 QueueWork 源码的时候，故意忽略掉了 debug 的相关代码，但是 ExponentiallyBucketedHistogram 这个类名看着还是挺吓人的。如果什么东西看着很可怕，让我们不敢接近，那我们就农村包围城市，逐渐了解它，知道发出那声感叹：原来没什么呀！！</p>
+<p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/util/ExponentiallyBucketedHistogram.java" target="_blank" rel="noopener">源码在这</a></p>
+<h3 id="先从字面理解"><a href="#先从字面理解" class="headerlink" title="先从字面理解"></a>先从字面理解</h3><p>Exponentially 是以指数方式地，成倍地<br>Bucketed 桶<br>Histogram 直方图，柱状图</p>
+<p>额，还不知道是什么东西，会生成直方图？</p>
+<p>###　看看怎么用的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ExponentiallyBucketedHistogram</span><br><span class="line">            mWaitTimes = <span class="keyword">new</span> ExponentiallyBucketedHistogram(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (waitTime &gt; <span class="number">0</span> || hadMessages) &#123;</span><br><span class="line">    mWaitTimes.add(Long.valueOf(waitTime).intValue());</span><br><span class="line">    mNumWaits++;</span><br><span class="line">    <span class="keyword">if</span> (DEBUG || mNumWaits % <span class="number">1024</span> == <span class="number">0</span> || waitTime &gt; MAX_WAIT_TIME_MILLIS) &#123;</span><br><span class="line">        mWaitTimes.log(LOG_TAG, <span class="string">"waited: "</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现用法实在是简单，只是在每次处理完任务后，把处理事件添加到这个直方图中，在达到一定条件的时候让这个直方图打印一下日志。</p>
+<h3 id="直面-ExponentiallyBucketedHistogram"><a href="#直面-ExponentiallyBucketedHistogram" class="headerlink" title="直面 ExponentiallyBucketedHistogram"></a>直面 ExponentiallyBucketedHistogram</h3><p>还是要先看看累的注释的：<br>这个类是一个直方图，直方图的值都是正数，每个柱是前一个柱的2倍。<br>表示不太理解</p>
+<p>有个属性是整数数组，在构造函数里初始化。</p>
+<h4 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h4><p>这个构造函数够我们好好学习一会了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ExponentiallyBucketedHistogram</span><span class="params">(@IntRange(from = <span class="number">1</span>, to = <span class="number">31</span>)</span> <span class="keyword">int</span> numBuckets) </span>&#123;</span><br><span class="line">    numBuckets = Preconditions.checkArgumentInRange(numBuckets, <span class="number">1</span>, <span class="number">31</span>, <span class="string">"numBuckets"</span>);</span><br><span class="line">    mData = <span class="keyword">new</span> <span class="keyword">int</span>[numBuckets];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先 @IntRange 是包 android.annotation 中的，这些注释很有用，在 Android Studio 里，在我们传的值不符合规则时，会标出黄线予以警告。这里 @IntRange 声明了参数 numBuckets 取值范围为 1 ～ 31。</p>
+<p>接下来，Preconditions 这个类也是一个 Android 内部使用的类，根据名字“先决条件”，可以知道，是做先验检查。这个语句会在检查参数符合要求好正常返回，否则抛出异常。你可能会疑惑，之前的注解不就干这事情吗？并不是，注解只是能让 AndroidStudio 显示提示，程序员在写代码时，可能会忽视它，而这里，直接抛异常，让你无法忽略。而且，注解是在编译时给提醒，在编代码的过程中，就能提示。而这个先验检查则需要在运行时，如果大家都很关注注解的提示，也就不需要这个先验检查了。</p>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (value &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">       mData[<span class="number">0</span>]++;</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       mData[Math.min(mData.length - <span class="number">1</span>, <span class="number">32</span> - Integer.numberOfLeadingZeros(value))]++;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>负责添加熟知，这里的 value，在 QueueWork 传进的处理一次任务花费的时间。根据注释的说明，在看代码，可以知道，当值小于等于0时都放到第一柱里，否则，否则就比较复杂了。首先得搞清楚  Integer.numberOfLeadingZeros 是个什么鬼？ 看文档发现是看一个无符号整数在二进制是开头有多少个0。这个代码也是很奇妙呀：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">if</span> (i &gt;&gt;&gt; <span class="number">16</span> == <span class="number">0</span>) &#123; n += <span class="number">16</span>; i &lt;&lt;= <span class="number">16</span>; &#125;</span><br><span class="line"><span class="keyword">if</span> (i &gt;&gt;&gt; <span class="number">24</span> == <span class="number">0</span>) &#123; n +=  <span class="number">8</span>; i &lt;&lt;=  <span class="number">8</span>; &#125;</span><br><span class="line"><span class="keyword">if</span> (i &gt;&gt;&gt; <span class="number">28</span> == <span class="number">0</span>) &#123; n +=  <span class="number">4</span>; i &lt;&lt;=  <span class="number">4</span>; &#125;</span><br><span class="line"><span class="keyword">if</span> (i &gt;&gt;&gt; <span class="number">30</span> == <span class="number">0</span>) &#123; n +=  <span class="number">2</span>; i &lt;&lt;=  <span class="number">2</span>; &#125;</span><br><span class="line">n -= i &gt;&gt;&gt; <span class="number">31</span>;</span><br></pre></td></tr></table></figure>
+<p>&gt;&gt;&gt; 是无符号数右移， 使用了二分发，有兴趣的可以研究一下。numberOfLeadingZeros 的注释中说<br>ceil(log2(x)) = 32 - numberOfLeadingZeros(x - 1)，而在这个代码里，就跟等式右边类似的表达式，这样基本可以知道，那条语句的意思，对于添加的一个值，求他的log2，如果值比数组的最大的桶下标大，就取下表最大值。</p>
+<p>而一个整形值，32位，这就是那个幻数的来历了，还记的构造函数的取值范围吗？ 1 ～ 31，也出于这里的原因。为什么呢？</p>
+<p>32 位用 log2 来划分，实际有33中取值，0 ～ 32，但是这分桶是看区间，所以是 1 ～ 31。其实细节还是不是很清楚，不过这时候我基本已经理解这个柱状图大体是个怎么个样子了。<br><img src="/exponentiallybucketedhistogram/jinux/bitmap.png" alt="hello"></p>
+<h3 id="reset"><a href="#reset" class="headerlink" title="reset"></a>reset</h3><p>本来想去看 log() 原来，还有个 reset 方法，虽然很简单，但是也涨了只是，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Arrays.fill(mData, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>如果以前我要做这工作，可能会自己遍历来了。实际这个方法也是想我要做的一样遍历，不过写起来方便嘛。Arrays 里有很多方便的方法，类似的还有 Strings，Collections</p>
+<h3 id="log"><a href="#log" class="headerlink" title="log"></a>log</h3><p>log方法用文字来表达了上面图像的内容，使用 StringBuilder 来构建字符串。输出格式类似这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello[&lt;<span class="number">1</span>: <span class="number">200</span>, &lt;<span class="number">2</span>: <span class="number">300</span>, &lt;<span class="number">4</span>: <span class="number">100</span>, &gt;=<span class="number">4</span>: <span class="number">800</span>]</span><br></pre></td></tr></table></figure>
+
+<p>到此为止</p>
+<hr>
+<ol>
+<li>最近在背英语单词呢，又学到了两个单词</li>
+<li>Arrays.fill(mData, 0) 填充一个数组</li>
+<li>numberOfLeadingZeros() 返回一个整数的二进制时的高位的0的个数</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ck8dsul5900545xq7g6hx7g4n" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-queue-worker" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/queue-worker/" class="article-date">
@@ -154,7 +231,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck8ce93bt00gt3wu36swo0hau" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ck8dsul9v00h05xq719ev39xx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -210,7 +287,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ck8ce937f00513wu33jkyhn7f" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ck8dsul5700515xq77x9826zg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" rel="tag">今日记</a></li></ul>
@@ -278,7 +355,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ck8ce937d004y3wu33gl29s8u" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ck8dsul56004y5xq7ceip2yqg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%89%E4%BB%96/" rel="tag">吉他</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E4%BB%BF/" rel="tag">模仿</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%98%E7%94%BB/" rel="tag">绘画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E4%B9%90/" rel="tag">音乐</a></li></ul>
@@ -377,7 +454,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ck8ce93bq00gr3wu3afcngr7k" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ck8dsul9g00gy5xq77ng5187h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li></ul>
@@ -485,7 +562,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ck8ce93bo00gp3wu37aqoet7o" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ck8dsul9e00gw5xq78s4iephl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%99%E4%BD%9C/" rel="tag">写作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
@@ -533,7 +610,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ck8ce9373004u3wu30a9yfhf8" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ck8dsul54004u5xq736r12h8k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AAR/" rel="tag">AAR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
@@ -620,7 +697,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck8ce936p004q3wu35ymmglkg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck8dsul4p004q5xq77g50buwh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Intent/" rel="tag">Intent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PendingIntent/" rel="tag">PendingIntent</a></li></ul>
@@ -679,7 +756,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck8ce936n004m3wu3e7oi2fao" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck8dsul4m004m5xq74tgu6w5p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
@@ -741,67 +818,9 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck8ce936l004j3wu3b39g37om" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck8dsul4k004j5xq780tobyc4" class="article-share-link">Share</a>
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-CentOS上无 Root 安装 python 环境" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" class="article-date">
-  <time datetime="2017-10-16T00:00:00.000Z" itemprop="datePublished">2017-10-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/">CentOS 上 无 Root 安装 Python</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>工作需要，需要做个爬虫放到服务器上定期怕数据，从本地写好，在发布到服务器的时候，遇到难题了。服务器系统太老了，Python版本2.6，没有 pip，而且还没有  Root 权限，情形可谓十分尴尬。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>我需要一个 Python 环境，并且安装了 Scrapy，怎么办？</p>
-<h2 id="尝试"><a href="#尝试" class="headerlink" title="尝试"></a>尝试</h2><h3 id="尝试使用-easy-install-通过修改安装路径解决"><a href="#尝试使用-easy-install-通过修改安装路径解决" class="headerlink" title="尝试使用 easy_install 通过修改安装路径解决"></a>尝试使用 easy_install 通过修改安装路径解决</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% easy_install --prefix=/home/work/tmppython pip <span class="comment"># pip 不能在 --prefix 前面谈疼</span></span><br></pre></td></tr></table></figure>
-
-<p>要设置 PYTHONPATH=/home/work/tmppython</p>
-<p>这个方法很正，可以安装上 pip，然后修改 pip 的安装路径不就可以安装 scrapy 了嘛，无奈安装失败，可能兼容性问题。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% pip install --install-option=<span class="string">"--prefix=/home/work/tmppython"</span> scrapy</span><br></pre></td></tr></table></figure>
-
-<p>easy_install 安装 scrapy，同样失败，问题还是一样的，找不到某个模块。估计是 Python2.6 的问题。</p>
-<h3 id="我要重新安装-Python3-4"><a href="#我要重新安装-Python3-4" class="headerlink" title="我要重新安装 Python3.4"></a>我要重新安装 Python3.4</h3><h4 id="1-下载源码包"><a href="#1-下载源码包" class="headerlink" title="1. 下载源码包"></a>1. 下载源码包</h4><p>下载了源码包，我就 configure -&gt; make -&gt; make install，结果当然以失败告终，因为它还依赖其他东西。</p>
-<h4 id="2-装依赖"><a href="#2-装依赖" class="headerlink" title="2. 装依赖"></a>2. 装依赖</h4><p>我能不能直接把 RPM 安装到我指定的目录呢？经查看命令帮助，发现可以，既可以设置下载 RPM 的路径，也可以设置安装路径，但是，为什么 yum 一定要让我以 root 账户运行呢？悲剧！</p>
-<p>后来，从网上找到一种方法，使用 yumdownloader 命令下载需要的 rpm，然后使用 rpm2cpio 将 rpm 转成 cpio 然后 用 cpio 命令将 cpio 数据解压出来。</p>
-<p>最终，就是以这种方式解决了。下面是过程：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">% yumdownloader --resolve zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make <span class="comment"># 这回下载所有的这些 rpm 并且还有他们依赖的 rpm</span></span><br><span class="line">% decompressRPM.sh <span class="comment"># 这是我写的脚本，是一条一条的对每一个文件 rpm 都执行命令： rpm2cpio FILE.rpm |cpio -idv</span></span><br><span class="line">% <span class="comment"># 解压出 Python 源码，去到解压出的目录</span></span><br><span class="line">% ./configure --prefix=/path/Python-3.4.1 --libdir=/rpm 解压出的目录/lib</span><br><span class="line">% make</span><br><span class="line">% maek install</span><br></pre></td></tr></table></figure>
-<p>以上是基本的过程，Python 的依赖时我在网上搜到的，解决了我这次问题，不一定能解决你的。现在才发现，服务器如果没有标准真的是很痛苦呀，配环境就搞死人了。</p>
-<h4 id="3-最终的推荐"><a href="#3-最终的推荐" class="headerlink" title="3. 最终的推荐"></a>3. 最终的推荐</h4><p>在写这篇文章的时候，查找资料，无意发现了<a href="https://www.anaconda.com/download/" target="_blank" rel="noopener">这个网址</a>,是一个数据科学平台，它的好处，就是完全打包了一整套的工具，包括 Python3.4，对就是我们想要的 Python3.4。很简单，回答几个问题就装上了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck8ce936k004g3wu3c8mj9279" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
-
     </footer>
   </div>
   
@@ -844,7 +863,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 18.75px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 10px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/BDD/" style="font-size: 13.75px;">BDD</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 12.5px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 10px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.5px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/TDD/" style="font-size: 13.75px;">TDD</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/ffmpeg/" style="font-size: 17.5px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 11.25px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 11.25px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 11.25px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 11.25px;">写作</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 12.5px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 12.5px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 11.25px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 11.25px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 12.5px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 10px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 11.25px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.75px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.25px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 10px;">碎碎念</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 12.5px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.25px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 11.25px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 11.25px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.75px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 12.5px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 11.25px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 11.25px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 20px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
+      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 18.75px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 11.25px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/BDD/" style="font-size: 13.75px;">BDD</a> <a href="/tags/C/" style="font-size: 11.25px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 12.5px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 10px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.5px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/TDD/" style="font-size: 13.75px;">TDD</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/ffmpeg/" style="font-size: 17.5px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 11.25px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 11.25px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 11.25px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 11.25px;">写作</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 12.5px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 12.5px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 11.25px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 11.25px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 12.5px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 10px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 11.25px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.75px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.25px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 10px;">碎碎念</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 12.5px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.25px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 11.25px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 11.25px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 13.75px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 12.5px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 11.25px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 11.25px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 20px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
     </div>
   </div>
 
@@ -866,6 +885,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%80%BB%E7%BB%93/">每天一点点音视频_AudioRecord_实际应用总结</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E8%A1%A5%E5%85%85/">每天一点点音视频_AudioRecord_补充</a>
           </li>
         
@@ -879,10 +902,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88/">每天一点点音视频_音频文件格式概览</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/">每天一点点音视频_AVFrame</a>
           </li>
         
       </ul>
