@@ -27,6 +27,8 @@ categories:
 
 最终的结果如下：
 
+{% codeblock lang:kotlin %}
+
     class WaveGenerator(val maxAmplitude: Float, val rate: Int) {
         fun getAmplitude(time: Float): Float {
             val cycle = PI.toFloat() * 2
@@ -34,9 +36,11 @@ categories:
             return sin(time * radiansPerSecond) * maxAmplitude
         }
     }
+{% endcodeblock %}
 
 我使用了单元测试，爽！！
 
+{% codeblock lang:kotlin %}
     @Test
     fun `计算某个时间点的振幅`() {
         generator = WaveGenerator(1f, RATE_ONE)
@@ -58,5 +62,6 @@ categories:
         assertThat(generator.getAmplitude(0.375f)).isWithin(0.001f).of(-1f)
 
     }
+{% endcodeblock %}
 
 到点了，明天见

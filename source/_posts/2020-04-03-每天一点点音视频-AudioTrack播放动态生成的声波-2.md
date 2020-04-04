@@ -12,6 +12,7 @@ categories:
 
 代码如下：
 
+{% codeblock lang:kotlin %}
 
     @Test
     fun `生成正弦波数据存入 buffer`() {
@@ -48,6 +49,7 @@ categories:
             }
         }
     }
+{% endcodeblock %}
 
 很快就写出来了，爽
 
