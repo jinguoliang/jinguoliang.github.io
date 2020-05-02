@@ -71,6 +71,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-AVFrame" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/" class="article-date">
+  <time datetime="2020-03-25T07:50:14.000Z" itemprop="datePublished">2020-3-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/">每天一点点音视频_AVFrame</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>AVFrame 是一个数据结构，存放解码后的数据，也就是原始数据（Raw Data）， 包括视频数据，音频数据。</p>
+<p>(我发现我在这写的，根它的注释很吻合， 这样的话， 工作轻松很多呀)</p>
+<p>使用 av_frame_alloc() 创建数据结构， 使用 av_frame_free() 释放， 内部的数据buffer，不会分配</p>
+<p>AVFrame 通常被重复使用， 这时候通常使用 av_frame_unref() 来恢复初始状态</p>
+<p>（感觉应付事儿了）</p>
+<p>明天： 每天一点点音视频_音频文件格式概览</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/" data-id="ck9p04tsi006v1vlucvrtbe7o" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AVFrame/" rel="tag">AVFrame</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点音视频-AVPacket" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVPacket/" class="article-date">
@@ -110,7 +158,7 @@ void av_packet_unref(AVPacket *pkt);</code></pre><p>当然还是有一些其他�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVPacket/" data-id="ck9m3d4l5006szqvd3551f2xz" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVPacket/" data-id="ck9p04tsh006s1vlu4ncmget9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AVPacket/" rel="tag">AVPacket</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li></ul>
@@ -166,7 +214,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-ffmpeg%E7%BC%96%E7%A0%81%E8%BF%87%E7%A8%8B/" data-id="ck9m3d4l4006qzqvd3d1lfuc7" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-ffmpeg%E7%BC%96%E7%A0%81%E8%BF%87%E7%A8%8B/" data-id="ck9p04tsg006q1vlu3gw3cwg7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A0%81/" rel="tag">编码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -211,7 +259,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/habits/" data-id="ck9m3d4l1006lzqvd2bcqa2lj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/habits/" data-id="ck9p04tsd006l1vlu70vo9gv7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Atomic-Habits/" rel="tag">Atomic Habits</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E6%83%AF/" rel="tag">习惯</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -256,7 +304,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E7%AC%AC%E4%B8%80%E5%91%A8%E6%80%BB%E7%BB%93/" data-id="ck9m3d4l2006nzqvd07pm7frj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E7%AC%AC%E4%B8%80%E5%91%A8%E6%80%BB%E7%BB%93/" data-id="ck9p04tse006n1vlub9zg89ml" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%BB%E7%BB%93/" rel="tag">总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" rel="tag">每天一点点</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -306,7 +354,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg-%E8%A7%A3%E5%8C%85%E5%99%A8%E5%92%8C%E8%A7%A3%E7%A0%81%E5%99%A8%E8%BF%9E%E6%8E%A5/" data-id="ck9m3d4kz006jzqvddk42evpn" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg-%E8%A7%A3%E5%8C%85%E5%99%A8%E5%92%8C%E8%A7%A3%E7%A0%81%E5%99%A8%E8%BF%9E%E6%8E%A5/" data-id="ck9p04tsc006j1vluea9k73ks" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%A3%E7%A0%81/" rel="tag">解码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -366,7 +414,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E7%A0%81%E5%99%A8/" data-id="ck9m3d4kx006fzqvd6cc9a4kh" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E7%A0%81%E5%99%A8/" data-id="ck9p04tsa006f1vluf830agd4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/decoder/" rel="tag">decoder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -437,7 +485,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" data-id="ck9m3d4kw006czqvd4wzaecag" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" data-id="ck9p04ts9006c1vlu8535eey5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -495,7 +543,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B/" data-id="ck9m3d4ku0069zqvd88nchni4" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B/" data-id="ck9p04ts600691vlu6epz91a8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -543,62 +591,10 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0%E4%B9%8B%E8%BD%AF%E7%BC%96/" data-id="ck9m3d4ks0067zqvdeyftg3gl" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0%E4%B9%8B%E8%BD%AF%E7%BC%96/" data-id="ck9p04ts400671vluey3848bd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频相关-Android上的音视频编解码概述" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0/" class="article-date">
-  <time datetime="2020-03-16T08:30:47.000Z" itemprop="datePublished">2020-3-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0/">每天一点点音视频相关_Android上的音视频编解码概述之硬编</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Android 上支持硬件编解码， 所谓硬件编解码，就是专门的电子模块来处理编解码，它就是硬件视频流编解码器， VPU （Video processing unit）</p>
-<p>Android中实现音视频编解码的过程， 牵扯到三个类： MediaCodec， MediaExtractor， MediaMuxer</p>
-<h3 id="回顾之前介绍的音视频编码的流程："><a href="#回顾之前介绍的音视频编码的流程：" class="headerlink" title="回顾之前介绍的音视频编码的流程："></a>回顾之前介绍的音视频编码的流程：</h3><p>音视频文件 -&gt; 解封装(Extractor) -&gt; 解码(MediaCodec) -&gt; 原始音视频数据</p>
-<p>对应着：</p>
-<p>音视频文件 -&gt; MediaExtractor –packet–&gt; MediaCodec –Frame–&gt; </p>
-<h3 id="回顾之前介绍的音视频解码的流程："><a href="#回顾之前介绍的音视频解码的流程：" class="headerlink" title="回顾之前介绍的音视频解码的流程："></a>回顾之前介绍的音视频解码的流程：</h3><p>原始音视频数据 -&gt; 编码(MediaCodec) -&gt; 封装(Muxer) -&gt; 音视频文件</p>
-<p>对应着：</p>
-<p>–Frame–&gt; MediaCodec –packet–&gt; MediaMuxer -&gt; 音视频文件</p>
-<p>这里对比着写出来，很相似，我之前以为这就是规范，在其他平台上，也是这样称呼的，后来我知道了 ffmpeg， 发现还有其他说法。</p>
-<p>明天： 每天一点点音视频相关_Android上的音视频编解码概述之软编</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0/" data-id="ck9m3d4kr0063zqvdbglthxvq" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaExtractor/" rel="tag">MediaExtractor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaMuxer/" rel="tag">MediaMuxer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
 
     </footer>
   </div>
@@ -651,7 +647,7 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -662,6 +658,10 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
+          </li>
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/">每天一点点_OpenGL_GLES实现</a>
@@ -677,10 +677,6 @@ av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据�
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/">每天一点点_VSYNC</a>
           </li>
         
       </ul>

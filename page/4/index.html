@@ -71,6 +71,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-AudioTrack播放动态生成的声波-3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/" class="article-date">
+  <time datetime="2020-04-04T08:57:23.000Z" itemprop="datePublished">2020-4-4</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/">每天一点点音视频_AudioTrack播放动态生成的声波_3</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>异常顺利， 下面的代码播放中央C的声音：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">val</span> sampleRate = <span class="number">44100</span></span><br><span class="line"><span class="keyword">val</span> channel = AudioFormat.CHANNEL_OUT_STEREO</span><br><span class="line"><span class="keyword">val</span> encodingBit = AudioFormat.ENCODING_PCM_FLOAT</span><br><span class="line"><span class="keyword">val</span> sampleRateForCenterC = <span class="number">261</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> waveGenerator = WaveGenerator(<span class="number">1f</span>, sampleRateForCenterC)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> minBuffSize = AudioTrack.getMinBufferSize(</span><br><span class="line">    sampleRate,</span><br><span class="line">    channel,</span><br><span class="line">    encodingBit</span><br><span class="line">)</span><br><span class="line"><span class="keyword">val</span> player = AudioTrack.Builder()</span><br><span class="line">    .setAudioAttributes(</span><br><span class="line">        AudioAttributes.Builder()</span><br><span class="line">            .setUsage(AudioAttributes.USAGE_MEDIA)</span><br><span class="line">            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)</span><br><span class="line">            .build()</span><br><span class="line">    )</span><br><span class="line">    .setAudioFormat(</span><br><span class="line">        AudioFormat.Builder()</span><br><span class="line">            .setEncoding(encodingBit)</span><br><span class="line">            .setSampleRate(sampleRate)</span><br><span class="line">            .setChannelMask(channel)</span><br><span class="line">            .build()</span><br><span class="line">    )</span><br><span class="line">    .setBufferSizeInBytes(minBuffSize)</span><br><span class="line">    .build()</span><br><span class="line">player.play()</span><br><span class="line">Thread &#123;</span><br><span class="line">    <span class="keyword">val</span> audioData = FloatArray(minBuffSize)</span><br><span class="line">    <span class="keyword">var</span> startTime = <span class="number">0f</span></span><br><span class="line">    <span class="keyword">while</span> (!isDestroyed) &#123;</span><br><span class="line">        <span class="keyword">val</span> duration = waveGenerator.generateWave(sampleRate, startTime, audioData)</span><br><span class="line">        player.write(audioData, <span class="number">0</span>, minBuffSize, AudioTrack.WRITE_BLOCKING)</span><br><span class="line">        startTime += duration</span><br><span class="line">    &#125;</span><br><span class="line">    player.stop()</span><br><span class="line">&#125;.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>让我很意外的是，竟然很好听，纯正的中央C。在我的认识了，乐器的声音都不是单独的正弦波。可能那种复杂决定了音色吧。</p>
+<p>还有问题， 播放一段时间后，会增加额外的杂音， 猜测可能是取整这种问题。</p>
+<p>还有很多可以搞的， 可以调节频率， 可以显示波形线， 可以对不同频率的音进行叠加等等， 是个大坑。</p>
+<p>我的每天一点点，还是专注于音视频的整个领域的知识点，先把面铺的广一点，至于这个坑，会填的。</p>
+<p>明天： 每天一点点音视频_MediaCodec</p>
+<hr>
+<p>仓库在这 <a href="https://github.com/jinguoliang/WavePlayer" target="_blank" rel="noopener">WavePlayer</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/" data-id="ck9p04tsv007o1vlu0oax7bem" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A3%B0%E6%B3%A2/" rel="tag">声波</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点音视频-AudioTrack播放动态生成的声波-2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-2/" class="article-date">
@@ -118,7 +170,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-2/" data-id="ck9m3d4lx007mzqvdapkn8182" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-2/" data-id="ck9p04tsu007m1vlu0npaa7l2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A3%B0%E6%B3%A2/" rel="tag">声波</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -178,7 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-1/" data-id="ck9m3d4lu007izqvd86ytepsi" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-1/" data-id="ck9p04tss007i1vludts524ux" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A3%B0%E6%B3%A2/" rel="tag">声波</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -242,7 +294,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%92%AD%E6%94%BE%E6%A8%A1%E5%BC%8F/" data-id="ck9m3d4lr007fzqvd3yh84rbe" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%92%AD%E6%94%BE%E6%A8%A1%E5%BC%8F/" data-id="ck9p04tsq007f1vlubhfy79a5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AudioTrack/" rel="tag">AudioTrack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -319,7 +371,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack/" data-id="ck9m3d4lp007bzqvd09d4eomx" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack/" data-id="ck9p04tsp007b1vlufw6j36uv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AudioTrack/" rel="tag">AudioTrack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -373,7 +425,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%80%BB%E7%BB%93/" data-id="ck9m3d4lm0078zqvdcrtbdo53" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%80%BB%E7%BB%93/" data-id="ck9p04tsp00781vlucow9csu1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AudioRecord/" rel="tag">AudioRecord</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -421,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E8%A1%A5%E5%85%85/" data-id="ck9m3d4lj0075zqvd3ajb41zo" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecord-%E8%A1%A5%E5%85%85/" data-id="ck9p04tso00751vlubeu96act" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AudioRecord/" rel="tag">AudioRecord</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -478,7 +530,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecorder/" data-id="ck9m3d4lg0072zqvd75hngf5h" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioRecorder/" data-id="ck9p04tsn00721vlu536kc0fb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AudioRecorder/" rel="tag">AudioRecorder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -532,7 +584,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-PCM/" data-id="ck9m3d4la0070zqvdh4gchh3w" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-PCM/" data-id="ck9p04tsl00701vlugpki6sl5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PCM/" rel="tag">PCM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -588,58 +640,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88/" data-id="ck9m3d4l8006xzqvdhclr73o9" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88/" data-id="ck9p04tsk006x1vlubo4i5d8s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" rel="tag">声音的数字化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%97%AE%E9%A2%98/" rel="tag">问题</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" rel="tag">音频文件</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-AVFrame" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/" class="article-date">
-  <time datetime="2020-03-25T07:50:14.000Z" itemprop="datePublished">2020-3-25</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/">每天一点点音视频_AVFrame</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>AVFrame 是一个数据结构，存放解码后的数据，也就是原始数据（Raw Data）， 包括视频数据，音频数据。</p>
-<p>(我发现我在这写的，根它的注释很吻合， 这样的话， 工作轻松很多呀)</p>
-<p>使用 av_frame_alloc() 创建数据结构， 使用 av_frame_free() 释放， 内部的数据buffer，不会分配</p>
-<p>AVFrame 通常被重复使用， 这时候通常使用 av_frame_unref() 来恢复初始状态</p>
-<p>（感觉应付事儿了）</p>
-<p>明天： 每天一点点音视频_音频文件格式概览</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVFrame/" data-id="ck9m3d4l7006vzqvd10qybnny" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AVFrame/" rel="tag">AVFrame</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
 
     </footer>
   </div>
@@ -692,7 +696,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -703,6 +707,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
+          </li>
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/">每天一点点_OpenGL_GLES实现</a>
@@ -718,10 +726,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/">每天一点点_VSYNC</a>
           </li>
         
       </ul>

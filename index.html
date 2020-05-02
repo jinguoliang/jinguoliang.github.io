@@ -71,6 +71,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点-Android-Graphics-总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2020-05-02T09:23:51.000Z" itemprop="datePublished">2020-5-2</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>至此， 把 AOSP 上 图像 部分 的文档看了， 忽略了底层驱动的实现部分，一些我之前没有了解的部分，现在也不想了解的部分。</p>
+<p>再来最开始的这个图片：</p>
+<p><img src="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/2020-04-10-09-24-34.png" alt></p>
+<p>上面的图像流生产者， 下面的图像流消费者。</p>
+<p>中间由 Surface 作为传递者， 同时 windowManager 提供图像现实的一些附加信息，比如位置，格式等等。</p>
+<p>Surface 是 BufferQueue 上层的 API， 一个代表。</p>
+<p>SurfaceView 将 BufferQueue 一端连接 SurfaceFlinger 作为消费者，另一端作为生产者，绘制。可以通过 SurfaceHolder 传给 CameraPreview， MediaPlayer， EGL 等等。</p>
+<p>TextureView 在作用上跟 Surface 类似，只不过实现上不同， SurfaceView 使用了单独的 Window， 单独的 Window 以为着单独的 Surface， 单独的 BufferQueue， 单独的位置参数等， 直接通向 SurfaceFlinger，效率会高，但是与页面其他元素的交互性变差了，因为与他们不再一个 View 树。TextureView 则相反， 与其他 View 在同一个 View 树， 图像数据会合成到 View 树的 Surface 上。</p>
+<p>EGLSurface 是属于 OpenGL 的概念， 由 EGL 在 Android 平台实现，从而可以将 OpenGL 绘制的图像传给 Android 系统。EGL 类似两个系统之间搭桥的。</p>
+<p>上面的 EGLSurface 负责将 OpenGL 的图像传到 Android。而SurfaceTexture 负责将 Android 的 Surface 传给 OpenGL， 成为了一个 Texture， 从而可以进行 OpenGL 操作。</p>
+<p>完工。</p>
+<p>换换口味，该研究一下格式，协议啥的了，比较讨厌的这些东西，人家说做自己害怕的事情能让自己更快的提高。但是我觉的，关键是能不能自己害怕的事情变得不那么害怕，有趣一点。</p>
+<p>明天： 每天一点点音视频_Bitmap了解</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/" data-id="ck9p04tu400a51vlu36xc7w7e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点-OpenGL-GLES实现" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/" class="article-date">
@@ -112,7 +167,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/" data-id="ck9m3d4qw00n6zqvd4q4d4o06" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/" data-id="ck9p04tu300a11vluc0veegza" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EGL/" rel="tag">EGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GLES/" rel="tag">GLES</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -166,7 +221,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-EGLSurface/" data-id="ck9m3d4qv00n5zqvdcduxaul6" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-EGLSurface/" data-id="ck9p04tu2009y1vlubzgnfinw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EGL/" rel="tag">EGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EGLSurface/" rel="tag">EGLSurface</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GLES/" rel="tag">GLES</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E2%9C%AE-%E2%9C%AE-%E2%9C%AE/" rel="tag">✮ ✮ ✮</a></li></ul>
@@ -217,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/" data-id="ck9m3d4qu00n3zqvd72475h0m" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/" data-id="ck9p04tu1009v1vlu0q0la3f1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EGL/" rel="tag">EGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GLES/" rel="tag">GLES</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -269,7 +324,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/" data-id="ck9m3d4qs00n2zqvdehj459az" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/" data-id="ck9p04tu1009t1vlua4vrdewe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FramePacing/" rel="tag">FramePacing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
@@ -317,7 +372,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/" data-id="ck9m3d4n9009qzqvd8jouc28q" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/" data-id="ck9p04ttz009q1vlufw1vg8d6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VSYNC/" rel="tag">VSYNC</a></li></ul>
@@ -392,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-layer-display/" data-id="ck9m3d4n8009ozqvdcbjvglxj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-layer-display/" data-id="ck9p04tty009o1vlub7kt4rou" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/display/" rel="tag">display</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/graphics/" rel="tag">graphics</a></li></ul>
@@ -443,7 +498,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC1/" data-id="ck9m3d4n7009mzqvd1mitaral" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC1/" data-id="ck9p04tty009m1vlu7nii1t23" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HWC/" rel="tag">HWC</a></li></ul>
@@ -503,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%BA%AA%E5%BF%B5%E4%B8%80%E6%AC%A1%E6%91%84%E5%83%8F%E5%A4%B4%E5%AF%B9%E7%84%A6%E5%8A%9F%E8%83%BD%E5%AE%8C%E6%88%90/" data-id="ck9m3d4n6009jzqvd7abhdl8b" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%BA%AA%E5%BF%B5%E4%B8%80%E6%AC%A1%E6%91%84%E5%83%8F%E5%A4%B4%E5%AF%B9%E7%84%A6%E5%8A%9F%E8%83%BD%E5%AE%8C%E6%88%90/" data-id="ck9p04ttw009j1vlu9wkh9r6w" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Camera2/" rel="tag">Camera2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%90%9E%E7%AC%91/" rel="tag">搞笑</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%9B%8B%E7%96%BC/" rel="tag">蛋疼</a></li></ul>
@@ -556,59 +611,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC/" data-id="ck9m3d4n5009gzqvdhq61clnh" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC/" data-id="ck9p04ttv009g1vludy7b2qkt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HWC/" rel="tag">HWC</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-SurfaceFlinger3" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger3/" class="article-date">
-  <time datetime="2020-04-22T09:03:50.000Z" itemprop="datePublished">2020-4-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger3/">每天一点点音视频_SurfaceFlinger3</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面说道 WindowManager 会向 SurafceFlinger 请求创建一个层， 在 WindowManager 那就是一个 Window， 而一个 Window 包括了一个 Surface 和 这个 Surface 在屏幕上的显示参数，比如显示位置等。</p>
-<p>View， Window 和 Surface 的关系</p>
-<p>Window 是一个容器对象， 它里面有 View， Surface， 还有其他一些参数</p>
-<p>View 负责绘制， 比如 TextView 负责绘制文字。</p>
-<p>Surface 负责存储， View 所绘制的东西到哪了呢， 就会知道了 Surface 上。</p>
-<p>完结撒花</p>
-<p>明天： 每天一点点音视频_HWC</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger3/" data-id="ck9m3d4n4009czqvd0d3f28ud" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurfaceFlinger/" rel="tag">SurfaceFlinger</a></li></ul>
 
     </footer>
   </div>
@@ -661,7 +667,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -672,6 +678,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
+          </li>
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/">每天一点点_OpenGL_GLES实现</a>
@@ -687,10 +697,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/">每天一点点_VSYNC</a>
           </li>
         
       </ul>

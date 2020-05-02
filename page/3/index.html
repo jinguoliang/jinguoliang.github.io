@@ -71,6 +71,70 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-Graphics架构" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%9E%B6%E6%9E%84/" class="article-date">
+  <time datetime="2020-04-12T09:18:45.000Z" itemprop="datePublished">2020-4-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%9E%B6%E6%9E%84/">每天一点点音视频_Graphics架构</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>再以后的一段日子的，我们将会学习 Android 上 Graphics 架构的一些组件， 将会从地层到上层的顺序。今天是一个概述。</p>
+<h2 id="底层的组件"><a href="#底层的组件" class="headerlink" title="底层的组件"></a>底层的组件</h2><h3 id="BufferQueue-和-Gralloc"><a href="#BufferQueue-和-Gralloc" class="headerlink" title="BufferQueue 和 Gralloc"></a>BufferQueue 和 Gralloc</h3><p>BufferQueue 实现连接图形缓冲的生产者和消费者，消费者主要时接受了数据后，显示出来或者做进一步的处理。 </p>
+<p>gralloc 负责分配缓冲，通过 HAL 接口实现</p>
+<h3 id="SurfaceFlinger，-Hardware-Composer-和-virtual-displays"><a href="#SurfaceFlinger，-Hardware-Composer-和-virtual-displays" class="headerlink" title="SurfaceFlinger， Hardware Composer 和 virtual displays"></a>SurfaceFlinger， Hardware Composer 和 virtual displays</h3><p>SurfaceFlinger 从多个源接受数据， 混合后发送显示</p>
+<p>HWC（Hardware Composer） 决定使用最有效的方式来混合图像</p>
+<p>virtual display 让混合后的图像再系统内可用，比如录屏</p>
+<h3 id="Surface-Canvas-和-SurfaceHolder"><a href="#Surface-Canvas-和-SurfaceHolder" class="headerlink" title="Surface, Canvas 和 SurfaceHolder"></a>Surface, Canvas 和 SurfaceHolder</h3><p>Surface 生成一个对应的缓冲队列， 当再一个 Surface 上绘制时，最后结果会被传给消费者</p>
+<p>Canvas API 是一套软件实现的绘制接口（支持硬件加速），负责往 Surface 上绘制</p>
+<p>所有与视图相关的的操作，都会有一个 SurfaceHolder, 通过它来获取或者设置 Surface 的参数比如 大小， 格式</p>
+<h3 id="EGLSurface-OpenGL-ES"><a href="#EGLSurface-OpenGL-ES" class="headerlink" title="EGLSurface, OpenGL ES"></a>EGLSurface, OpenGL ES</h3><p>OpenGL ES(GLES) 定义了一套图形渲染的 API</p>
+<p>EGL 是一个库，它被用来通过操作系统来创建 OpenGL 里的窗口</p>
+<h3 id="Vulkan"><a href="#Vulkan" class="headerlink" title="Vulkan"></a>Vulkan</h3><p>Vulkan 是有一个图形渲染的 API， 类似于 OpenGL， 它提供了工具再应用里创建高质量，实时的图像， 减少了 CPU 负载， 支持  SPIR-V Binary Intermediate 语言</p>
+<h2 id="上层的组件"><a href="#上层的组件" class="headerlink" title="上层的组件"></a>上层的组件</h2><h3 id="SurfaceView-和-GLSurfaceView"><a href="#SurfaceView-和-GLSurfaceView" class="headerlink" title="SurfaceView 和 GLSurfaceView"></a>SurfaceView 和 GLSurfaceView</h3><p>SurfaceView 将一个 Surface 和 View 绑定， SurfaceView 的 View 由 SurfaceFlinger 混合。允许再单独的线程做渲染操作。</p>
+<p>GLSurfaceView 提供了辅助类管理 EGL 上下文，线程间通讯，与 Activity 生命周期的交互。</p>
+<h3 id="SurfaceTexture"><a href="#SurfaceTexture" class="headerlink" title="SurfaceTexture"></a>SurfaceTexture</h3><p>SurfaceTexture 将一个 Surface 和一个 Texture 绑定在一块来创建一个缓冲队列，应用作为这个缓冲队列的消费者。</p>
+<p>当一个生产者产生了一个新缓存，它会将它入队，这时候你的应用就会得到通知，应用就会释放旧的缓冲区，获取新的。然后执行 EGL 操作，让新缓冲区成为一个 GLES 中的外部 texture。</p>
+<h3 id="TextureView"><a href="#TextureView" class="headerlink" title="TextureView"></a>TextureView</h3><p>TexureView 将一个 View 和一个 SurfaceTexture 绑定。</p>
+<p>TextureView 包裹了一个 SuraceTexture， 负责监听它，从其中获取新的缓冲区，作为它的数据源， 然后按照 View 的配置来渲染数据</p>
+<p>View 的混合总是使用 GLES， 这意味着更新内容会导致其他 View 的重绘（这里不太明白）</p>
+<p>明天：  每天一点点音视频_BufferQueue</p>
+<hr>
+<p>参考 <a href="https://source.android.com/devices/graphics/architecture" target="_blank" rel="noopener">官方文档</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%9E%B6%E6%9E%84/" data-id="ck9p04tt7008l1vlub29chnkf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点音视频-Graphics数据流" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%95%B0%E6%8D%AE%E6%B5%81/" class="article-date">
@@ -118,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%95%B0%E6%8D%AE%E6%B5%81/" data-id="ck9m3d4ml008izqvd2q990i4n" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%95%B0%E6%8D%AE%E6%B5%81/" data-id="ck9p04tt6008i1vlu5hylbg8z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
@@ -174,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/" data-id="ck9m3d4mi008fzqvdbrihct77" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/" data-id="ck9p04tt4008f1vlue5wcd32h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
@@ -226,7 +290,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Android%E4%B8%8A%E5%AE%9E%E7%8E%B0%E9%A2%84%E8%A7%88%E5%BD%95%E5%88%B6OpenGL%E5%A4%84%E7%90%86%E8%BF%87%E7%9A%84%E7%9B%B8%E6%9C%BA%E6%95%B0%E6%8D%AE/" data-id="ck9m3d4ma0084zqvd1x8rez6e" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/Android%E4%B8%8A%E5%AE%9E%E7%8E%B0%E9%A2%84%E8%A7%88%E5%BD%95%E5%88%B6OpenGL%E5%A4%84%E7%90%86%E8%BF%87%E7%9A%84%E7%9B%B8%E6%9C%BA%E6%95%B0%E6%8D%AE/" data-id="ck9p04tt100841vlu5bi6ahub" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9B%B8%E6%9C%BA/" rel="tag">相机</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -275,7 +339,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Surface/" data-id="ck9m3d4mg008bzqvdht363z8k" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Surface/" data-id="ck9p04tt3008b1vlu9r7n69qj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Surface/" rel="tag">Surface</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -326,7 +390,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E7%9A%84C%E4%BD%8D%E5%87%BA%E9%81%93/" data-id="ck9m3d4md0088zqvdfu186trr" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E7%9A%84C%E4%BD%8D%E5%87%BA%E9%81%93/" data-id="ck9p04tt200881vlufdyv0gse" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -440,7 +504,7 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/" data-id="ck9m3d4m90081zqvd86dhb3v3" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/" data-id="ck9p04tt000811vlu89o26p2l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A4%BA%E4%BE%8B/" rel="tag">示例</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -493,7 +557,7 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E5%88%9B%E5%BB%BA%E5%88%9D%E5%A7%8B%E5%8C%96/" data-id="ck9m3d4m6007yzqvd3y8igut3" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E5%88%9B%E5%BB%BA%E5%88%9D%E5%A7%8B%E5%8C%96/" data-id="ck9p04tsz007y1vlu7dk6euag" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -575,7 +639,7 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/" data-id="ck9m3d4m3007uzqvd94wt77i1" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/" data-id="ck9p04tsy007u1vlucmbg2yb6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%8A%B6%E6%80%81/" rel="tag">状态</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -634,62 +698,10 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec/" data-id="ck9m3d4m1007rzqvd0h5rdpq2" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MediaCodec/" data-id="ck9p04tsx007r1vlub3224elg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-AudioTrack播放动态生成的声波-3" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/" class="article-date">
-  <time datetime="2020-04-04T08:57:23.000Z" itemprop="datePublished">2020-4-4</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/">每天一点点音视频_AudioTrack播放动态生成的声波_3</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>异常顺利， 下面的代码播放中央C的声音：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">val</span> sampleRate = <span class="number">44100</span></span><br><span class="line"><span class="keyword">val</span> channel = AudioFormat.CHANNEL_OUT_STEREO</span><br><span class="line"><span class="keyword">val</span> encodingBit = AudioFormat.ENCODING_PCM_FLOAT</span><br><span class="line"><span class="keyword">val</span> sampleRateForCenterC = <span class="number">261</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> waveGenerator = WaveGenerator(<span class="number">1f</span>, sampleRateForCenterC)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> minBuffSize = AudioTrack.getMinBufferSize(</span><br><span class="line">    sampleRate,</span><br><span class="line">    channel,</span><br><span class="line">    encodingBit</span><br><span class="line">)</span><br><span class="line"><span class="keyword">val</span> player = AudioTrack.Builder()</span><br><span class="line">    .setAudioAttributes(</span><br><span class="line">        AudioAttributes.Builder()</span><br><span class="line">            .setUsage(AudioAttributes.USAGE_MEDIA)</span><br><span class="line">            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)</span><br><span class="line">            .build()</span><br><span class="line">    )</span><br><span class="line">    .setAudioFormat(</span><br><span class="line">        AudioFormat.Builder()</span><br><span class="line">            .setEncoding(encodingBit)</span><br><span class="line">            .setSampleRate(sampleRate)</span><br><span class="line">            .setChannelMask(channel)</span><br><span class="line">            .build()</span><br><span class="line">    )</span><br><span class="line">    .setBufferSizeInBytes(minBuffSize)</span><br><span class="line">    .build()</span><br><span class="line">player.play()</span><br><span class="line">Thread &#123;</span><br><span class="line">    <span class="keyword">val</span> audioData = FloatArray(minBuffSize)</span><br><span class="line">    <span class="keyword">var</span> startTime = <span class="number">0f</span></span><br><span class="line">    <span class="keyword">while</span> (!isDestroyed) &#123;</span><br><span class="line">        <span class="keyword">val</span> duration = waveGenerator.generateWave(sampleRate, startTime, audioData)</span><br><span class="line">        player.write(audioData, <span class="number">0</span>, minBuffSize, AudioTrack.WRITE_BLOCKING)</span><br><span class="line">        startTime += duration</span><br><span class="line">    &#125;</span><br><span class="line">    player.stop()</span><br><span class="line">&#125;.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>让我很意外的是，竟然很好听，纯正的中央C。在我的认识了，乐器的声音都不是单独的正弦波。可能那种复杂决定了音色吧。</p>
-<p>还有问题， 播放一段时间后，会增加额外的杂音， 猜测可能是取整这种问题。</p>
-<p>还有很多可以搞的， 可以调节频率， 可以显示波形线， 可以对不同频率的音进行叠加等等， 是个大坑。</p>
-<p>我的每天一点点，还是专注于音视频的整个领域的知识点，先把面铺的广一点，至于这个坑，会填的。</p>
-<p>明天： 每天一点点音视频_MediaCodec</p>
-<hr>
-<p>仓库在这 <a href="https://github.com/jinguoliang/WavePlayer" target="_blank" rel="noopener">WavePlayer</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AudioTrack%E6%92%AD%E6%94%BE%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E7%9A%84%E5%A3%B0%E6%B3%A2-3/" data-id="ck9m3d4ly007ozqvd95mj3gcv" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A3%B0%E6%B3%A2/" rel="tag">声波</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
 
     </footer>
   </div>
@@ -742,7 +754,7 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
     </div>
   </div>
 
@@ -753,6 +765,10 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
+          </li>
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-GLES%E5%AE%9E%E7%8E%B0/">每天一点点_OpenGL_GLES实现</a>
@@ -768,10 +784,6 @@ codec.release();</code></pre><p>这是官方文档的例子， 这样写出看�
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/">每天一点点_VSYNC</a>
           </li>
         
       </ul>
