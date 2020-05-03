@@ -71,6 +71,105 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-applay-commit" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/applay-commit/" class="article-date">
+  <time datetime="2018-05-27T11:12:00.000Z" itemprop="datePublished">2018-5-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/applay-commit/">从源码来看 SharePreference</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>SharePreference 是 Android 应用保存配置的类，保存键值对，它的使用还是比较简单的，我们只需要跟三个接口打交道：</p>
+<ol>
+<li>SharedPreferences 负责读取配置(getXXX())，从 Context#getSharedPreferences 获取对象</li>
+<li>Editor 负责保存配置(putXXX()), 最后要使用 (apply/commit 提交配置)，从 SharedPreferences.editor 获取对象</li>
+<li>OnSharedPreferenceChangeListener 负责监听配置变化，需要传给 SharedPreferences</li>
+</ol>
+<p>需要特别注意的是，SharePreference 特别声明该类不支持跨进程。在老版本是允许的，是一个坑。</p>
+<h2 id="获取-SharedPreferences-对象"><a href="#获取-SharedPreferences-对象" class="headerlink" title="获取 SharedPreferences 对象"></a>获取 SharedPreferences 对象</h2><p>Contex 的实现类 <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ContextImpl.java" target="_blank" rel="noopener">ContextImpl</a></p>
+<p>在 getSharedPreferences(String name, int mode) 方法里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (ContextImpl<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mSharedPrefsPaths == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mSharedPrefsPaths = <span class="keyword">new</span> ArrayMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    file = mSharedPrefsPaths.get(name);</span><br><span class="line">    <span class="keyword">if</span> (file == <span class="keyword">null</span>) &#123;</span><br><span class="line">        file = getSharedPreferencesPath(name);</span><br><span class="line">        mSharedPrefsPaths.put(name, file);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用 synchronized 防止并发访问 mSharedPrefsPaths 这样每个线程得到的都是相同的 mSharedPrefsPaths，并能根据 name 获取到自己正确的文件名。getSharedPreferencesPath 会根据 name 生成文件路径。我们跟进这个方法发现配置文件保存目录为 data/shared_prefs。</p>
+<p>继续，进到重载方法 getSharedPreferences(File file, int mode) 方法里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (ContextImpl<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> ArrayMap&lt;File, SharedPreferencesImpl&gt; cache = getSharedPreferencesCacheLocked();</span><br><span class="line">  sp = cache.get(file);</span><br><span class="line">  <span class="keyword">if</span> (sp == <span class="keyword">null</span>) &#123;</span><br><span class="line">      checkMode(mode);</span><br><span class="line">      <span class="keyword">if</span> (getApplicationInfo().targetSdkVersion &gt;= android.os.Build.VERSION_CODES.O) &#123;</span><br><span class="line">          <span class="keyword">if</span> (isCredentialProtectedStorage()</span><br><span class="line">                  &amp;&amp; !getSystemService(UserManager<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">                          .<span class="title">isUserUnlockingOrUnlocked</span>(<span class="title">UserHandle</span>.<span class="title">myUserId</span>())) </span>&#123;</span><br><span class="line">              <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"SharedPreferences in credential encrypted "</span></span><br><span class="line">                      + <span class="string">"storage are not available until after user is unlocked"</span>);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      sp = <span class="keyword">new</span> SharedPreferencesImpl(file, mode);</span><br><span class="line">      cache.put(file, sp);</span><br><span class="line">      <span class="keyword">return</span> sp;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ((mode &amp; Context.MODE_MULTI_PROCESS) != <span class="number">0</span> ||</span><br><span class="line">  getApplicationInfo().targetSdkVersion &lt; android.os.Build.VERSION_CODES.HONEYCOMB) &#123;</span><br><span class="line">  <span class="comment">// If somebody else (some other process) changed the prefs</span></span><br><span class="line">  <span class="comment">// file behind our back, we reload it.  This has been the</span></span><br><span class="line">  <span class="comment">// historical (if undocumented) behavior.</span></span><br><span class="line">  sp.startReloadIfChangedUnexpectedly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现，有做了一个 缓存，之前是 name -&gt; File, 现在是 File -&gt; SharedPreferencesImpl, 同样进行了同步。下面对存储加密并且没有解开的情况抛异常，接下来的一个判断解决了我们开头的那个 “特别注意”， 我们忽略了一个参数 mode，这个参数有一个可选值为 Context.MODE_MULTI_PROCESS， 在 HONEYCOMB 之前，其他进程在我们之后修改了配置，我们会重新加载它，先在不做处理，也不推荐使用这个参数了。</p>
+<p>这样，我们得到了 SharedPreferencesImpl 的对象。</p>
+<h2 id="如果要我去实现一个-SharedPreferences"><a href="#如果要我去实现一个-SharedPreferences" class="headerlink" title="如果要我去实现一个 SharedPreferences"></a>如果要我去实现一个 SharedPreferences</h2><p>接口已经有了，如果让我们去实现他们，我们可能会实现的非常简单。</p>
+<ol>
+<li>首先打算用 HashMap 来存储键值对，作为内存缓存。</li>
+<li>实现那些获取值的方法。</li>
+<li>存储为 xml，在初始化 SharedPreference 的时候读取解析成 HashMap。</li>
+<li>感觉都不需要 单独有个 Editor，为什么不直接在 SharePreference 里定义写的方法呢？</li>
+<li>对于写的方法也不过是对 HashMap 的 put。</li>
+<li>apply/commit 分别实现异步和同步的把 HashMap 保存为 xml。</li>
+</ol>
+<p>是不是很简单？考虑到并发，我们需要把读和写的操作加锁。</p>
+<p>好，下面就把我的想法和 SharedPreferencesImpl 实现比较一下，它的实现实在是太复杂了。我们要去探索它复杂背后的原由。</p>
+<h2 id="SharedPreferencesImpl"><a href="#SharedPreferencesImpl" class="headerlink" title="SharedPreferencesImpl"></a>SharedPreferencesImpl</h2><p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java" target="_blank" rel="noopener">这是 SharedPreferencesImpl 的源码</a></p>
+<p>SharedPreferencesImpl 所有代码都在上面一个文件中，只有一个队列的代码单独为一个文件，最后在讨论它。</p>
+<p>我们上面考虑到的步骤，它都实现了，下面我们就一次来看看。</p>
+<h3 id="加载数据到内存"><a href="#加载数据到内存" class="headerlink" title="加载数据到内存"></a>加载数据到内存</h3><p>它的确使用了 Map 来缓存数据，从文件解析 xml 来加载数据，在构造函数里调用了 startLoadFromDisk() 来加载， 它里面 new 了一个新线程 调用了 loadFromDisk()。在它里面，的确做了解析 xml 成 map 的步骤。</p>
+<h3 id="访问操作"><a href="#访问操作" class="headerlink" title="访问操作"></a>访问操作</h3><p>在获取 SharedPreferencesImpl 之前，也就是文章开头介绍的两个同步，对于特定名称的配置，实际上保证了单例。但是因为 loadFromDisk() 是在单独线程执行完成的，也就是说数据还没有读取完成，构造函数就返回了，也就可以调用 get 方法了，这肯定出问题，所以所有的访问操作，你会看到都是如下的样式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">XXXX</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">        awaitLoadedLocked();</span><br><span class="line">        <span class="keyword">return</span> mMap.XXXX(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关键就在 awaitLoadedLocked()，它会判断如果还没有加载完成就会一直等待，并且如果加载过程中出现异常，这时候也会报错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (!mLoaded) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mLock.wait();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException unused) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mThrowable != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(mThrowable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>着我们就知道，如果我们的配置文件如果太大，加载过程就会很长，如果我们的访问操作在UI线程就可能倒置界面卡顿，虽然只有一次。</p>
+<h3 id="为什么要有个专门的-Editor"><a href="#为什么要有个专门的-Editor" class="headerlink" title="为什么要有个专门的 Editor"></a>为什么要有个专门的 Editor</h3><p>我们先来把简单的打扫完成，EditImpl 内使用一个 HashMap 来存储修改了的键值对，所有的写操作除了 clear 使用了一个专门的属性来保存，其他操作都是作用在这个 HashMap 上。</p>
+<p>而关键的逻辑在 commitToMemory() 里， commit 和 apply 都是调用了它。实现将加载的 map 和修改的 map 做差，然后将结果存到了专门的一个 内部类里 MemoryCommitResult。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (mEditorLock) &#123;</span><br><span class="line">    <span class="keyword">boolean</span> changesMade = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (mClear) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!mapToWriteToDisk.isEmpty()) &#123;</span><br><span class="line">            changesMade = <span class="keyword">true</span>;</span><br><span class="line">            mapToWriteToDisk.clear();</span><br><span class="line">        &#125;</span><br><span class="line">        mClear = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; e : mModified.entrySet()) &#123;</span><br><span class="line">        String k = e.getKey();</span><br><span class="line">        Object v = e.getValue();</span><br><span class="line">        <span class="comment">// "this" is the magic value for a removal mutation. In addition,</span></span><br><span class="line">        <span class="comment">// setting a value to "null" for a given key is specified to be</span></span><br><span class="line">        <span class="comment">// equivalent to calling remove on that key.</span></span><br><span class="line">        <span class="keyword">if</span> (v == <span class="keyword">this</span> || v == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mapToWriteToDisk.containsKey(k)) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            mapToWriteToDisk.remove(k);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (mapToWriteToDisk.containsKey(k)) &#123;</span><br><span class="line">                Object existingValue = mapToWriteToDisk.get(k);</span><br><span class="line">                <span class="keyword">if</span> (existingValue != <span class="keyword">null</span> &amp;&amp; existingValue.equals(v)) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mapToWriteToDisk.put(k, v);</span><br><span class="line">        &#125;</span><br><span class="line">        changesMade = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (hasListeners) &#123;</span><br><span class="line">            keysModified.add(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    mModified.clear();</span><br><span class="line">    <span class="keyword">if</span> (changesMade) &#123;</span><br><span class="line">        mCurrentMemoryStateGeneration++;</span><br><span class="line">    &#125;</span><br><span class="line">    memoryStateGeneration = mCurrentMemoryStateGeneration;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看 mClear 标志，如果清空，直接把 mapToWriteToDiskWriteToDisk 清空，mapToWriteToDiskWriteToDisk 是谁，就是 mMap，当前的配置键值对。接下来遍历 mModified，这个遍历完全放在判断 mClear 的 else 里嘛！不过考虑到监听值得变化，还是不能放到 else 里的，对于提交修改的key，在 clear 的时候还是会收到修改的回调，但是如果只是 clear 了，不会收到修改的回调。这部分逻辑在 notifyListeners(final MemoryCommitResult mcr)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Looper.myLooper() == Looper.getMainLooper()) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = mcr.keysModified.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">      <span class="keyword">final</span> String key = mcr.keysModified.get(i);</span><br><span class="line">      <span class="keyword">for</span> (OnSharedPreferenceChangeListener listener : mcr.listeners) &#123;</span><br><span class="line">          <span class="keyword">if</span> (listener != <span class="keyword">null</span>) &#123;</span><br><span class="line">              listener.onSharedPreferenceChanged(SharedPreferencesImpl.<span class="keyword">this</span>, key);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// Run this function on the main thread.</span></span><br><span class="line">  ActivityThread.sMainThreadHandler.post(() -&gt; notifyListeners(mcr));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里还保证了回调一定在 UI 线程，这写法很棒，判断如果不是在主线成，就在主线程再调一遍自己。尤其是使用了 lambda，更加有没。</p>
+<h3 id="apply-和-commit-实现区别"><a href="#apply-和-commit-实现区别" class="headerlink" title="apply() 和 commit() 实现区别"></a>apply() 和 commit() 实现区别</h3><p>commit() 里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">SharedPreferencesImpl.<span class="keyword">this</span>.enqueueDiskWrite(</span><br><span class="line">    mcr, <span class="keyword">null</span> <span class="comment">/* sync write on this thread okay */</span>);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    mcr.writtenToDiskLatch.await();</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">        Log.d(TAG, mFile.getName() + <span class="string">":"</span> + mcr.memoryStateGeneration</span><br><span class="line">                + <span class="string">" committed after "</span> + (System.currentTimeMillis() - startTime)</span><br><span class="line">                + <span class="string">" ms"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">notifyListeners(mcr);</span><br><span class="line"><span class="keyword">return</span> mcr.writeToDiskResult;</span><br></pre></td></tr></table></figure>
+
+<p>在提交内存后，也就是将修改事假到当前键值对map后，生成了一个 MemoryCommitResult 对象，在传给 enqueueDiskWrite() 后，会被传给 Runnable 里执行的 writeToFile(), 紧接着把 Runnable 入队列。</p>
+<p>接下来，入队列后，调用 mcr.writtenToDiskLatch.await()，实现同步，这就是为什么说 commit 是同步的。writtenToDiskLatch 是一个 CountDownLatch，会在 mcr 的 setDiskWriteResult 被调用后，通知阻塞的线程运行，而 setDiskWriteResult 在上面的 writeToFile() 方法内，将改变后的配置写入完成后调用。</p>
+<p>上面是 commit 如何实现同步保存的，下面再看看 apply 如何实现异步的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> MemoryCommitResult mcr = commitToMemory();</span><br><span class="line"><span class="keyword">final</span> Runnable awaitCommit = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                mcr.writtenToDiskLatch.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (DEBUG &amp;&amp; mcr.wasWritten) &#123;</span><br><span class="line">                Log.d(TAG, mFile.getName() + <span class="string">":"</span> + mcr.memoryStateGeneration</span><br><span class="line">                        + <span class="string">" applied after "</span> + (System.currentTimeMillis() - startTime)</span><br><span class="line">                        + <span class="string">" ms"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">QueuedWork.addFinisher(awaitCommit);</span><br><span class="line">Runnable postWriteRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            awaitCommit.run();</span><br><span class="line">            QueuedWork.removeFinisher(awaitCommit);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">SharedPreferencesImpl.<span class="keyword">this</span>.enqueueDiskWrite(mcr, postWriteRunnable);</span><br></pre></td></tr></table></figure>
+
+<p>它同样的先提交改动到内存，返回一个 MemoryCommitResult 的对象，然后在 Runnable 里等待写入文件完成，把这个 Runnable 加入了 QueuedWork。接下来，又在一个 postWriteRunnable 里执行之前那个 awaitCommit， 并从QueuedWork移除刚才设置的它， 为什么呢？</p>
+<p>Android为了让在一个页面设置的配置在其他界面生效采取了一个机制，就是要保证在当前界面不可见时一定要保证配置保存完毕。所以在 ActivityThread 里的处理服务停止和 Activity 停止的地方调用了 QueuedWork 的 waitToFinish, 它里面就会遍历，所有的通过  addFinisher 添加的 Runnable。 而在每个写入操作完成后，当然可以移除了。</p>
+<hr>
+<blockquote>
+<p>官方源码：<br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/SharedPreferencesImpl.java</a><br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/QueuedWork.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/QueuedWork.java</a><br><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ActivityThread.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ActivityThread.java</a><br>墙裂推荐这篇文章，太好了，我得好好学习了<br><a href="http://weishu.me/2016/10/13/sharedpreference-advices/" target="_blank" rel="noopener">请不要滥用SharedPreference</a></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ck9qf7vqm00nz5xoqaethdnjt" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-how-to-write-blog-about-programming" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/how-to-write-blog-about-programming/" class="article-date">
@@ -167,7 +266,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ck9p04txf00o71vlu9awa76yp" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ck9qf7vql00nx5xoq75u76ify" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%99%E4%BD%9C/" rel="tag">写作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
@@ -215,7 +314,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ck9p04trg004u1vluc7eag9qv" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ck9qf7vlb005v5xoq6b12cdim" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AAR/" rel="tag">AAR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
@@ -302,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck9p04trf004q1vlu4gxj784l" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ck9qf7vla005q5xoq2aba6l1o" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Intent/" rel="tag">Intent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PendingIntent/" rel="tag">PendingIntent</a></li></ul>
@@ -361,7 +460,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck9p04tre004m1vlucis4fixw" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/first-month/" data-id="ck9qf7vl8005o5xoq9q6g2etj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E7%85%A7/" rel="tag">日照</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" rel="tag">时间管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
@@ -423,7 +522,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck9p04trd004j1vlu3ocseoys" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/seven-years/" data-id="ck9qf7vl7005j5xoqdx0l55zo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -479,7 +578,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck9p04trb004g1vlufcgr4slv" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/CentOS%E4%B8%8A%E6%97%A0%20Root%20%E5%AE%89%E8%A3%85%20python%20%E7%8E%AF%E5%A2%83/" data-id="ck9qf7vl6005g5xoq1frp7bs9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CPIO/" rel="tag">CPIO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Root/" rel="tag">Root</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
@@ -549,7 +648,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" data-id="ck9p04tr800481vlufay6ey55" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%AF%BB%E5%BF%AB%E9%80%9F%E9%98%85%E8%AF%BB%E6%9C%AF/" data-id="ck9qf7vl400595xoq2aoxglfk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95/" rel="tag">方法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%85%E8%AF%BB/" rel="tag">阅读</a></li></ul>
@@ -636,7 +735,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" data-id="ck9p04tra004c1vlugnkn7sg3" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%B0%88%E6%81%8B%E7%88%B1%E5%B0%B1%E6%98%AF%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" data-id="ck9qf7vl5005c5xoq1u4e8htr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%81%8B%E7%88%B1/" rel="tag">恋爱</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%90%AD%E8%AE%AA/" rel="tag">搭讪</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%81%8A%E5%A4%A9/" rel="tag">聊天</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" rel="tag">自我完善</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%98%AE%E7%90%A6/" rel="tag">阮琦</a></li></ul>
@@ -688,152 +787,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" data-id="ck9p04tr700441vlu4akb6nux" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%9B%8B%E7%96%BC%E7%9A%84Atom/" data-id="ck9qf7vl300565xoq72ww5nxm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%90%90%E4%BA%8B/" rel="tag">琐事</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Kotlin中的习语" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" class="article-date">
-  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/">&lt;翻译&gt; Kotlin中的习语</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Kotlin 作为一个实践导向的语言，当然是更加注重实践，它里面有很多习语，也就是经常使用的特定写法，来让开发更加快捷，同时也形成了 Kotlin 的风格。</p>
-<p>Kotlin 鼓励大家推荐自己喜欢的习语，一个的语言升级有可能会加入，这正好跟 Java 相反，Java 就感觉太死板了。</p>
-<h3 id="闲话少说，我们进入正题"><a href="#闲话少说，我们进入正题" class="headerlink" title="闲话少说，我们进入正题"></a>闲话少说，我们进入正题</h3><h4 id="创建-DTO-POJOs-POCOs"><a href="#创建-DTO-POJOs-POCOs" class="headerlink" title="创建 DTO(POJOs/POCOs)"></a>创建 DTO(POJOs/POCOs)</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span></span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> email: String)</span><br></pre></td></tr></table></figure>
-
-<p>会提供一个带有以下功能的对象：</p>
-<ol>
-<li>为所有属性生成 Getter 方法，如果属性是可变的，也会生成 Setter 方法</li>
-</ol>
-<ul>
-<li>equals()</li>
-<li>hashCode()</li>
-<li>toString()</li>
-<li>copy()</li>
-<li>为所有属性生成 component1(), component2()…</li>
-</ul>
-<h4 id="方法参数的默认参数"><a href="#方法参数的默认参数" class="headerlink" title="方法参数的默认参数"></a>方法参数的默认参数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">(a: <span class="type">Int</span> = <span class="number">0</span>, b: <span class="type">String</span> = <span class="string">""</span>)</span></span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
-
-<p>拥有了方法默认参数，就可以只赋值必须的几个参数，而其余使用默认，是不是很爽。</p>
-<h4 id="过滤一个列表"><a href="#过滤一个列表" class="headerlink" title="过滤一个列表"></a>过滤一个列表</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> positives = list.filter &#123; x -&gt; x &gt; <span class="number">0</span> &#125;</span><br></pre></td></tr></table></figure>
-
-<p>或者更简单一点</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> positives = list.filter &#123; it &gt; <span class="number">0</span> &#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="字符串内插值"><a href="#字符串内插值" class="headerlink" title="字符串内插值"></a>字符串内插值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="string">"Name <span class="variable">$name</span>"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>还有更强大的</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(<span class="string">"Name <span class="subst">$&#123; upperCase(user.Name) &#125;</span>"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>表达式的结果填入字符串</p>
-<h4 id="检查一个实例是某个类的对象"><a href="#检查一个实例是某个类的对象" class="headerlink" title="检查一个实例是某个类的对象"></a>检查一个实例是某个类的对象</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">when</span> (x) &#123;</span><br><span class="line">    <span class="keyword">is</span> Foo -&gt; ...</span><br><span class="line">    <span class="keyword">is</span> Bar -&gt; ...</span><br><span class="line">    <span class="keyword">else</span>   -&gt; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="遍历一个-map"><a href="#遍历一个-map" class="headerlink" title="遍历一个 map"></a>遍历一个 map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ((k, v) <span class="keyword">in</span> map) &#123;</span><br><span class="line">    println(<span class="string">"<span class="variable">$k</span> -&gt; <span class="variable">$v</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>k，v 可以取任意名</p>
-<h4 id="取值范围"><a href="#取值范围" class="headerlink" title="取值范围"></a>取值范围</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">100</span>) &#123; ... &#125;  <span class="comment">// 从 1 到 100</span></span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until <span class="number">100</span>) &#123; ... &#125; <span class="comment">// 从 1 到 99</span></span><br><span class="line"><span class="keyword">for</span> (x <span class="keyword">in</span> <span class="number">2</span>..<span class="number">10</span> step <span class="number">2</span>) &#123; ... &#125; <span class="comment">// 2 4 6 8 10</span></span><br><span class="line"><span class="keyword">for</span> (x <span class="keyword">in</span> <span class="number">10</span> downTo <span class="number">1</span>) &#123; ... &#125;</span><br><span class="line"><span class="keyword">if</span> (x <span class="keyword">in</span> <span class="number">1</span>..<span class="number">10</span>) &#123; ... &#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="只读的列表"><a href="#只读的列表" class="headerlink" title="只读的列表"></a>只读的列表</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list = listOf(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="只读-Map"><a href="#只读-Map" class="headerlink" title="只读 Map"></a>只读 Map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> map = mapOf(<span class="string">"a"</span> to <span class="number">1</span>, <span class="string">"b"</span> to <span class="number">2</span>, <span class="string">"c"</span> to <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="访问一个-Map"><a href="#访问一个-Map" class="headerlink" title="访问一个 Map"></a>访问一个 Map</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(map[<span class="string">"key"</span>])</span><br><span class="line">map[<span class="string">"key"</span>] = value</span><br></pre></td></tr></table></figure>
-
-<p>这个都算，我就没见过 map 不这样操作的</p>
-<h4 id="懒加载属性"><a href="#懒加载属性" class="headerlink" title="懒加载属性"></a>懒加载属性</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> p: String <span class="keyword">by</span> lazy &#123;</span><br><span class="line">    <span class="comment">// compute the string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个才算是棒，在第一次使用的时候初始化属性</p>
-<h4 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> String.<span class="title">spaceToCamelCase</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="string">"Convert this to camelcase"</span>.spaceToCamelCase()</span><br></pre></td></tr></table></figure>
-
-<p>这也是高能，竟然能对那些司空见惯的对象添加新功能，不知道这是好事还是坏事，凡是自由，都需要限制。</p>
-<h4 id="创建单例"><a href="#创建单例" class="headerlink" title="创建单例"></a>创建单例</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> Resource &#123;</span><br><span class="line">    <span class="keyword">val</span> name = <span class="string">"Name"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上一篇文章，已经和 Java 的单例对比了，简洁！！</p>
-<h4 id="判断非-null-的快捷方式"><a href="#判断非-null-的快捷方式" class="headerlink" title="判断非 null 的快捷方式"></a>判断非 null 的快捷方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> files = File(<span class="string">"Test"</span>).listFiles()</span><br><span class="line"></span><br><span class="line">println(files?.size)</span><br></pre></td></tr></table></figure>
-
-<p>判断 files 如果非 null 则返回 size 的值，否则返回 null</p>
-<h4 id="判断非-null-以及-null-情况的处理方式-的快捷方式"><a href="#判断非-null-以及-null-情况的处理方式-的快捷方式" class="headerlink" title="判断非 null 以及 null 情况的处理方式 的快捷方式"></a>判断非 null 以及 null 情况的处理方式 的快捷方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> files = File(<span class="string">"Test"</span>).listFiles()</span><br><span class="line"></span><br><span class="line">println(files?.size ?: <span class="string">"empty"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>判断 files 如果非 null 则返回 size 的值，否则返回 empty</p>
-<h4 id="在判断是-null-时执行一个语句"><a href="#在判断是-null-时执行一个语句" class="headerlink" title="在判断是 null 时执行一个语句"></a>在判断是 null 时执行一个语句</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"><span class="keyword">val</span> email = <span class="keyword">data</span>[<span class="string">"email"</span>] ?: <span class="keyword">throw</span> IllegalStateException(<span class="string">"Email is missing!"</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="判断输入不是-null-时执行"><a href="#判断输入不是-null-时执行" class="headerlink" title="判断输入不是 null 时执行"></a>判断输入不是 null 时执行</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span>?.let &#123;</span><br><span class="line">    ... <span class="comment">// execute this block if not null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="把可能为空的变量编程不能为空的变量"><a href="#把可能为空的变量编程不能为空的变量" class="headerlink" title="把可能为空的变量编程不能为空的变量"></a>把可能为空的变量编程不能为空的变量</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> mapped = <span class="keyword">data</span>?.let &#123; transformData(it) &#125; ?: defaultValueIfDataIsNull</span><br></pre></td></tr></table></figure>
-
-<h4 id="when-语句-作为一个表达式返回"><a href="#when-语句-作为一个表达式返回" class="headerlink" title="when 语句 作为一个表达式返回"></a>when 语句 作为一个表达式返回</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">transform</span><span class="params">(color: <span class="type">String</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">when</span> (color) &#123;</span><br><span class="line">        <span class="string">"Red"</span> -&gt; <span class="number">0</span></span><br><span class="line">        <span class="string">"Green"</span> -&gt; <span class="number">1</span></span><br><span class="line">        <span class="string">"Blue"</span> -&gt; <span class="number">2</span></span><br><span class="line">        <span class="keyword">else</span> -&gt; <span class="keyword">throw</span> IllegalArgumentException(<span class="string">"Invalid color param value"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="try-catch-也可以作为表达式，有返回值"><a href="#try-catch-也可以作为表达式，有返回值" class="headerlink" title="try/catch 也可以作为表达式，有返回值"></a>try/catch 也可以作为表达式，有返回值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">try</span> &#123;</span><br><span class="line">        count()</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: ArithmeticException) &#123;</span><br><span class="line">        <span class="keyword">throw</span> IllegalStateException(e)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Working with result</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="if-语句也可以作为表达式，-有返回值"><a href="#if-语句也可以作为表达式，-有返回值" class="headerlink" title="if 语句也可以作为表达式， 有返回值"></a>if 语句也可以作为表达式， 有返回值</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">(param: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">if</span> (param == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="string">"one"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (param == <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="string">"two"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="string">"three"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="对于返回值为-Unit-的函数，可以使用构造器的风格调用"><a href="#对于返回值为-Unit-的函数，可以使用构造器的风格调用" class="headerlink" title="对于返回值为 Unit 的函数，可以使用构造器的风格调用"></a>对于返回值为 Unit 的函数，可以使用构造器的风格调用</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">arrayOfMinusOnes</span><span class="params">(size: <span class="type">Int</span>)</span></span>: IntArray &#123;</span><br><span class="line">    <span class="keyword">return</span> IntArray(size).apply &#123;</span><br><span class="line">      fill(-<span class="number">1</span>)</span><br><span class="line">      ... <span class="comment">// 其他配置</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在我才知道，这个 apply 的高能，它就是为了方便对一个对象做一些配置，来个更好的栗子：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">var</span> name: String, <span class="keyword">var</span> age: <span class="built_in">Int</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">wearHat</span><span class="params">()</span></span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">wearCoat</span><span class="params">()</span></span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">....</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> goodMan = Person(<span class="string">"Jin"</span>, <span class="number">27</span>).apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="单一表达式的函数"><a href="#单一表达式的函数" class="headerlink" title="单一表达式的函数"></a>单一表达式的函数</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">theAnswer</span><span class="params">()</span></span> = <span class="number">42</span></span><br></pre></td></tr></table></figure>
-
-<p>这个栗子也太简单了，因为 Kotlin 里 If 语句， When 语句， try/catch 语句 都是表达式，所以你懂得。</p>
-<h4 id="使用-“with”-在同一个对象上调用多个方法"><a href="#使用-“with”-在同一个对象上调用多个方法" class="headerlink" title="使用 “with” 在同一个对象上调用多个方法"></a>使用 “with” 在同一个对象上调用多个方法</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Turtle</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">penDown</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">penUp</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">turn</span><span class="params">(degrees: <span class="type">Double</span>)</span></span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">forward</span><span class="params">(pixels: <span class="type">Double</span>)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> myTurtle = Turtle()</span><br><span class="line">with(myTurtle) &#123; <span class="comment">//draw a 100 pix square</span></span><br><span class="line">    penDown()</span><br><span class="line">    <span class="keyword">for</span>(i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">4</span>) &#123;</span><br><span class="line">        forward(<span class="number">100.0</span>)</span><br><span class="line">        turn(<span class="number">90.0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    penUp()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>感觉这和前边那个 apply 类似，都是在一个代码块里，this变成了我们指定的一个对象。不过使用 with 更有过程编程的感觉。</p>
-<h4 id="Java7-的-try-with-resources-在-Kotlin-里也有类似的实现"><a href="#Java7-的-try-with-resources-在-Kotlin-里也有类似的实现" class="headerlink" title="Java7 的 try-with-resources 在 Kotlin 里也有类似的实现"></a>Java7 的 try-with-resources 在 Kotlin 里也有类似的实现</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> stream = Files.newInputStream(Paths.<span class="keyword">get</span>(<span class="string">"/some/file.txt"</span>))</span><br><span class="line">stream.buffered().reader().use &#123; reader -&gt;</span><br><span class="line">    println(reader.readText())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>而 Java7 的 try-with-resource 是这样的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (BufferedReader br =</span><br><span class="line">                   <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="keyword">return</span> br.readLine();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>还是 Kotlin 的比较好看</p>
-<h4 id="对于一个需要泛型类型信息的泛型函数的方便方式"><a href="#对于一个需要泛型类型信息的泛型函数的方便方式" class="headerlink" title="对于一个需要泛型类型信息的泛型函数的方便方式"></a>对于一个需要泛型类型信息的泛型函数的方便方式</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  public final class Gson &#123;</span></span><br><span class="line"><span class="comment">//     ...</span></span><br><span class="line"><span class="comment">//     public &lt;T&gt; T fromJson(JsonElement json, Class&lt;T&gt; classOfT) throws JsonSyntaxException &#123;</span></span><br><span class="line"><span class="comment">//     ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;<span class="keyword">reified</span> T: Any&gt;</span> Gson.<span class="title">fromJson</span><span class="params">(json: <span class="type">JsonElement</span>)</span></span>: T = <span class="keyword">this</span>.fromJson(json, T::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br></pre></td></tr></table></figure>
-
-<p>我对泛型还真是不太了解，暂不评价，我该去学习泛型了。</p>
-<h4 id="一个可能为-null-的-Boolean-也能直接被-if-条件判断"><a href="#一个可能为-null-的-Boolean-也能直接被-if-条件判断" class="headerlink" title="一个可能为 null 的 Boolean 也能直接被 if 条件判断"></a>一个可能为 null 的 Boolean 也能直接被 if 条件判断</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> b: <span class="built_in">Boolean</span>? = ...</span><br><span class="line"><span class="keyword">if</span> (b == <span class="literal">true</span>) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// `b` is false or null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>以下是一些缩写，有兴趣可以 wiki 一下：</p>
-<ul>
-<li>DTO – Data Transfer Object</li>
-<li>POJO – Plain old Java Object</li>
-<li>POCO – Plain Old CLR Object</li>
-<li>CLR – Comman Language Runtime</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Kotlin%E4%B8%AD%E7%9A%84%E4%B9%A0%E8%AF%AD/" data-id="ck9p04tr500411vluaye0a3i2" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li></ul>
 
     </footer>
   </div>
@@ -899,6 +856,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Bitmap%E4%BA%86%E8%A7%A3/">每天一点点音视频_Bitmap了解</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
           </li>
         
@@ -912,10 +873,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_OpenGL_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
           </li>
         
       </ul>

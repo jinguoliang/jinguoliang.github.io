@@ -71,6 +71,109 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-the-way-to-opengl-4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-4/" class="article-date">
+  <time datetime="2017-03-06T00:00:00.000Z" itemprop="datePublished">2017-3-6</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-4/">OpenGL登堂入室之路4-画三个点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们画了一个点，两个点，接着画三个点，有些小伙伴可能想到要画三角形了，的确如此，而且是带颜色的三角形。</p>
+<p>本文知识点：</p>
+<ol>
+<li>画三角形</li>
+<li>给每个点设置不同的颜色</li>
+<li>初步了解GLSL，连个变量的两种修饰符</li>
+</ol>
+<p>在开始之前，希望小伙伴，自己加上第三个点，我相信你能做到的。</p>
+<p>好了吗？好，按找题目所表达的，今天完成任务了，小伙伴出去玩吧，哈哈</p>
+<p>但是我们要画三角形呀，三角形呀</p>
+<p>好，告诉你，只要修改一个地方，我觉的你也能猜到，不过我偏偏告诉你，就不给你留自己思考的时间。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, <span class="number">0</span>, <span class="number">3</span>);  </span><br></pre></td></tr></table></figure>
+<p>or  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, <span class="number">0</span>, <span class="number">3</span>);  </span><br></pre></td></tr></table></figure>
+<p>or:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glDrawArrays(GLES20.GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>它们都是告诉OpenGL绘制三角形，只不过绘制方式有区别，具体什么区别，我们会在下一篇绘制多个三角形的时候研究，因为一个的时候看不出来。(一不小心下一预告就出来了)</p>
+<p>画三角形，轻松愉快就完成了，三角赢得颜色是cyan，这个颜色我挺喜欢，最近才知道它原来是有，绿色和蓝色混合成的，而绿色和蓝色我都很喜欢，这叫什么呢？我们接下来要将给三个点设置不同的颜色了，在颜色着色器代码里，还记得吗？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">String</span> FRAGMENT_SHADER = <span class="string">"precision mediump float;\n"</span></span><br><span class="line">    + <span class="string">"void main() &#123;\n"</span></span><br><span class="line">    + <span class="string">"  gl_FragColor = vec4(1,0,1,1);\n"</span></span><br><span class="line">    + <span class="string">"&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，vec4(1,0,1,1) 是一个四维向量，分别为argb, 着色器是对每个点都作相同的处理的程序，所以就不能分别给每个点设置不同的颜色了，那怎么办呢？<br>我们的顶点位置数据就是三个点分别设置的呀，对了，也要传进来<br>怎么传呢，照葫芦画瓢，但是这着色器语言实在是有点似曾相识又陌生，像C却不是C，不要着急，我们一点点的学习，立马学一点：</p>
+<blockquote>
+<p>vec4(1,0,1,1)  是一个四维的向量，还有vec3(三维向量)，vec2(二位向量)</p>
+</blockquote>
+<p>我们看看顶点着色器：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"attribute vec4 vPosition;\n"</span></span><br></pre></td></tr></table></figure>
+
+<p>对应着，在OpenGL里是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mPositionHandle = GLES20.glGetAttribLocation(mProgram, <span class="string">"vPosition"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们得到一个代表vPosition的东西mPositionHandle， 然后对它做出里，那是不是可以也声明一个类似的东西，在OpenGL取得它的代表，然后向它传递数据呢？当然是可以的。<br>我们先来看看那个声明语句，它是声明了一个变量vPosition，它的类型是vec4，这我们知道，为什么前面还有一个attribute， 看这个函数glGetAttribLocation，有Attrib，尽管它不完整，我们也知道它就是attribute。什么意思呢？<br>看这里：<br><a href="https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.1.20.pdf" target="_blank" rel="noopener">https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.1.20.pdf</a><br>全英文，那要不看这里：<br><a href="https://my.oschina.net/sweetdark/blog/208024" target="_blank" rel="noopener">https://my.oschina.net/sweetdark/blog/208024</a></p>
+<p>attribute 修饰的变量，有三个特点</p>
+<ol>
+<li>从OpenGL里传入</li>
+<li>只读</li>
+<li>只能在顶点着色器出现，颜色着色器里就不能声明了</li>
+</ol>
+<p>第一点，我们见识了，第二点我们先记住啦，第三点好像打破了我们美好的愿望呀，我们想在颜色着色器里使用呀，怎么办呢？</p>
+<p>还要引入另一个变量的修饰符 varying<br>varying 有两个特点：</p>
+<ol>
+<li>在顶点着色器里可读写，在颜色着色器里只读</li>
+<li>顶点着色器和颜色着色器，都声明相同名字的变量，从而可以将数据从顶点着色器传给颜色着色器</li>
+</ol>
+<p>了解了这两个修饰符，上代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String VERTEX_SHADER = <span class="string">"attribute vec4 vPosition;\n"</span></span><br><span class="line">    + <span class="string">"varying vec4 vColor;\n"</span></span><br><span class="line">    + <span class="string">"void main() &#123;\n"</span></span><br><span class="line">    + <span class="string">"  vColor = vPosition;\n"</span></span><br><span class="line">    + <span class="string">"  gl_Position = vPosition;\n"</span></span><br><span class="line">    + <span class="string">"  gl_PointSize = 100.0;\n"</span></span><br><span class="line">    + <span class="string">"&#125;"</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FRAGMENT_SHADER = <span class="string">"precision mediump float;\n"</span></span><br><span class="line">    + <span class="string">"varying vec4 vColor;\n"</span></span><br><span class="line">    + <span class="string">"void main() &#123;\n"</span></span><br><span class="line">    + <span class="string">"  gl_FragColor = vColor;\n"</span></span><br><span class="line">    + <span class="string">"&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>首先我们看到，两端代码里都有这一句：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">varying vec3 vColor</span><br></pre></td></tr></table></figure>
+
+<p>对，它就是在两个着色器之间传递颜色数据的变量。</p>
+<p>另外还有两句是赋值语句，我相信你会明白的, 这里我们为了简单起见，直接把顶点的坐标作为颜色数据，运行后你可以看到三角形三个顶点分别是，黑色（0,0,0)，红色(0,0.5,0)，黄色(0.5,0.5,0), 让人惊奇的是三角形竟然被填充了，三个点之间颜色渐变，还挺漂亮，是吧？这是OpenGL的特性，这里的原理嘛，是这样：</p>
+<blockquote>
+<p>OpenGL在渲染三角形图像时，会作一步一步的处理，有好多步，我们现在只见识了顶点着色器和颜色着色器，它们都是这一步一步处理中要执行的。在像素化阶段，通常会生成比顶点更多的像素，每个像素就会挨个传递自己数据到顶点着色器，而它们的坐标是它们基于三角形中的位置的。不仅位置坐标基于像素在三角形中的位置，颜色也同样，比如我们有一个线段，A顶点的颜色为绿色，B顶点的颜色为红色，则在线段上距离A 20%的点的颜色值将会是80%的绿色，20%的红色</p>
+</blockquote>
+<p>加餐：<br>我们这一次，修改了着色器语言，对它不熟悉，而且也没有ide提醒，所以很容易出错，而且呢，出错也没有log的，简直无从下手呀! 其实OpenGL提供了打印编译错误的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glLinkProgram(mProgram); </span><br><span class="line">IntBuffer result = IntBuffer.allocate(<span class="number">1</span>);</span><br><span class="line">GLES20.glGetProgramiv(mProgram, GLES20.GL_LINK_STATUS, result);</span><br><span class="line">Log.e(TAG, <span class="string">"loadProgram: "</span> + result.get(<span class="number">0</span>));</span><br><span class="line"><span class="keyword">if</span> (result.get(<span class="number">0</span>) == <span class="number">1</span>) &#123;</span><br><span class="line">    Log.e(<span class="string">"glGetProgramInfoLog"</span>, GLES20.glGetProgramInfoLog(mProgram));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在glLinkProgram后，调用了glGetProgramiv，它会获取到着色器程序的编译状态，然后又用glGetProgramInfoLog，获取到了编译log，这样，我们就可以快乐的找错误了。<br>再多说一点，glGetProgramiv的第三个参数使用了IntBuffer，因为OpenGL低层是C++，按照它的风格，会把结果从参数返回来，我们适应一下吧。IntBuffer以后会讲到</p>
+<hr>
+<p>好的，over</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-4/" data-id="ck9qf7vka003b5xoq8u936xtv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-the-way-to-opengl-3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/the-way-to-opengl-3/" class="article-date">
@@ -149,7 +252,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-3/" data-id="ck9p04tqe00211vlu24dt6khs" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-3/" data-id="ck9qf7vk800385xoq8ore5tdh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -229,7 +332,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-2/" data-id="ck9p04tqc001y1vlugs81gc92" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-2/" data-id="ck9qf7vk700345xoq1iup7sno" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -308,7 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ck9p04tqb001u1vlu33ha8zh2" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ck9qf7vk600315xoq7jlebd9u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -362,7 +465,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ck9p04tqa001s1vlu6j0x7apd" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ck9qf7vk4002y5xoqe9r59llo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -442,7 +545,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ck9p04txd00o61vlu6ncggv1n" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ck9qf7vqk00nw5xoq5yqyhh21" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -519,7 +622,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ck9p04tqa001q1vluejd565td" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ck9qf7vjy002w5xoq2r584o1h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android-Studio/" rel="tag">Android Studio</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jekyll/" rel="tag">Jekyll</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VIM/" rel="tag">VIM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zsh/" rel="tag">zsh</a></li></ul>
@@ -565,7 +668,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/flow/" data-id="ck9p04tq7001g1vlu20ktdmk2" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/flow/" data-id="ck9qf7vjj002r5xoq3tjca759" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BF%83%E6%B5%81/" rel="tag">心流</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6/" rel="tag">读书</a></li></ul>
@@ -619,7 +722,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ck9p04tq8001l1vlu9r0f4jr2" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ck9qf7vjn002t5xoq29o89asd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
@@ -679,83 +782,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ck9p04tq6001d1vlugzgtgb66" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-一次旅行" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E4%B8%80%E6%AC%A1%E6%97%85%E8%A1%8C/" class="article-date">
-  <time datetime="2016-01-17T00:00:00.000Z" itemprop="datePublished">2016-1-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E4%B8%80%E6%AC%A1%E6%97%85%E8%A1%8C/">一个旅行</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>此刻，一个人在这如画的风景之中，冥想。</p>
-<p>一年过去了，梦想，还在，近了，但却模糊。这应该算是第一次出来旅游，……，赶时间，切入正题。</p>
-<p>毕业一年多了，人生才刚刚开始，我们应该开一个好头，每年都来总结一下，好让自己感受到进步，安慰一下脆弱的内心，同时，也忏悔一下，感恩一下，那些人，那些事。</p>
-<p>2015过去了！2016来了！2016来了！</p>
-<p>流水账启动：</p>
-<p>去年十月份，转入安卓应用开发，当时是一种妥协，由一心往硬件发展，转向应用开发。但是“妥协，是因为有更在乎的”，最根本的，我要创造，硬件更有感觉，摸得着看得见，但是我学的软件，我在软件方面更专长。</p>
-<p>从索尼出来的时候，找工作时有三个条件：小公司（之前算是在大公司待过了），非外包（之前确实是外包），应用开发（之前算是系统开发了），并且带着一个伟大的理想，我要去做有广大用户的软件，有一天我能看到别人在使用（到现在都没实现）。</p>
-<p>第一份第二份工作跟了同一个CEO,公司都倒闭了。我三个月刚从容下来，倒闭了，三个月，刚要沉淀下来，倒闭了，想想有点遗憾。但是呢，身处互联网时代，刚出来，这么早就沉淀下去，肯定会被压成页岩，所以要感恩，感恩CEO，感恩CTO。</p>
-<p>第一份工作让我了解了阅读器的核心技术，至于是什么，机密。第二份工作，让我分清了O2O和P2P,认识了几个朋友。</p>
-<p>就这样，我深深的体会到了小创业公司是什么样的，于是我决心去大公司，这次找工作一定要从容点，淡定点，好好选一个大公司。</p>
-<p>万万没想到，在脉脉上看到一个百度的招聘信息，于是就这么意外的得到了一次进百度的机会，然后就幸运的进来了，非常感谢岩哥。</p>
-<p>进百度感受怎么样，一个字，累，加班严重，但是这算啥，咱刚出来，就得摸爬滚打的练，咱还想四十岁退休，去夏威夷晒着太阳敲代码呢！</p>
-<p>工作就说这些，成长是肯定的，但也有遗憾，比如几套代码都没有到达优化阶段，没有将自己的所学所用都积累下来，没有专心的去研究通透一个大的技术，比如View视图系统，不过，那又怎样，我们才刚刚开始嘛！</p>
-<p>下面到了生活思想价值观方面了。<br>宗教，一个陌生又熟悉的概念，陌生更多一些。信仰，一个熟悉又陌生的概念，不过熟悉更多一点。信仰包括宗教。啊，sorry,这个问题还是无法说得清楚。<br>但是，价值观是更底层的，价值观从没有变过，而且也是值得坚持的，因为它很好，因为它跟钱总不是太近，跟物质总不是太近。</p>
-<p>以上都是在旅游前在家写的，是一种理想的情况以下是现实。</p>
-<p>我计划了一个元旦旅行，路线是从北京做高铁到济南坐飞机到昆明坐飞机到深圳坐飞机到天津坐火车到北京，整个过程顺顺利利完成，为这点点赞</p>
-<p>在家的时候我计划要去哪去哪，但是到了昆明时，蒙了，我心想我来干什么。面对一个陌生的地方，陌生的时间点，还真是茫然，我本想去公园转转，但是还是没淡定下来，然后打了个车,一块的还有另一个航班改时间的人，路上司机很好，给各种介绍，介绍住长途客运站比较方便，给介绍了一个路线，于是我满心感谢呀，最后来到一个旅馆住宿，旅馆张口100，我本可以拒绝，但是没有，于是住了一晚，是那种泡沫板房，有一种潮潮的味道，它有多差我都能忍，关键有其他问题，后面说。</p>
-<p>住了一晚，我从美团把第二晚上的房子定了，第二天一大早，我就出门，去了石林，很棒！！很累！！</p>
-<p>下午回到长途客运站，订的旅馆的房东去接的，很热情，又给介绍旅游景点，我跟他说了我第一晚的情况，他说在外面，凡是别人帮忙的，都会有回扣车站要是有个人领你去吃饭，可能要10块钱，如果你自己去就可能8块。这个房东的确很好，他的旅馆在美团评价挺高的。</p>
-<p>第三天，下雨，睡到中午，然后吃饭，去市里玩，没地方可去，就去了动物园，我还是第一次去动物园。但是却相当不爽，下雨淋成了落汤鸡。</p>
-<p>然后赶往飞机场，想去坐地铁，找了好久找到了，发现昆明只有三个地铁线，1号2号连着，6号通往机场，竟然不连着，这还真的没想到，于是走出去找公交，等到了长途客运站，七点多点，6号线没了，我都服气了</p>
-<p>这就是我的旅行。</p>
-<p>为什么有这个旅行？其实有很多原因:</p>
-<p>我有假期，</p>
-<p>毕业出来快两年了，说好的旅行呢？</p>
-<p>答应小伙伴的邀请的行动呢？</p>
-<p>还没坐过飞机！</p>
-<p>看《心花路放》留下的后遗症……</p>
-<p>接下来，就飞往深圳。去找小伙伴了。</p>
-<p>来到深圳，感觉真心特别好，冬天，植物却茂盛的像夏天一样，路边或者是椰子，或者是芭蕉，或者是棕榈，反正是棒棒哒，公园里各种北方没有的树，小郭挨个都能说上名来，真是佩服。</p>
-<p>晚上，租了个床位就住下了，两室一厅，住了二十来个人，竟然很多人是长住的，这又让我服了。</p>
-<p>接下来，就是各种逛，各种吃，在小明和小郭的带领下把想吃的水果都吃了个遍，最后下定结论，还是苹果香蕉橘子桃好吃</p>
-<p>这俩家伙有点太过分，让我玩着，吃着，喝着，还得拿着上海的小伙伴们，就这个标准就行</p>
-<p>在昆明和在深圳两地的处境，真心感受到，在外靠朋友，如果陌生的地方有个熟悉的人，是多么好</p>
-<p>其实旅行是一种心态，本想升华一下……</p>
-<p>题外话:其实我们都很优秀，只是不喜欢装饰（有点心虚，已经学着去装了）</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%B8%80%E6%AC%A1%E6%97%85%E8%A1%8C/" data-id="ck9p04tq400191vlugfy6enfj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ck9qf7vjh002q5xoqbg46bwn4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -822,6 +849,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Bitmap%E4%BA%86%E8%A7%A3/">每天一点点音视频_Bitmap了解</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
           </li>
         
@@ -835,10 +866,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_OpenGL_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/">每天一点点_frame_pacing</a>
           </li>
         
       </ul>
