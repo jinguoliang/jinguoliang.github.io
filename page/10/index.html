@@ -71,14 +71,14 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-被逼死的程序员" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-17-Kotlin的Any" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" class="article-date">
-  <time datetime="2017-09-15T00:00:00.000Z" itemprop="datePublished">2017-9-15</time>
+    <a href="/17-Kotlin%E7%9A%84Any/" class="article-date">
+  <time datetime="2017-09-16T00:00:00.000Z" itemprop="datePublished">2017-9-16</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a>
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
   </div>
 
   </div>
@@ -89,7 +89,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/">被逼死的程序员</a>
+      <a class="article-title" href="/17-Kotlin%E7%9A%84Any/">Kotlin 的 Any</a>
     </h1>
   
 
@@ -97,20 +97,67 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近一个引起媒体关注的事件是一个程序员被前妻逼死。这个程序员是个 IOS 开发者，做了一个应用，收入不少，他开了公司，这个前妻，向他要钱，恐吓，最终导致这个程序员无路可走，只得自杀。</p>
-<p>我一向不喜欢凑热闹的，但是这几天我憋得不行，我不想说那女的有多坏，多可恶，并不是说我接受了这种事情，见怪不怪了，而是这个程序员的自杀，让我再一次认识到，人的思想的差距有多大。</p>
-<p>尽管我不知道，死亡多么的可怕，死后会怎样，但是，一个正常的人很难去自杀的，因为人类长久的进化，将那些不畏死亡想死亡的基因一次一次的筛选，这时间如此长，筛选次数如此之多，应该让人类完全没有这中想法才对。当然，我也听说过，其他一些自杀的，但是更多听说的是，有些人有心理疾病，他们会自虐，自虐这种基因会流传下来，因为自虐并不会死亡，而只有死亡是筛选边界。</p>
-<p>今天看了一个视频，是台湾的一个重症专家，他说他很适合谈生死，因为他看了太多的死亡。他的一个观点让我印象深刻，人生的意义是什么呢？ 他说，追寻这个问题的答案就是这个问题的答案。说的很绕口，意思是人生是一个过程，而这个过程里，不断去思考一个问题。</p>
-<p>这个被逼死的程序员让我很痛苦，哀其不幸，怒其不争。那个女人恐吓他偷税扣税，灰色收入，为什么不去自首坦白，这一切最坏的结果，没收全部资产，蹲监狱几年，出来依然一条好汉。难道舍不得钱？</p>
-<p>不去揣测其中的原因，我们还是应该去追求那个问题的答案，人生的意义到底是什么？如果一个人如果不想活了，多半是他找到。</p>
+        <p>今天，我们来看看 Kotlin 里的 Any，它相当于 Java 里的 Object，所有其他的类都默认继承了它。Kotlin 比 Java 的面向对象更彻底， Java 还有基础类型，它们没有继承 Object， Java 的方法也不是对象，而 Kotlin 的方法是对象。</p>
+<p>Any 的构造函数就不多说，就是能构造出它的对象，</p>
+<h3 id="Any-的函数"><a href="#Any-的函数" class="headerlink" title="Any 的函数"></a>Any 的函数</h3><ol>
+<li>equals</li>
+<li>hashCode， 唯一标示这个对象</li>
+<li>toString</li>
+</ol>
+<p>这三个函数跟 Object 里的相同，这里不再详述</p>
+<h3 id="Any-的扩展属性"><a href="#Any-的扩展属性" class="headerlink" title="Any 的扩展属性"></a>Any 的扩展属性</h3><p>javaClass 代表一个对象的运行时 java class（当然只在 JVM 上有这个属性）</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> &lt;T : Any&gt; T.javaClass: Class&lt;T&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个写法还是需要解释一下的，首先，扩展函数的定义形式是这样的，例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> String.wordsCount: <span class="built_in">Int</span></span><br><span class="line">  <span class="keyword">get</span>() &#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>而上面 javaClass 的定义，用到了类型参数，我想说，这真的是太牛逼了，类型参数，指定每个所有继承 Any 的 T 都有 javaClass 这个属性，并且 javaClass 得到的是 T 这个类的 java 运行时 class</p>
+<h3 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h3><h4 id="also"><a href="#also" class="headerlink" title="also"></a>also</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">also</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 会接受一个代码块，这个代码块以 this 为参数，并且返回 this。</p>
+<p>扩展函数跟扩展属性同样使用了类型参数，不过，这样算是 Any 的扩展函数吗？ 当然，一切解释权归官方所有，官方认为是就是了。</p>
+<p>我们知道了扩展函数的好处，扩展函数可以使用类型参数作为 Receiver，从而在子类上调用该扩展函数时，我们拿到的 Receiver 是子类。</p>
+<h4 id="also-和-apply"><a href="#also-和-apply" class="headerlink" title="also 和 apply"></a>also 和 apply</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">apply</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">Unit</span>)</span></span>: T</span><br></pre></td></tr></table></figure>
+
+<p>also 和 apply 的作用可以说是完全一样，它们都可以执行一个代码块，并且返回 Receiver。但是它们有区别的，传入 also 的代码块，将 Receiver 作为参数，而 apply 将 apply 的 Receiver 作为代码块的 Receiver。文字还是太苍白，让我们举个栗子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> john = Person().apply &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> lili = Person().also &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就清晰明了了，also 将自己的 Receiver 作为代码块的参数，而当代码块但参数时，可以不写出来，默认这个参数的名字叫 it</p>
+<p>对于我来说，它们在语意上，apply 的代码块内更像过程编程，描述一些有顺序的行为，而 also 的代码块内更像面向对象，给这个 it 发信息，设置一些状态。</p>
+<h4 id="let-和-run"><a href="#let-和-run" class="headerlink" title="let 和 run"></a>let 和 run</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">let</span><span class="params">(block: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: R</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> T.<span class="title">run</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">R</span>)</span></span>: R</span><br></pre></td></tr></table></figure>
+
+<p>let/run 的差别 跟 also/apply 的差别相同，还是再说一遍，let 将自己的 Receiver 作为 代码块的参数 而 run 将自己的 Receiver 作为代码块的 Receiver。let/run 与 also/apply 的区别在于返回值， 之前提到，also/apply 的返回值是它们的 Receiver，而 let/run 的返回值是代码块表达式的最后返回值。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result1 = Calculator().run &#123;</span><br><span class="line">   addOne(<span class="number">23</span>)</span><br><span class="line">   addAnother(<span class="number">43</span>)</span><br><span class="line">   compute()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> result2 = Calculator().let &#123;</span><br><span class="line">   it.addOne(<span class="number">23</span>)</span><br><span class="line">   it.addAnother(<span class="number">53</span>)</span><br><span class="line">   it.compute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我发现在语言表达上，它们两个也还是有区别的，run 同 apply 运行一些指令，有顺序的运行。而 let 让它做一些动作，最后，获取一个结果</p>
+<h4 id="takeIf-和-takeUnless"><a href="#takeIf-和-takeUnless" class="headerlink" title="takeIf 和 takeUnless"></a>takeIf 和 takeUnless</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeIf</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">takeUnless</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: T?</span><br></pre></td></tr></table></figure>
+
+<p>这两个扩展函数都是 kotlin 1.1 版本添。它们都会接受一个断言，在断言返回 true 时 takeIf 返回自己，否则 返回 null；takeUnless 与之相反，在断言返回 false 时返回自己，在断言返回 true 时返回 null。上代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> index = <span class="string">"Kotlin"</span>.indexOf(<span class="string">'K'</span>).takeIf &#123; it &gt; <span class="number">0</span> &#125; ?: <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> personName = person?.Name ?: <span class="string">"no name"</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子里将 takeIf 与 ?. 做了对比，它们都提供了一个默认值的形式。只不过 takeIf/taskUnless 更普遍，可以自己定义条件来决定是否使用默认值。</p>
+<h4 id="to"><a href="#to" class="headerlink" title="to"></a>to</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">infix</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;A, B&gt;</span> A.<span class="title">to</span><span class="params">(that: <span class="type">B</span>)</span></span>: Pair&lt;A, B&gt;</span><br></pre></td></tr></table></figure>
+
+<p>to 比较有趣，它是一个中缀运算符，也就是类似这个样子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person1 = Person().run &#123;</span><br><span class="line">    wearHat()</span><br><span class="line">    wearCoat()</span><br><span class="line">    name to <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person2 = Person().let &#123;</span><br><span class="line">    it.wearHat()</span><br><span class="line">    it.wearCoat()</span><br><span class="line">    it.name to it</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person = mapOf(person1, person2)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，我们在 run/let 分别使用 to 构造了两个 Pair，而 Pair 正好可以作为 map 的键值对，于是我们构造了一个包含两个人的 map。</p>
+<h4 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString"></a>toString</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Any?.<span class="title">toString</span><span class="params">()</span></span>: String</span><br></pre></td></tr></table></figure>
+
+<p>这个 toString 是一个扩展函数，它并没有比之前那个 toString() 函数高级多少，只是 Receiver 是 Any？ 也就是在 Receiver 为 null 的时候也会调用 toString()。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> name = person.toString()</span><br></pre></td></tr></table></figure>
+
+<p>我们不管 person 到底是不是 null 了。还是为了解决 Java 中的 NullPointerException 的问题。</p>
+<hr>
+<p>还有几个 JavaScript 相关的扩展函数，我们这里没有列出来，如果需要请自行查看。类似了。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" data-id="ck9yykel3003r3fmqgbh96iud" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/17-Kotlin%E7%9A%84Any/" data-id="cka0gx1ih003o3lrm4imihdlo" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%82%B9/" rel="tag">热点</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E6%AD%BB/" rel="tag">生死</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag">程序员</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%84%8F/" rel="tag">语意</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag">语法</a></li></ul>
 
     </footer>
   </div>
@@ -168,10 +215,58 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ck9yykel5003u3fmqe75dfrah" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="cka0gx1if003k3lrmgr8o3buv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E8%AF%AD/" rel="tag">习语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-被逼死的程序员" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" class="article-date">
+  <time datetime="2017-09-15T00:00:00.000Z" itemprop="datePublished">2017-9-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/">被逼死的程序员</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近一个引起媒体关注的事件是一个程序员被前妻逼死。这个程序员是个 IOS 开发者，做了一个应用，收入不少，他开了公司，这个前妻，向他要钱，恐吓，最终导致这个程序员无路可走，只得自杀。</p>
+<p>我一向不喜欢凑热闹的，但是这几天我憋得不行，我不想说那女的有多坏，多可恶，并不是说我接受了这种事情，见怪不怪了，而是这个程序员的自杀，让我再一次认识到，人的思想的差距有多大。</p>
+<p>尽管我不知道，死亡多么的可怕，死后会怎样，但是，一个正常的人很难去自杀的，因为人类长久的进化，将那些不畏死亡想死亡的基因一次一次的筛选，这时间如此长，筛选次数如此之多，应该让人类完全没有这中想法才对。当然，我也听说过，其他一些自杀的，但是更多听说的是，有些人有心理疾病，他们会自虐，自虐这种基因会流传下来，因为自虐并不会死亡，而只有死亡是筛选边界。</p>
+<p>今天看了一个视频，是台湾的一个重症专家，他说他很适合谈生死，因为他看了太多的死亡。他的一个观点让我印象深刻，人生的意义是什么呢？ 他说，追寻这个问题的答案就是这个问题的答案。说的很绕口，意思是人生是一个过程，而这个过程里，不断去思考一个问题。</p>
+<p>这个被逼死的程序员让我很痛苦，哀其不幸，怒其不争。那个女人恐吓他偷税扣税，灰色收入，为什么不去自首坦白，这一切最坏的结果，没收全部资产，蹲监狱几年，出来依然一条好汉。难道舍不得钱？</p>
+<p>不去揣测其中的原因，我们还是应该去追求那个问题的答案，人生的意义到底是什么？如果一个人如果不想活了，多半是他找到。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E8%A2%AB%E9%80%BC%E6%AD%BB%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/" data-id="cka0gx1ie003h3lrmgnf7c3mw" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%83%AD%E7%82%B9/" rel="tag">热点</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E6%AD%BB/" rel="tag">生死</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag">程序员</a></li></ul>
 
     </footer>
   </div>
@@ -239,7 +334,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Java-VS-Kotlin/" data-id="ck9yykel2003p3fmqfe2jb1wk" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/Java-VS-Kotlin/" data-id="cka0gx1id003e3lrm3rwk1obs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/" rel="tag">Kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E8%A8%80/" rel="tag">语言</a></li></ul>
@@ -289,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%94%9F%E6%B4%BB%E4%B8%AD%E5%AD%A6%E4%B9%A0%E7%BC%96%E7%A8%8B/" data-id="ck9yykel0003l3fmqgihghhcq" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%94%9F%E6%B4%BB%E4%B8%AD%E5%AD%A6%E4%B9%A0%E7%BC%96%E7%A8%8B/" data-id="cka0gx1i9003b3lrmc475f5cd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8E%A7%E5%88%B6/" rel="tag">控制</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
@@ -342,7 +437,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%83%8C%E8%AF%B5%E8%AF%BE%E6%96%87/" data-id="ck9yykekz003i3fmq8zuy57b8" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%83%8C%E8%AF%B5%E8%AF%BE%E6%96%87/" data-id="cka0gx1i700393lrm8fr75mxc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9B%AE%E7%9A%84/" rel="tag">目的</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9C%9F%E5%AE%9E/" rel="tag">真实</a></li></ul>
@@ -389,7 +484,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%9D%A1%E5%89%8D%E5%90%83%E4%B8%AA%E6%A1%83%E5%AD%90/" data-id="ck9yykekw003e3fmqdhvnauww" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%9D%A1%E5%89%8D%E5%90%83%E4%B8%AA%E6%A1%83%E5%AD%90/" data-id="cka0gx1i500353lrm5u90ao7c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%81%A5%E5%BA%B7/" rel="tag">健康</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9D%A1%E8%A7%89/" rel="tag">睡觉</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%9B%80%E7%89%99/" rel="tag">蛀牙</a></li></ul>
@@ -438,7 +533,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%88%B0%E4%BA%86%E7%BB%93%E5%A9%9A%E7%9A%84%E5%B9%B4%E7%BA%AA/" data-id="ck9yykeku003b3fmqfmg2evez" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%88%B0%E4%BA%86%E7%BB%93%E5%A9%9A%E7%9A%84%E5%B9%B4%E7%BA%AA/" data-id="cka0gx1i400333lrmfwa067wx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%8C%E5%AD%A6/" rel="tag">同学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B4%E7%BA%AA/" rel="tag">年纪</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%93%E5%A9%9A/" rel="tag">结婚</a></li></ul>
@@ -488,7 +583,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%86%8D%E8%B0%88%E8%BA%AB%E4%BD%93%E7%8A%B6%E6%80%81/" data-id="ck9yykeks00383fmqevdpc889" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%86%8D%E8%B0%88%E8%BA%AB%E4%BD%93%E7%8A%B6%E6%80%81/" data-id="cka0gx1i2002z3lrm7db63ltn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%81%A5%E5%BA%B7/" rel="tag">健康</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BA%AB%E4%BD%93/" rel="tag">身体</a></li></ul>
@@ -542,64 +637,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%94%B7%E5%A3%AB%E5%AF%B9%E5%A5%B3%E5%A3%AB%E5%AE%A1%E7%BE%8E%E5%85%B3%E6%B3%A8%E7%82%B9/" data-id="ck9yykekr00343fmq6u812o9z" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%94%B7%E5%A3%AB%E5%AF%B9%E5%A5%B3%E5%A3%AB%E5%AE%A1%E7%BE%8E%E5%85%B3%E6%B3%A8%E7%82%B9/" data-id="cka0gx1i1002w3lrmcgcf4757" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%A4%E6%80%A7/" rel="tag">两性</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" rel="tag">心理学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" rel="tag">进化学</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-状态" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E7%8A%B6%E6%80%81/" class="article-date">
-  <time datetime="2017-08-31T00:00:00.000Z" itemprop="datePublished">2017-8-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E7%8A%B6%E6%80%81/">对大脑状态的一点认识</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>人类是一个高智能的动物，他有一个全宇宙最复杂的东西 “大脑”。可能会有人反对，好吧，宇宙很大，充满了未知，说它全地球最复杂的东西总不会错吧？</p>
-<p>人的大脑约有100亿～140亿个神经元，大概有银河系的星星那么多。这些脑细胞互相之间产生联系那是错综复杂呀。</p>
-<p>有些是被大家熟知的</p>
-<blockquote>
-<p>在一天的不同时间里，大脑的功能状态是不同的，这样就有一个怎样选择最佳时间用脑学习的问题。人的大脑每天有四个记忆高峰期。 第一个是早晨起床后：大脑在睡眠过程中并没有停止工作，而是在对头一天输入的信息进行编码整理。早晨醒后没有新的信息干扰，这时记东西会印象清晰。第二个高峰期是在上午8点到10点：这时精力上升到旺盛期，处理识记效率高，记忆量增大。第三个高峰期是在下午6到8点：这是一天中记忆最佳期。 第四个是临睡前1小时左右：这时识记材料后就入睡，不再有新信息输入，所以没有相互抑制的影响。另外研究者还发现上午8点大脑具有严谨周密的思考能力，下午2点思考能力最敏捷，但推理能力则在白天12小时内递减。根据这些测试，我们在早晨最好安排些严谨周密的工作，下午做一些需要快速完成的工作，晚上则做些需要加深记忆的工作。</p>
-</blockquote>
-<p>另一个被大家熟悉的是情绪影响大脑的状态，比如人在情绪激动的时候容易大脑空白，没法思考，人在愉悦高兴的时候，大脑会超常发挥，在紧张的时候又会被压抑。</p>
-<p>还有更神奇一点的，大脑的状态还会被我们的行为状态所改变，最早了解到它是从一本书里，是在高中的时候，他说，当我们不高兴的时候，我们可以做出高兴时候的动作，甚至只是想象高兴时的自己的行为状态，都是起作用的。我信以为真，当时的确鼓励我一阵子，比如，当我感觉战斗力不强了，我就会想想自己是孙悟空，然后来个一飞冲天的姿势，想象自己冲破云霄，然后就真的来劲了。</p>
-<p>然而最近，我发现了一个更加不可思议的事情，那就是大脑它是一个状态机，我们的做一些事情，大脑可能会内部可能会进行一定的重组，从而适应这些事情。比如在工作了三年后，我感觉我的大脑已经更加的依赖于左脑。在比如，可能又几天话很多，喜欢跟人聊天，这时候，我的语言组织能力可能会提高，但是就不适合写代码了。我试着想说明白，这种状态的转换，有的是长时间做某些事情实现的。而有的可能是几天的。其实还有个更明显的栗子，当我们连续看上几个恐怖片时，我们就会进入一种状态，在这种状态里，我们会各种思考恐怖的事情。前面提到的重组，还是挺合理的，当我们关注某件事时，相关的神经元就会连接。</p>
-<p>好吧，我的写作的神经元没有成功连接，重组出一个适合写作的文章，写的真烂，但是我已经进入了一种不怕写的烂的状态。[哭笑不得]</p>
-<hr>
-<p><img src="/%E7%8A%B6%E6%80%81/img/draw.png" alt="has-selection"><br>每天写文章前，会画个马里奥，这样可以让心静下来，进入写作状态。<br>我想说这图太搞笑了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%8A%B6%E6%80%81/" data-id="ck9yykekp00313fmq1wko17js" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%A7%E8%84%91/" rel="tag">大脑</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" rel="tag">心理学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" rel="tag">生理学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a></li></ul>
 
     </footer>
   </div>
@@ -643,7 +684,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10.83px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 10.83px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/AudioTrack/" style="font-size: 10.83px;">AudioTrack</a> <a href="/tags/BDD/" style="font-size: 12.5px;">BDD</a> <a href="/tags/BMP/" style="font-size: 12.5px;">BMP</a> <a href="/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/tags/C/" style="font-size: 10.83px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Camera/" style="font-size: 10px;">Camera</a> <a href="/tags/Camera2/" style="font-size: 10.83px;">Camera2</a> <a href="/tags/DIP/" style="font-size: 10px;">DIP</a> <a href="/tags/EGL/" style="font-size: 11.67px;">EGL</a> <a href="/tags/EGLSurface/" style="font-size: 10px;">EGLSurface</a> <a href="/tags/FramePacing/" style="font-size: 10px;">FramePacing</a> <a href="/tags/GLES/" style="font-size: 11.67px;">GLES</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Graphics/" style="font-size: 18.33px;">Graphics</a> <a href="/tags/HWC/" style="font-size: 10.83px;">HWC</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 11.67px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 14.17px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.5px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/SurafceFlinger/" style="font-size: 10px;">SurafceFlinger</a> <a href="/tags/Surface/" style="font-size: 10.83px;">Surface</a> <a href="/tags/SurfaceFlinger/" style="font-size: 10.83px;">SurfaceFlinger</a> <a href="/tags/SurfaceTextue/" style="font-size: 10px;">SurfaceTextue</a> <a href="/tags/SurfaceView/" style="font-size: 10px;">SurfaceView</a> <a href="/tags/TDD/" style="font-size: 12.5px;">TDD</a> <a href="/tags/TextureView/" style="font-size: 10.83px;">TextureView</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/VSYNC/" style="font-size: 10px;">VSYNC</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/bmp/" style="font-size: 10.83px;">bmp</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/display/" style="font-size: 10px;">display</a> <a href="/tags/ffmpeg/" style="font-size: 15.83px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 10.83px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/graphics/" style="font-size: 10px;">graphics</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E2%9C%AE-%E2%9C%AE-%E2%9C%AE/" style="font-size: 10px;">✮ ✮ ✮</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 10.83px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 10.83px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10.83px;">写作</a> <a href="/tags/%E5%88%9B%E4%B8%9A/" style="font-size: 10px;">创业</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E5%A4%8D/" style="font-size: 10px;">反复</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E6%B3%A2/" style="font-size: 11.67px;">声波</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E5%9D%91/" style="font-size: 10px;">大坑</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 11.67px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10.83px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 10.83px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 14.17px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 11.67px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%9E%E7%AC%91/" style="font-size: 10px;">搞笑</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 15px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 10.83px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">模型</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.5px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10.83px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8A%B6%E6%80%81/" style="font-size: 10px;">状态</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9B%B8%E6%9C%BA/" style="font-size: 10px;">相机</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 11.67px;">碎碎念</a> <a href="/tags/%E7%A4%BA%E4%BE%8B/" style="font-size: 10px;">示例</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">练习</a> <a href="/tags/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88/" style="font-size: 10px;">经验之谈</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 11.67px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.67px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10.83px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10.83px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%9B%8B%E7%96%BC/" style="font-size: 10px;">蛋疼</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.5px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 11.67px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 10.83px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 10.83px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 19.17px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
+      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10.91px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 10.91px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/AudioTrack/" style="font-size: 10.91px;">AudioTrack</a> <a href="/tags/BDD/" style="font-size: 12.73px;">BDD</a> <a href="/tags/BMP/" style="font-size: 13.64px;">BMP</a> <a href="/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Camera/" style="font-size: 10px;">Camera</a> <a href="/tags/Camera2/" style="font-size: 10.91px;">Camera2</a> <a href="/tags/DIP/" style="font-size: 10px;">DIP</a> <a href="/tags/EGL/" style="font-size: 11.82px;">EGL</a> <a href="/tags/EGLSurface/" style="font-size: 10px;">EGLSurface</a> <a href="/tags/FramePacing/" style="font-size: 10px;">FramePacing</a> <a href="/tags/GLES/" style="font-size: 11.82px;">GLES</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Graphics/" style="font-size: 18.18px;">Graphics</a> <a href="/tags/HWC/" style="font-size: 10.91px;">HWC</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 11.82px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 14.55px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.27px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/SurafceFlinger/" style="font-size: 10px;">SurafceFlinger</a> <a href="/tags/Surface/" style="font-size: 10.91px;">Surface</a> <a href="/tags/SurfaceFlinger/" style="font-size: 10.91px;">SurfaceFlinger</a> <a href="/tags/SurfaceTextue/" style="font-size: 10px;">SurfaceTextue</a> <a href="/tags/SurfaceView/" style="font-size: 10px;">SurfaceView</a> <a href="/tags/TDD/" style="font-size: 12.73px;">TDD</a> <a href="/tags/TextureView/" style="font-size: 10.91px;">TextureView</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/VSYNC/" style="font-size: 10px;">VSYNC</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/bmp/" style="font-size: 10.91px;">bmp</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/display/" style="font-size: 10px;">display</a> <a href="/tags/ffmpeg/" style="font-size: 15.45px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 10.91px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/graphics/" style="font-size: 10px;">graphics</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E2%9C%AE-%E2%9C%AE-%E2%9C%AE/" style="font-size: 10px;">✮ ✮ ✮</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 10.91px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 10.91px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10.91px;">写作</a> <a href="/tags/%E5%88%9B%E4%B8%9A/" style="font-size: 10px;">创业</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E5%A4%8D/" style="font-size: 10px;">反复</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E6%B3%A2/" style="font-size: 11.82px;">声波</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E5%9D%91/" style="font-size: 10px;">大坑</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 13.64px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 11.82px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10.91px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 10.91px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 14.55px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 11.82px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%9E%E7%AC%91/" style="font-size: 10px;">搞笑</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 15.45px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 10.91px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">模型</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10.91px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8A%B6%E6%80%81/" style="font-size: 10px;">状态</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9B%B8%E6%9C%BA/" style="font-size: 10px;">相机</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 12.73px;">碎碎念</a> <a href="/tags/%E7%A4%BA%E4%BE%8B/" style="font-size: 10px;">示例</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">练习</a> <a href="/tags/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88/" style="font-size: 10px;">经验之谈</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 11.82px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.36px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10.91px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10.91px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%9B%8B%E7%96%BC/" style="font-size: 10px;">蛋疼</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 11.82px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 10.91px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 10.91px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 19.09px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
     </div>
   </div>
 
@@ -665,6 +706,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/">每天一点点音视频_bmp_像素数据2</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE1/">每天一点点音视频_bmp_像素数据1</a>
           </li>
         
@@ -678,10 +723,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-dip%E5%A4%B4/">每天一点点音视频_bmp_dip头</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E6%96%87%E4%BB%B6%E5%A4%B4/">每天一点点音视频_bmp_文件头</a>
           </li>
         
       </ul>
