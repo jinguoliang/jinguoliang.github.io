@@ -71,6 +71,122 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-bmp-实践" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/" class="article-date">
+  <time datetime="2020-05-11T09:18:11.000Z" itemprop="datePublished">2020-5-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/">每天一点点音视频_bmp_实践</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>现在依然会有那种错误的冲动，就是学完一个只是以后，就觉得明白了，很简单，这么简单，以后都记住了。然而事实上，这种明白的感觉也没有那么明白，另外，就算当时明白了，以后也会忘，甚至能忘得一干二净。</p>
+<p>所以，我也有意识的在学完了一个东西以后，用一下，检测一下。</p>
+<p>最近学西的 BMP 格式， 这种只是的检测方式，手写一个读取或者写入 BMP 的程序就很好。</p>
+<p>以下是一个 4*2, 每个像素 32 位， 带有透明度的 BMP 的示意图。DIP 头的版本是 BITMAPV4HEADER。</p>
+<p><img src="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/2020-05-11-09-23-25.png" alt></p>
+<p>我打算生成一个这样的 BMP 文件,数据都来自 <a href="https://en.wikipedia.org/wiki/BMP_file_format" target="_blank" rel="noopener">wiki</a></p>
+<h3 id="第一步确定-DIP-头的版本"><a href="#第一步确定-DIP-头的版本" class="headerlink" title="第一步确定 DIP 头的版本"></a>第一步确定 DIP 头的版本</h3><p>使用 BITMAPV4HEADER</p>
+<h3 id="第二步确定像素格式"><a href="#第二步确定像素格式" class="headerlink" title="第二步确定像素格式"></a>第二步确定像素格式</h3><p>使用 32 位， 压缩方法为 BI_BITFIELDS， 使用掩码来确定像素的格式</p>
+<table>
+<thead>
+<tr>
+<th>掩码名称</th>
+<th>掩码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>红色</td>
+<td>00 00 FF 00</td>
+</tr>
+<tr>
+<td>绿色</td>
+<td>00 FF 00 00</td>
+</tr>
+<tr>
+<td>蓝色</td>
+<td>FF 00 00 00</td>
+</tr>
+<tr>
+<td>透明</td>
+<td>00 00 00 FF</td>
+</tr>
+</tbody></table>
+<h3 id="第三步确定像素数据"><a href="#第三步确定像素数据" class="headerlink" title="第三步确定像素数据"></a>第三步确定像素数据</h3><table>
+<thead>
+<tr>
+<th>位置</th>
+<th>颜色数据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>（0,0）</td>
+<td>FF0000FF</td>
+</tr>
+<tr>
+<td>（0,1）</td>
+<td>00FF00FF</td>
+</tr>
+<tr>
+<td>（0,2）</td>
+<td>0000FFFF</td>
+</tr>
+<tr>
+<td>（0,3）</td>
+<td>FFFFFFFF</td>
+</tr>
+<tr>
+<td>（1,0）</td>
+<td>FF00007F</td>
+</tr>
+<tr>
+<td>（1,1）</td>
+<td>00FF007F</td>
+</tr>
+<tr>
+<td>（1,2）</td>
+<td>0000FF7F</td>
+</tr>
+<tr>
+<td>（1,3）</td>
+<td>FFFFFF7F</td>
+</tr>
+</tbody></table>
+<h3 id="第四步写入文件头数据"><a href="#第四步写入文件头数据" class="headerlink" title="第四步写入文件头数据"></a>第四步写入文件头数据</h3><h3 id="第五步写入-DIP-数据"><a href="#第五步写入-DIP-数据" class="headerlink" title="第五步写入 DIP 数据"></a>第五步写入 DIP 数据</h3><h3 id="第六步写入像素数据"><a href="#第六步写入像素数据" class="headerlink" title="第六步写入像素数据"></a>第六步写入像素数据</h3><p>写不完了，以后补 ：）</p>
+<p>明天： 每天一点点音视频_MP4_了解</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/" data-id="cka2ed4l600b114sf0ok84w9n" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点音视频-bmp-像素数据2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/" class="article-date">
@@ -115,7 +231,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/" data-id="cka0gx1n900ax3lrmekzb6dsj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/" data-id="cka2ed4l500ay14sf0venayns" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -167,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE1/" data-id="cka0gx1n800au3lrmfsh01x1j" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE1/" data-id="cka2ed4l400aw14sf2iuyeibe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -214,7 +330,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE/" data-id="cka0gx1n700ar3lrm97ik8r03" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE/" data-id="cka2ed4l300at14sfabb0156s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -265,7 +381,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E8%89%B2%E7%9B%98/" data-id="cka0gx1n600ap3lrm8l0vfvxr" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E8%89%B2%E7%9B%98/" data-id="cka2ed4l200ar14sfbf4637ub" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -418,7 +534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-dip%E5%A4%B4/" data-id="cka0gx1n500am3lrmgugl9vlv" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-dip%E5%A4%B4/" data-id="cka2ed4l100ao14sfa46c2rf5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DIP/" rel="tag">DIP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -506,7 +622,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E6%96%87%E4%BB%B6%E5%A4%B4/" data-id="cka0gx1n400ak3lrmfiq6fdsb" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E6%96%87%E4%BB%B6%E5%A4%B4/" data-id="cka2ed4l000am14sf8o7z3yr9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bmp/" rel="tag">bmp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -567,7 +683,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%9B%9B%E6%9C%88%E7%A2%8E%E7%A2%8E%E5%BF%B5/" data-id="cka0gx1n300af3lrmh7c5cc1h" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%9B%9B%E6%9C%88%E7%A2%8E%E7%A2%8E%E5%BF%B5/" data-id="cka2ed4kz00af14sf16lr342z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B/" rel="tag">模型</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%83%E4%B9%A0/" rel="tag">练习</a></li></ul>
@@ -617,7 +733,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp%E4%BA%86%E8%A7%A3/" data-id="cka0gx1n400ah3lrm0gr0esru" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp%E4%BA%86%E8%A7%A3/" data-id="cka2ed4kz00ai14sf4iv88o84" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bmp/" rel="tag">bmp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -669,64 +785,9 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Bitmap%E4%BA%86%E8%A7%A3/" data-id="cka0gx1n200ad3lrmdobz9qfn" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Bitmap%E4%BA%86%E8%A7%A3/" data-id="cka2ed4kx00ab14sffag609fn" class="article-share-link">Share</a>
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点-Android-Graphics-总结" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2020-05-02T09:23:51.000Z" itemprop="datePublished">2020-5-2</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/">每天一点点_Android_Graphics_总结</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>至此， 把 AOSP 上 图像 部分 的文档看了， 忽略了底层驱动的实现部分，一些我之前没有了解的部分，现在也不想了解的部分。</p>
-<p>再来最开始的这个图片：</p>
-<p><img src="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/2020-04-10-09-24-34.png" alt></p>
-<p>上面的图像流生产者， 下面的图像流消费者。</p>
-<p>中间由 Surface 作为传递者， 同时 windowManager 提供图像现实的一些附加信息，比如位置，格式等等。</p>
-<p>Surface 是 BufferQueue 上层的 API， 一个代表。</p>
-<p>SurfaceView 将 BufferQueue 一端连接 SurfaceFlinger 作为消费者，另一端作为生产者，绘制。可以通过 SurfaceHolder 传给 CameraPreview， MediaPlayer， EGL 等等。</p>
-<p>TextureView 在作用上跟 Surface 类似，只不过实现上不同， SurfaceView 使用了单独的 Window， 单独的 Window 以为着单独的 Surface， 单独的 BufferQueue， 单独的位置参数等， 直接通向 SurfaceFlinger，效率会高，但是与页面其他元素的交互性变差了，因为与他们不再一个 View 树。TextureView 则相反， 与其他 View 在同一个 View 树， 图像数据会合成到 View 树的 Surface 上。</p>
-<p>EGLSurface 是属于 OpenGL 的概念， 由 EGL 在 Android 平台实现，从而可以将 OpenGL 绘制的图像传给 Android 系统。EGL 类似两个系统之间搭桥的。</p>
-<p>上面的 EGLSurface 负责将 OpenGL 的图像传到 Android。而SurfaceTexture 负责将 Android 的 Surface 传给 OpenGL， 成为了一个 Texture， 从而可以进行 OpenGL 操作。</p>
-<p>完工。</p>
-<p>换换口味，该研究一下格式，协议啥的了，比较讨厌的这些东西，人家说做自己害怕的事情能让自己更快的提高。但是我觉的，关键是能不能自己害怕的事情变得不那么害怕，有趣一点。</p>
-<p>明天： 每天一点点音视频_Bitmap了解</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-Android-Graphics-%E6%80%BB%E7%BB%93/" data-id="cka0gx1n100a93lrmgonv825v" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
-
     </footer>
   </div>
   
@@ -769,7 +830,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10.91px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 10.91px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/AudioTrack/" style="font-size: 10.91px;">AudioTrack</a> <a href="/tags/BDD/" style="font-size: 12.73px;">BDD</a> <a href="/tags/BMP/" style="font-size: 13.64px;">BMP</a> <a href="/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Camera/" style="font-size: 10px;">Camera</a> <a href="/tags/Camera2/" style="font-size: 10.91px;">Camera2</a> <a href="/tags/DIP/" style="font-size: 10px;">DIP</a> <a href="/tags/EGL/" style="font-size: 11.82px;">EGL</a> <a href="/tags/EGLSurface/" style="font-size: 10px;">EGLSurface</a> <a href="/tags/FramePacing/" style="font-size: 10px;">FramePacing</a> <a href="/tags/GLES/" style="font-size: 11.82px;">GLES</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Graphics/" style="font-size: 18.18px;">Graphics</a> <a href="/tags/HWC/" style="font-size: 10.91px;">HWC</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 11.82px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 14.55px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.27px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/SurafceFlinger/" style="font-size: 10px;">SurafceFlinger</a> <a href="/tags/Surface/" style="font-size: 10.91px;">Surface</a> <a href="/tags/SurfaceFlinger/" style="font-size: 10.91px;">SurfaceFlinger</a> <a href="/tags/SurfaceTextue/" style="font-size: 10px;">SurfaceTextue</a> <a href="/tags/SurfaceView/" style="font-size: 10px;">SurfaceView</a> <a href="/tags/TDD/" style="font-size: 12.73px;">TDD</a> <a href="/tags/TextureView/" style="font-size: 10.91px;">TextureView</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/VSYNC/" style="font-size: 10px;">VSYNC</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/bmp/" style="font-size: 10.91px;">bmp</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/display/" style="font-size: 10px;">display</a> <a href="/tags/ffmpeg/" style="font-size: 15.45px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 10.91px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/graphics/" style="font-size: 10px;">graphics</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E2%9C%AE-%E2%9C%AE-%E2%9C%AE/" style="font-size: 10px;">✮ ✮ ✮</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 10.91px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 10.91px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10.91px;">写作</a> <a href="/tags/%E5%88%9B%E4%B8%9A/" style="font-size: 10px;">创业</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E5%A4%8D/" style="font-size: 10px;">反复</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E6%B3%A2/" style="font-size: 11.82px;">声波</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E5%9D%91/" style="font-size: 10px;">大坑</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 13.64px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 11.82px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10.91px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 10.91px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 14.55px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 11.82px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%9E%E7%AC%91/" style="font-size: 10px;">搞笑</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 15.45px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 10.91px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">模型</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10.91px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8A%B6%E6%80%81/" style="font-size: 10px;">状态</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9B%B8%E6%9C%BA/" style="font-size: 10px;">相机</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 12.73px;">碎碎念</a> <a href="/tags/%E7%A4%BA%E4%BE%8B/" style="font-size: 10px;">示例</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">练习</a> <a href="/tags/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88/" style="font-size: 10px;">经验之谈</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 11.82px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.36px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10.91px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10.91px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%9B%8B%E7%96%BC/" style="font-size: 10px;">蛋疼</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 11.82px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 10.91px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 10.91px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 19.09px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
+      <a href="/tags/AAR/" style="font-size: 10px;">AAR</a> <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/AVFrame/" style="font-size: 10px;">AVFrame</a> <a href="/tags/AVPacket/" style="font-size: 10px;">AVPacket</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 10px;">Android Studio</a> <a href="/tags/App/" style="font-size: 10.91px;">App</a> <a href="/tags/Atomic-Habits/" style="font-size: 10px;">Atomic Habits</a> <a href="/tags/AtomicHabits/" style="font-size: 10px;">AtomicHabits</a> <a href="/tags/AudioRecord/" style="font-size: 10.91px;">AudioRecord</a> <a href="/tags/AudioRecorder/" style="font-size: 10px;">AudioRecorder</a> <a href="/tags/AudioTrack/" style="font-size: 10.91px;">AudioTrack</a> <a href="/tags/BDD/" style="font-size: 12.73px;">BDD</a> <a href="/tags/BMP/" style="font-size: 14.55px;">BMP</a> <a href="/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/tags/C/" style="font-size: 10.91px;">C</a> <a href="/tags/CPIO/" style="font-size: 10px;">CPIO</a> <a href="/tags/Camera/" style="font-size: 10px;">Camera</a> <a href="/tags/Camera2/" style="font-size: 10.91px;">Camera2</a> <a href="/tags/DIP/" style="font-size: 10px;">DIP</a> <a href="/tags/EGL/" style="font-size: 11.82px;">EGL</a> <a href="/tags/EGLSurface/" style="font-size: 10px;">EGLSurface</a> <a href="/tags/FramePacing/" style="font-size: 10px;">FramePacing</a> <a href="/tags/GLES/" style="font-size: 11.82px;">GLES</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Graphics/" style="font-size: 18.18px;">Graphics</a> <a href="/tags/HWC/" style="font-size: 10.91px;">HWC</a> <a href="/tags/Intent/" style="font-size: 10px;">Intent</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Jekyll/" style="font-size: 10px;">Jekyll</a> <a href="/tags/Jenkins/" style="font-size: 10px;">Jenkins</a> <a href="/tags/Kotlin/" style="font-size: 11.82px;">Kotlin</a> <a href="/tags/MediaCodec/" style="font-size: 14.55px;">MediaCodec</a> <a href="/tags/MediaExtractor/" style="font-size: 10px;">MediaExtractor</a> <a href="/tags/MediaMuxer/" style="font-size: 10px;">MediaMuxer</a> <a href="/tags/OpenGL/" style="font-size: 17.27px;">OpenGL</a> <a href="/tags/PCM/" style="font-size: 10px;">PCM</a> <a href="/tags/PendingIntent/" style="font-size: 10px;">PendingIntent</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QueueWorker/" style="font-size: 10px;">QueueWorker</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/Root/" style="font-size: 10px;">Root</a> <a href="/tags/SharedPrefenrences/" style="font-size: 10px;">SharedPrefenrences</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/SurafceFlinger/" style="font-size: 10px;">SurafceFlinger</a> <a href="/tags/Surface/" style="font-size: 10.91px;">Surface</a> <a href="/tags/SurfaceFlinger/" style="font-size: 10.91px;">SurfaceFlinger</a> <a href="/tags/SurfaceTextue/" style="font-size: 10px;">SurfaceTextue</a> <a href="/tags/SurfaceView/" style="font-size: 10px;">SurfaceView</a> <a href="/tags/TDD/" style="font-size: 12.73px;">TDD</a> <a href="/tags/TextureView/" style="font-size: 10.91px;">TextureView</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VIM/" style="font-size: 10px;">VIM</a> <a href="/tags/VSYNC/" style="font-size: 10px;">VSYNC</a> <a href="/tags/WebDriver/" style="font-size: 10px;">WebDriver</a> <a href="/tags/bmp/" style="font-size: 10.91px;">bmp</a> <a href="/tags/decoder/" style="font-size: 10px;">decoder</a> <a href="/tags/display/" style="font-size: 10px;">display</a> <a href="/tags/ffmpeg/" style="font-size: 15.45px;">ffmpeg</a> <a href="/tags/git/" style="font-size: 10.91px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/graphics/" style="font-size: 10px;">graphics</a> <a href="/tags/nio/" style="font-size: 10px;">nio</a> <a href="/tags/repo/" style="font-size: 10px;">repo</a> <a href="/tags/zsh/" style="font-size: 10px;">zsh</a> <a href="/tags/%E2%9C%AE-%E2%9C%AE-%E2%9C%AE/" style="font-size: 10px;">✮ ✮ ✮</a> <a href="/tags/%E4%B8%A4%E6%80%A7/" style="font-size: 10px;">两性</a> <a href="/tags/%E4%B9%A0%E6%83%AF/" style="font-size: 10px;">习惯</a> <a href="/tags/%E4%B9%A0%E8%AF%AD/" style="font-size: 10.91px;">习语</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 10px;">人生</a> <a href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">今日记</a> <a href="/tags/%E4%BB%B0%E5%8D%A7%E8%B5%B7%E5%9D%90/" style="font-size: 10px;">仰卧起坐</a> <a href="/tags/%E5%81%A5%E5%BA%B7/" style="font-size: 10.91px;">健康</a> <a href="/tags/%E5%86%99%E4%BD%9C/" style="font-size: 10.91px;">写作</a> <a href="/tags/%E5%88%9B%E4%B8%9A/" style="font-size: 10px;">创业</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 10px;">博客</a> <a href="/tags/%E5%8F%8D%E5%A4%8D/" style="font-size: 10px;">反复</a> <a href="/tags/%E5%8F%8D%E6%80%9D/" style="font-size: 10px;">反思</a> <a href="/tags/%E5%8F%A3%E5%8F%B7/" style="font-size: 10px;">口号</a> <a href="/tags/%E5%90%89%E4%BB%96/" style="font-size: 10px;">吉他</a> <a href="/tags/%E5%90%8C%E5%AD%A6/" style="font-size: 10px;">同学</a> <a href="/tags/%E5%9D%9A%E6%8C%81/" style="font-size: 10px;">坚持</a> <a href="/tags/%E5%A3%B0%E6%B3%A2/" style="font-size: 11.82px;">声波</a> <a href="/tags/%E5%A3%B0%E9%9F%B3%E7%9A%84%E6%95%B0%E5%AD%97%E5%8C%96/" style="font-size: 10px;">声音的数字化</a> <a href="/tags/%E5%A4%A7%E5%9D%91/" style="font-size: 10px;">大坑</a> <a href="/tags/%E5%A4%A7%E8%84%91/" style="font-size: 10px;">大脑</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 10px;">存储</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 13.64px;">学习</a> <a href="/tags/%E5%B0%8F%E6%97%B6%E5%80%99/" style="font-size: 10px;">小时候</a> <a href="/tags/%E5%B0%8F%E8%AF%B4/" style="font-size: 10px;">小说</a> <a href="/tags/%E5%B7%A5%E4%BD%9C/" style="font-size: 11.82px;">工作</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10.91px;">工具</a> <a href="/tags/%E5%B9%B4%E7%BA%AA/" style="font-size: 10px;">年纪</a> <a href="/tags/%E5%BC%80%E5%A7%8B/" style="font-size: 10px;">开始</a> <a href="/tags/%E5%BF%83%E6%B5%81/" style="font-size: 10px;">心流</a> <a href="/tags/%E5%BF%83%E7%90%86%E5%AD%A6/" style="font-size: 10.91px;">心理学</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 10px;">思想</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 14.55px;">思考</a> <a href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" style="font-size: 11.82px;">思考总结</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%81%8B%E7%88%B1/" style="font-size: 10px;">恋爱</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 10px;">控制</a> <a href="/tags/%E6%90%9E%E7%AC%91/" style="font-size: 10px;">搞笑</a> <a href="/tags/%E6%90%AD%E8%AE%AA/" style="font-size: 10px;">搭讪</a> <a href="/tags/%E6%95%B4%E7%90%86/" style="font-size: 10px;">整理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" style="font-size: 16.36px;">文件格式</a> <a href="/tags/%E6%96%AD%E8%88%8D%E7%A6%BB/" style="font-size: 10px;">断舍离</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 10px;">方法</a> <a href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" style="font-size: 10px;">方法学</a> <a href="/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/" style="font-size: 10px;">方法论</a> <a href="/tags/%E6%97%85%E6%B8%B8/" style="font-size: 10.91px;">旅游</a> <a href="/tags/%E6%97%A5%E7%85%A7/" style="font-size: 10px;">日照</a> <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" style="font-size: 10px;">时间管理</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">服务器</a> <a href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" style="font-size: 10px;">村上春树</a> <a href="/tags/%E6%9E%81%E7%AE%80%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">极简生活</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%A2%A6%E6%83%B3/" style="font-size: 10px;">梦想</a> <a href="/tags/%E6%A8%A1%E4%BB%BF/" style="font-size: 10px;">模仿</a> <a href="/tags/%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">模型</a> <a href="/tags/%E6%AF%85%E5%8A%9B/" style="font-size: 10px;">毅力</a> <a href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" style="font-size: 10px;">每天一点点</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">测试驱动开发</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10.91px;">源码</a> <a href="/tags/%E7%83%AD%E7%82%B9/" style="font-size: 10px;">热点</a> <a href="/tags/%E7%8A%B6%E6%80%81/" style="font-size: 10px;">状态</a> <a href="/tags/%E7%8E%8B%E5%B0%8F%E6%B3%A2/" style="font-size: 10px;">王小波</a> <a href="/tags/%E7%90%90%E4%BA%8B/" style="font-size: 10px;">琐事</a> <a href="/tags/%E7%94%9F%E6%AD%BB/" style="font-size: 10px;">生死</a> <a href="/tags/%E7%94%9F%E7%90%86%E5%AD%A6/" style="font-size: 10px;">生理学</a> <a href="/tags/%E7%9B%AE%E7%9A%84/" style="font-size: 10px;">目的</a> <a href="/tags/%E7%9B%B8%E6%9C%BA/" style="font-size: 10px;">相机</a> <a href="/tags/%E7%9C%9F%E5%AE%9E/" style="font-size: 10px;">真实</a> <a href="/tags/%E7%9D%A1%E8%A7%89/" style="font-size: 10px;">睡觉</a> <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" style="font-size: 13.64px;">碎碎念</a> <a href="/tags/%E7%A4%BA%E4%BE%8B/" style="font-size: 10px;">示例</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 10px;">科普</a> <a href="/tags/%E7%A7%BB%E6%B0%91/" style="font-size: 10px;">移民</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" style="font-size: 10px;">程序员</a> <a href="/tags/%E7%B2%BE%E7%A5%9E/" style="font-size: 10px;">精神</a> <a href="/tags/%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">练习</a> <a href="/tags/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88/" style="font-size: 10px;">经验之谈</a> <a href="/tags/%E7%BB%93%E5%A9%9A/" style="font-size: 10px;">结婚</a> <a href="/tags/%E7%BB%98%E7%94%BB/" style="font-size: 10px;">绘画</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 11.82px;">编程</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 16.36px;">翻译</a> <a href="/tags/%E8%81%8A%E5%A4%A9/" style="font-size: 10px;">聊天</a> <a href="/tags/%E8%87%AA%E6%88%91%E5%AE%8C%E5%96%84/" style="font-size: 10px;">自我完善</a> <a href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" style="font-size: 10.91px;">自由开发者</a> <a href="/tags/%E8%8B%A6%E8%A1%8C/" style="font-size: 10px;">苦行</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10.91px;">英语</a> <a href="/tags/%E8%9B%80%E7%89%99/" style="font-size: 10px;">蛀牙</a> <a href="/tags/%E8%9B%8B%E7%96%BC/" style="font-size: 10px;">蛋疼</a> <a href="/tags/%E8%A1%8C%E4%B8%BA%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" style="font-size: 12.73px;">行为驱动开发</a> <a href="/tags/%E8%A7%A3%E7%A0%81/" style="font-size: 10px;">解码</a> <a href="/tags/%E8%A8%80%E6%83%85/" style="font-size: 10px;">言情</a> <a href="/tags/%E8%AE%A1%E5%88%92/" style="font-size: 11.82px;">计划</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%AF%97/" style="font-size: 10px;">诗</a> <a href="/tags/%E8%AF%AD%E6%84%8F/" style="font-size: 10px;">语意</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">语法</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" style="font-size: 10.91px;">语法糖</a> <a href="/tags/%E8%AF%AD%E8%A8%80/" style="font-size: 10.91px;">语言</a> <a href="/tags/%E8%AF%BB%E4%B9%A6/" style="font-size: 10px;">读书</a> <a href="/tags/%E8%B5%84%E6%BA%90/" style="font-size: 10px;">资源</a> <a href="/tags/%E8%BA%AB%E4%BD%93/" style="font-size: 10px;">身体</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" style="font-size: 10px;">软件工艺宣言</a> <a href="/tags/%E8%BF%9B%E5%8C%96%E5%AD%A6/" style="font-size: 10px;">进化学</a> <a href="/tags/%E9%94%BB%E7%82%BC/" style="font-size: 10px;">锻炼</a> <a href="/tags/%E9%97%AE%E9%A2%98/" style="font-size: 10px;">问题</a> <a href="/tags/%E9%98%85%E8%AF%BB/" style="font-size: 10px;">阅读</a> <a href="/tags/%E9%98%AE%E7%90%A6/" style="font-size: 10px;">阮琦</a> <a href="/tags/%E9%9F%B3%E4%B9%90/" style="font-size: 10px;">音乐</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" style="font-size: 19.09px;">音视频</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6/" style="font-size: 10px;">音频文件</a>
     </div>
   </div>
 
@@ -791,6 +852,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/">每天一点点音视频_bmp_实践</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/">每天一点点音视频_bmp_像素数据2</a>
           </li>
         
@@ -804,10 +869,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E8%89%B2%E7%9B%98/">每天一点点音视频_bmp_色盘</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-dip%E5%A4%B4/">每天一点点音视频_bmp_dip头</a>
           </li>
         
       </ul>
