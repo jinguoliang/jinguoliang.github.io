@@ -71,6 +71,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点-音视频-OpenGL-概述" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/" class="article-date">
+  <time datetime="2020-05-29T09:23:56.000Z" itemprop="datePublished">2020-5-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我之前写过一个关于入门 OpenGL 的<a href="https://jinguoliang.github.io/the-way-to-opengl-1/">系列文章</a></p>
+<p>那时候，我也是刚开始学，也没有用过，现在，我有了一定的 OpenGL 的开发实践经验，应该可以写一个进阶的 OpenGL 教程了。</p>
+<h3 id="OpenGL-是什么"><a href="#OpenGL-是什么" class="headerlink" title="OpenGL 是什么"></a>OpenGL 是什么</h3><p>OpenGL 是一套 API， 它定义了一套抽象的接口，从而给我们提供了通过 GPU 来实现图像处理绘制的能力。作为抽象的接口，它独立于平台，独立于语言， 这意味着，不同的语言，可能每个接口的样子不太一样，毕竟语法不尽相同，但是基本的名字，参数，都是类似的。这样，在一个语言一个平台会了 OpenGL， 在其他语言其他平台学习的成本就很少了。</p>
+<h3 id="OpenGL-ES-是什么"><a href="#OpenGL-ES-是什么" class="headerlink" title="OpenGL ES 是什么"></a>OpenGL ES 是什么</h3><p>OpenGL ES 是 OpenGL 的一个子集， 是针对 手机， 平板等嵌入式设备设计的。我们在之后的学习都是基于 OpenGL ES 的</p>
+<h3 id="EGL-是什么"><a href="#EGL-是什么" class="headerlink" title="EGL 是什么"></a>EGL 是什么</h3><p>EGL 是 OpenGL ES 渲染 API 和本地窗口系统(native platform window system，在 Android 平台就是 Android 提供 EGL 的实现)之间的一个中间接口层，它主要由系统制造商实现</p>
+<p>主要提供了下面三个概念的实现：</p>
+<ol>
+<li>Display， 它代表了一个显示器</li>
+<li>Surface， 带代表了 画布</li>
+<li>EGLContext， 保存一些状态信息</li>
+</ol>
+<p>明天： 每天一点点_音视频_OpenGL_基本步骤</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/" data-id="ckavtosv400bn22wo6l6i6r5c" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点-音视频-MP4-视频数据BOX1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/" class="article-date">
@@ -111,7 +165,7 @@ udta: 834</code></pre><p>还多了一个 udta， 有两个 trak box， 应该就
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/" data-id="ckan8u2wv00bjxeno8x7672i1" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/" data-id="ckavtosv200bj22wo7sq1at2e" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AC%E5%8F%91%E6%91%98%E6%8A%84/" rel="tag">转发摘抄</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -177,7 +231,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX/" data-id="ckan8u2wu00bgxenobk36d5a6" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX/" data-id="ckavtosv100bg22woe0k8hg1d" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AC%E5%8F%91%E6%91%98%E6%8A%84/" rel="tag">转发摘抄</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -231,7 +285,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-BOX/" data-id="ckan8u2ws00bcxeno9yoydnyc" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-BOX/" data-id="ckavtosuz00bc22wo0ia49jq8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AC%E5%8F%91%E6%91%98%E6%8A%84/" rel="tag">转发摘抄</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -287,7 +341,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/" data-id="ckan8u2wq00b7xenocxoscy8l" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/" data-id="ckavtosuy00ba22wof2ykhnf6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -349,7 +403,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/" data-id="ckan8u2wr00baxenog7unbq1e" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/" data-id="ckavtosuw00b722wo4gdna8ze" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%F0%9F%8C%9F/" rel="tag">🌟</a></li></ul>
@@ -403,7 +457,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E4%BA%86%E8%A7%A3/" data-id="ckan8u2wp00b3xenocvb63tyg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E4%BA%86%E8%A7%A3/" data-id="ckavtosuu00b322wo8c8rbhu0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MP4/" rel="tag">MP4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8%E6%A0%BC%E5%BC%8F/" rel="tag">容器格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -519,7 +573,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/" data-id="ckan8u2wo00b0xeno76fx09kq" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%AE%9E%E8%B7%B5/" data-id="ckavtosut00b022wobfhk2zsb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -575,7 +629,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/" data-id="ckan8u2wn00awxenohwbv2mmf" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE2/" data-id="ckavtosur00aw22wo1xae0b28" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -627,54 +681,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE1/" data-id="ckan8u2wm00atxeno7t969de0" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-bmp-像素数据" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE/" class="article-date">
-  <time datetime="2020-05-08T09:01:53.000Z" itemprop="datePublished">2020-5-8</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE/">每天一点点音视频_bmp_像素数据</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>BMP 的像素存储的大小如何计算呢，要按照的想的，很简单，反正 DIP 头里已经有图像的宽和高了，而且还有了图像颜色的深度，也就是每个像素占的空间的大小，这样计算呗：</p>
-<pre><code>DATASIZE = WIDTH * HEIGHT * PIXEL</code></pre><p>但是实际上不然， BMP 为了加速读取， 让每一行通过填充，对齐到 DWORD （4字节）的倍数， 这样一行的所占空间大小如下计算：</p>
-<pre><code>ROWSIZE = （WIDTH * PIXELBIT + 31） / 32 * 4</code></pre><p>上面的意思是先算出一行像素的所占的位数， 然后填充 31 位，然后除以 32， 这样就得到了补充对奇后的一行的双字数，然后乘以 4 就是一行的字节数。</p>
-<pre><code>DATASIZE = ROWSIZE * HEIGHT</code></pre><p>计算出所有行的数据。</p>
-<p>明天： 每天一点点音视频_bmp_像素数据1</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE/" data-id="ckan8u2wl00aqxenod0xl6a5s" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-bmp-%E5%83%8F%E7%B4%A0%E6%95%B0%E6%8D%AE1/" data-id="ckavtosuq00at22wo8sppb5oa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BMP/" rel="tag">BMP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -690,7 +697,7 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -743,6 +750,10 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -756,10 +767,6 @@ moov: 16281</code></pre><p>这就有意思了，下一步该绘制 UI 了</p>
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

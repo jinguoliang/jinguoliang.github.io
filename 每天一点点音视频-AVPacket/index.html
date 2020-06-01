@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="空谷之兰">
 <meta property="og:description" content="之前已经提到了， AVPacket 里存储着压缩后的视频帧数据。现在我们详细来说明以下它的结构, 创建，使用和释放。 结构它的结构主要包括属于那个流，数据， 数据的信息包括大小等。 创建AVPacket *pkt &#x3D; av_packet_alloc();释放av_packet_free(AVPacket **pkt);这里需要注意的是， 传的是指针的指针， 这就避免了每次调用了这个方法后自己再置空">
 <meta property="article:published_time" content="2020-03-24T08:33:15.000Z">
-<meta property="article:modified_time" content="2020-05-26T01:30:52.688Z">
+<meta property="article:modified_time" content="2020-06-01T01:36:47.707Z">
 <meta property="article:author" content="金国梁">
 <meta property="article:tag" content="ffmpeg">
 <meta property="article:tag" content="AVPacket">
@@ -110,7 +110,7 @@ void av_packet_unref(AVPacket *pkt);</code></pre><p>当然还是有一些其他�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVPacket/" data-id="ckan8u2t3006sxeno8q7v03iq" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-AVPacket/" data-id="ckavtosrz006s22wo0z6h6scl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AVPacket/" rel="tag">AVPacket</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li></ul>
@@ -191,6 +191,10 @@ void av_packet_unref(AVPacket *pkt);</code></pre><p>当然还是有一些其他�
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -204,10 +208,6 @@ void av_packet_unref(AVPacket *pkt);</code></pre><p>当然还是有一些其他�
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

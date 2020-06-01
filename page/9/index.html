@@ -71,6 +71,80 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-kiss" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/kiss/" class="article-date">
+  <time datetime="2020-03-02T17:53:06.000Z" itemprop="datePublished">2020-3-2</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/kiss/">KISS原理（翻译）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="What-does-KISS-stand-for"><a href="#What-does-KISS-stand-for" class="headerlink" title="What does KISS stand for?"></a>What does KISS stand for?</h2><p><a href="https://people.apache.org/~fhanik/kiss.html" target="_blank" rel="noopener">原文 https://people.apache.org/~fhanik/kiss.html</a></p>
+<p>KISS 是“保持一个东西的简单，用起来傻瓜式的”英文（KEEP IT SIMPLE AND STUPID）缩写。</p>
+<h2 id="神马意思？"><a href="#神马意思？" class="headerlink" title="神马意思？"></a>神马意思？</h2><p>这个原则让我在做软件工程的这几年里获得了巨大的成功。今天，困扰广大软件工程师和开发人员的一个大问题就是他们要去克服复杂的问题。</p>
+<p>通常，当一个开发者遇到一个难题时，他们几乎都会想到将他分解成更小的部分，以便于他们可以理解然后尝试用代码实现解决方案。 我想说的是他们分解的还不够小，对那小部分也理解不够深。这导致他们即使解决最简单的问题，也会使用非常复杂的实现。另一个副作用是产生面条代码（就是那种很乱的代码），我们可能只想到 BASIC 使用了 goto 就是面条代码了，实际上也包括在 Java 里那些包含500到1000行代码的雷。</p>
+<p>This code clutter is a result of the developer realizing exception cases to his original solution while he is typing in code. These exception cases would have solved if the developer had broken down the problem further.<br>这种代码混乱是因为开发者在编写代码实现他们的解决方案的过程中意识到了很多异常情况需要处理。如果研发者分解问题更细，这些异常情况是可以解决的。</p>
+<h2 id="我如何从-KISS-原则中获益"><a href="#我如何从-KISS-原则中获益" class="headerlink" title="我如何从 KISS 原则中获益"></a>我如何从 KISS 原则中获益</h2><ul>
+<li>能更快地解决更多问题</li>
+<li>用更少的代码解决更困难的问题</li>
+<li>写出高质量的代码</li>
+<li>构建更大的系统，更容易维护</li>
+<li>代码更灵活，更容易扩展，当有新需求时更容易满足它们</li>
+<li>比想象的实现更多</li>
+<li>能在很大的项目中团队中工作</li>
+</ul>
+<h2 id="如何在我的工作中应用-KISS-原则"><a href="#如何在我的工作中应用-KISS-原则" class="headerlink" title="如何在我的工作中应用 KISS 原则"></a>如何在我的工作中应用 KISS 原则</h2><p>只需要几步， 非常简单，但是某些也是挑战。就像听起来的那样，保持简单，就是耐心的问题，主要是对你自己。</p>
+<ul>
+<li>谦逊，不要把自己想象成一个天才，这是第一个错误。谦逊了，你最终就能达到天才的状态，但即使不是，谁又在乎呢。你的代码是简单的，所以没必要是天才。</li>
+<li>把任务分解成子任务，足够小，小到你认为自己4到12个小时就能解决它。</li>
+<li>把你的问题分解的足够小，每个问题能用1各类或者非常少的类就能实现。</li>
+<li>保持方法足够小，小到只有三四十行，每个方法应该解决一些小问题，如果一个方法里有很多条件判断，把他们分解成更小的方法。不仅仅因为这样更容易读，更容易维护，而且也更容易找到bug。别忘了多使用重构功能。</li>
+<li>同样的类也要足够小</li>
+<li>先解决这个问题，有了方案，在写代码。而不是在写代码的过程中解决问题，这也没有错，事实上，你可以两种方式结合起来做。<br>如果你能将一个事情分解的非常小，那就尽量在编码的时候去这样做吧。但是别害怕一遍一遍一遍的去重构你的代码。最终的结果才重要，代码更少当然更好</li>
+<li>不要害怕扔掉代码。当遇到不存在的需求，或者发现更好的解决方案时，删掉就代码吧。如果你遵照以上建议，重写的代码比会最少，如果不遵守肯定会有很多重写。</li>
+<li>在其他情况下也要尽可能的简单，这是最难的模式，但是一旦你坚持了，当回头看时，你会感叹当时是怎么写出来的呀。</li>
+</ul>
+<h2 id="有什么遵循-KISS-原则的例子吗？"><a href="#有什么遵循-KISS-原则的例子吗？" class="headerlink" title="有什么遵循 KISS 原则的例子吗？"></a>有什么遵循 KISS 原则的例子吗？</h2><p>有很多，我将会找一些放在这. 但是现在我先告诉你:</p>
+<p>世界上最伟大的算法总是那些代码行数最少的一些。很容易理解. 算法的创建着把问题分解的足够小，足够简单，以便于可以用代码实现它们。很多伟大的问题解决者不是开发人员，但是却能写出伟大的代码。</p>
+<h2 id="KISS-只能应用于-Java"><a href="#KISS-只能应用于-Java" class="headerlink" title="KISS 只能应用于 Java"></a>KISS 只能应用于 Java</h2><p>绝对不是，他可以一个用于各种其他的语言，甚至可以扩展应用到你生活的各个地方。<br>唯一的不能使用 KISS 原则的地方是：情感， 爱， 最重要的你的婚姻。</p>
+<hr>
+<p>这篇文章是2016年写的，实际是直接把英文内容复制过来的，也不知到当时看没看完，一点印象都没有了。现在 2020年3月2日，翻译成了中文，感觉没什么高深了，就当练练翻译吧。</p>
+<p>最后的 KISS 不能应用于 情感，爱，婚姻， 直接升华了，很棒。</p>
+<p>其实这个就是说的 TDD，或者更先进说法 BDD。或者说 TDD/BDD 遵循了 KISS 原则，试图将问题提前分解，每次只去解决一个很小的问题。当然 TDD/BDD 包含了更多。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/kiss/" data-id="ckavtosod001n22woc7d7cnef" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%B3%95%E5%AD%A6/" rel="tag">方法学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-《挪威的森林》读后感" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" class="article-date">
@@ -108,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ckan8u2rn0059xenoad4d7re9" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E3%80%8A%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97%E3%80%8B%E8%AF%BB%E5%90%8E%E6%84%9F/" data-id="ckavtosqf005922wobxchcfcs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A0%91/" rel="tag">村上春树</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A8%80%E6%83%85/" rel="tag">言情</a></li></ul>
@@ -162,7 +236,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ckan8u2rl0056xenoe7m6b7pf" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%852%E4%B8%AA%E6%9C%88%E6%80%BB%E7%BB%93/" data-id="ckavtosqd005622wo263b54hb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%85%E6%B8%B8/" rel="tag">旅游</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E7%94%B1%E5%BC%80%E5%8F%91%E8%80%85/" rel="tag">自由开发者</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%A6%E8%A1%8C/" rel="tag">苦行</a></li></ul>
@@ -239,7 +313,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ckan8u2rk0054xenobhgj5uur" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/exponentiallybucketedhistogram/" data-id="ckavtosqc005422wofppp9cbh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/QueueWorker/" rel="tag">QueueWorker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -334,7 +408,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ckan8u31f00s7xenodu2zbuvg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/queue-worker/" data-id="ckavtoszf00sd22wobw1cfhfx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPrefenrences/" rel="tag">SharedPrefenrences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
@@ -390,7 +464,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ckan8u2ri0051xenoezf2a6qy" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E4%BB%8A%E6%97%A5%E8%AE%B0%E7%AE%80%E4%BB%8B/" data-id="ckavtosqa005122wo0upkdvcp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%8A%E6%97%A5%E8%AE%B0/" rel="tag">今日记</a></li></ul>
@@ -458,7 +532,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ckan8u2rh004yxeno5ne20oh2" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/learn-guitar/" data-id="ckavtosq8004y22wob1q8846w" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%89%E4%BB%96/" rel="tag">吉他</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E4%BB%BF/" rel="tag">模仿</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%98%E7%94%BB/" rel="tag">绘画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E4%B9%90/" rel="tag">音乐</a></li></ul>
@@ -557,7 +631,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ckan8u31100s5xeno0p639xnu" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/applay-commit/" data-id="ckavtoszd00sb22wo2mkbdx4n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SharedPreferences/" rel="tag">SharedPreferences</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li></ul>
@@ -665,7 +739,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ckan8u31000s3xenofquw14eh" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/how-to-write-blog-about-programming/" data-id="ckavtoszb00s922wo4onbh52i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%86%99%E4%BD%9C/" rel="tag">写作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
@@ -713,97 +787,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ckan8u2rf004uxeno6o9n0s0f" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/simple-upload-aar/" data-id="ckavtosq7004u22wo61xj7noo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AAR/" rel="tag">AAR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-pending-intent" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/pending-intent/" class="article-date">
-  <time datetime="2018-05-13T21:22:00.000Z" itemprop="datePublished">2018-5-13</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/pending-intent/">彻底认识 PengingIntent</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近在写一个闹钟程序的时候使用到了 PendingIntent, 而且是两个地方用到，一个是 AlarmManager 定时的时候, 另一个是在点击通知进入应用的时候。其实我早就想深入研究一下 PendingIntent 了，因为我很好奇一下几个问题:</p>
-<ol>
-<li>已经有了 Intent, 为什么还有　PendingIntent?</li>
-<li>PendingIntent 也就几个场景用到过，还有其他场景吗？</li>
-<li>它的内部实现。</li>
-</ol>
-<h2 id="Intent-和-PendingIntent-的区别"><a href="#Intent-和-PendingIntent-的区别" class="headerlink" title="Intent 和 PendingIntent 的区别"></a>Intent 和 PendingIntent 的区别</h2><h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>Intent 是意图的意思。Android 中的　Intent 正是取自这个意思，它是一个消息对象，通过它，Android 系统的四大组件能够方便的通信，并且保证解耦。</p>
-<p>Intent 可以说明某种意图，携带一种行为和相应的数据，发送到目标组件。</p>
-<p>IntentFilter 与 Intent 配套使用，它声明了一个组件接受某个　Intent。</p>
-<h3 id="PendingIntent"><a href="#PendingIntent" class="headerlink" title="PendingIntent"></a>PendingIntent</h3><p>PendingIntent 是对 Intent 的封装，关键的不同在于：</p>
-<blockquote>
-<p>A组件 创建了一个 PendingIntent 的对象然后传给 B组件，B 在执行这个 PendingIntent 的 send 时候，它里面的 Intent 会被发送出去，而接受到这个 Intent 的 C 组件会认为是 A 发的。</p>
-<p>B 以 A 的权限和身份发送了这个 Intent。</p>
-</blockquote>
-<p>比如，我们的 Activity 如果设置了 exported = false，其他应用如果使用 Intent 就访问不到这个 Activity，但是使用 PendingIntent 是可以的。</p>
-<p>综上所述，PendingIntent 有两个特点：</p>
-<ol>
-<li>将某个动作的触发时机交给其他应用</li>
-<li>让那个应用代表自己去执行那个动作(权限都给他了)</li>
-</ol>
-<h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><h3 id="获取-PendingIntent"><a href="#获取-PendingIntent" class="headerlink" title="获取 PendingIntent"></a>获取 PendingIntent</h3><ol>
-<li>getActivity</li>
-<li>getActivities</li>
-<li>getBroadcast</li>
-<li>getService</li>
-<li>getForegroundService</li>
-</ol>
-<blockquote>
-<p>为什么没有 getContentProvider?<br>我猜测，ContentProvider 作为一个数据源，太重要了，相当于是把数据直接暴露出去了</p>
-</blockquote>
-<p>它们的参数都相同，都是四个：Context， requestCode, Intent, flags。Context 不必多说，要想让其他组件代替自己办事，当然要将自己的上下文传给它。action, requestCode 和 Intent 共同来标志一个行为的唯一性，什么意思呢?</p>
-<p>简单的说，我们通过相同的方法(action), 相同的 requestCode 和相同的 Intent 获取到的 PendingIntent, 虽然可能不是同一个对象，但是，却是代表同一个东西，之所以这样看 flags 参数就知道了。</p>
-<p>FLAG_ONE_SHOT: 只执行一次， 在调用了 send 以后自动调用 cancel，不能在调用 send 了。<br>FLAG_NO_CREATE: 不创建新的，如果我们之前设置过，这次就能获取到，否则，返回 null。<br>FLAG_CANCEL_CURRENT: 如果之前设置过，就取消掉, 重新创建个新的<br>FLAG_UPDATE_CURRENT: 如果之前设置过，就更新它。更新什么呢，Intent 的 Extras<br>FLAG_IMMUTABLE: 设置 Intent 在 send 的时候不能更改</p>
-<h3 id="发送-PendingIntent"><a href="#发送-PendingIntent" class="headerlink" title="发送 PendingIntent"></a>发送 PendingIntent</h3><p>send 是触发 PendingIntent 包含的行为，它有很多重载形式，我们通常的开发用不到他，除非我们做桌面程序开发或者 Android Framework 开发。<br>这里我们只是大体说明一下，可以传给它一个 Intent 来对它原来的 Intent 做修改，但是如果目标设置了 FLAG_IMMUTABLE 则给参数忽略。可以设置 callback 当发送完成获得回调，并且可以通过设置handler决定回调发生的线程。</p>
-<h3 id="取消-PendingIntent"><a href="#取消-PendingIntent" class="headerlink" title="取消 PendingIntent"></a>取消 PendingIntent</h3><p>只有设置 PendingIntent 的原来的应用可以取消它，发送方只能发送，当一个 PendingIntent 被取消后，发送则不会成功。</p>
-<h2 id="PendingIntent-的使用场景"><a href="#PendingIntent-的使用场景" class="headerlink" title="PendingIntent 的使用场景"></a>PendingIntent 的使用场景</h2><p>已知的使用场景是:</p>
-<ol>
-<li>通知，在点击通知时执行调起本应用的操作，当然也可以执行其他操作</li>
-<li>闹钟，定时执行某个操作</li>
-<li>桌面小部件，点击小部件时执行某个操作</li>
-</ol>
-<p>通知，闹钟，桌面小部件，都是运行在其他应用中的，但是给我们的感知就像是我们自己的应用的一部分。</p>
-<h2 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h2><p>大体的原理是: A应用希望让B应用帮忙触发一个行为，这是跨应用的通信，需要 Android 系统作为中间人，这里的中间人就是 ActivityManager。 A应用创建建 PendingIntent，在创建 PendingIntent 的过程中，向 ActivityManager 注册了这个 PendingIntent，所以，即使A应用死了，当它再次苏醒时，只要提供相同的参数，还是可以获取到之前那个 PendingIntent 的。当 A 将 PendingIntent 调用系统 API 比如 AlarmManager.set()，实际是将权限给了B应用，这时候， B应用可以根据参数信息，来从 ActivityManager 获取到 A 设置的 PendingIntent。</p>
-<hr>
-<p>匹配 PendingIntent 相同时，需要匹配 Intent 相同，Intent 如何匹配相同的？</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/pending-intent/" data-id="ckan8u2rd004qxenohg1a34a7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Intent/" rel="tag">Intent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PendingIntent/" rel="tag">PendingIntent</a></li></ul>
 
     </footer>
   </div>
@@ -816,7 +803,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/8/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/8/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/10/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -869,6 +856,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -882,10 +873,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

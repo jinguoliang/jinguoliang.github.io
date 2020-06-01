@@ -71,6 +71,62 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-ffmpeg编码过程" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-ffmpeg%E7%BC%96%E7%A0%81%E8%BF%87%E7%A8%8B/" class="article-date">
+  <time datetime="2020-03-23T09:16:51.000Z" itemprop="datePublished">2020-3-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-ffmpeg%E7%BC%96%E7%A0%81%E8%BF%87%E7%A8%8B/">每天一点点音视频_ffmpeg编码过程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们在之前的文章中知道， ffmpeg里， 解码后的数据是一个一个的 AVFrame， 我们要对它进行编码， 让它变成 AVPacket， 然后对 AVPacket 打包成一个最终的音视频文件。</p>
+<p>我们首先需要一个编码器， 在之前创建解码器的时候，我们是根据 AVPacket 的数据来找特定的编码器的， 但是现在，我们是在编码，我们可以选择特定的编码器。</p>
+<pre><code>codec = avcodec_find_encoder(AV_CODEC_ID_MP2);
+c = avcodec_alloc_context3(codec);</code></pre><p>因为是在编码，所以我们不仅可以决定编码器，还可以选择不同的参数比如码率，采样率等等。</p>
+<p>在设置好参数后，需要执行打开命令</p>
+<pre><code>avcodec_open2(c, codec, NULL)</code></pre><p>此时， 编码器准备好了。</p>
+<p>剩下的就是给它喂数据，然后等它拉出来了。</p>
+<p>先准备输入和输出的数据结构</p>
+<pre><code>pkt = av_packet_alloc();
+frame = av_frame_alloc();
+av_frame_get_buffer(frame, 0);
+av_frame_make_writable(frame);</code></pre><p>对于 Frame, 需要填入数据和数据信息</p>
+<p>额， 开始琐碎了， 不够抽象了， 花太多时间了。</p>
+<p>明天： 每天一点点音视频_AVPacket</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-ffmpeg%E7%BC%96%E7%A0%81%E8%BF%87%E7%A8%8B/" data-id="ckavtosrn006q22wo7ahzaxhu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A0%81/" rel="tag">编码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-habits" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/habits/" class="article-date">
@@ -104,7 +160,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/habits/" data-id="ckan8u2sw006lxeno8xh9gc49" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/habits/" data-id="ckavtosrk006l22woh2b505a2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Atomic-Habits/" rel="tag">Atomic Habits</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%A0%E6%83%AF/" rel="tag">习惯</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -149,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E7%AC%AC%E4%B8%80%E5%91%A8%E6%80%BB%E7%BB%93/" data-id="ckan8u2sy006nxenof1nj94ts" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E7%AC%AC%E4%B8%80%E5%91%A8%E6%80%BB%E7%BB%93/" data-id="ckavtosrl006n22wo3gct2bdy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%BB%E7%BB%93/" rel="tag">总结</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9/" rel="tag">每天一点点</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -199,7 +255,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg-%E8%A7%A3%E5%8C%85%E5%99%A8%E5%92%8C%E8%A7%A3%E7%A0%81%E5%99%A8%E8%BF%9E%E6%8E%A5/" data-id="ckan8u2st006jxenoc9ae9tqi" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg-%E8%A7%A3%E5%8C%85%E5%99%A8%E5%92%8C%E8%A7%A3%E7%A0%81%E5%99%A8%E8%BF%9E%E6%8E%A5/" data-id="ckavtosrj006j22wob9bcd4yr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%A3%E7%A0%81/" rel="tag">解码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -259,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E7%A0%81%E5%99%A8/" data-id="ckan8u2sq006fxenohoks8gzm" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E7%A0%81%E5%99%A8/" data-id="ckavtosrh006f22wo41na71ms" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/decoder/" rel="tag">decoder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -330,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" data-id="ckan8u2sg006cxeno7aqhewka" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B-part2/" data-id="ckavtosrf006c22wohhzq1p4t" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -388,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B/" data-id="ckan8u2se0069xenoewqd3phu" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-ffmpeg%E8%A7%A3%E5%8C%85%E6%95%B0%E6%8D%AE%E7%A4%BA%E4%BE%8B/" data-id="ckavtosr1006922wo3ovecjxy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -436,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0%E4%B9%8B%E8%BD%AF%E7%BC%96/" data-id="ckan8u2sd0067xeno7uh0a6xe" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0%E4%B9%8B%E8%BD%AF%E7%BC%96/" data-id="ckavtosr0006722wofx3cbgfj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -488,7 +544,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0/" data-id="ckan8u2sa0063xeno3quh9vop" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-Android%E4%B8%8A%E7%9A%84%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E8%A7%A3%E7%A0%81%E6%A6%82%E8%BF%B0/" data-id="ckavtosqy006322wo31pd37ip" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaCodec/" rel="tag">MediaCodec</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaExtractor/" rel="tag">MediaExtractor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MediaMuxer/" rel="tag">MediaMuxer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -540,72 +596,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E9%9F%B3%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E6%A6%82%E8%BF%B0/" data-id="ckan8u2s90060xeno48qwbocx" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3-%E9%9F%B3%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E6%A6%82%E8%BF%B0/" data-id="ckavtosqx006022wo5bj5c16v" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" rel="tag">文件格式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-AtomicHabitss实践-每天一点点音视频相关" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/AtomicHabitss%E5%AE%9E%E8%B7%B5-%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3/" class="article-date">
-  <time datetime="2020-03-14T10:48:56.000Z" itemprop="datePublished">2020-3-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/AtomicHabitss%E5%AE%9E%E8%B7%B5-%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3/">AtomicHabitss实践_每天一点点音视频相关</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一个习惯的形成需要从以下四个方面动手：</p>
-<ol>
-<li>信号，提示 （好习惯的信号要加强，提高出现的频次，坏习惯的信号要避开）  </li>
-<li>渴望 （当有了一个信号， 只有当我们有所渴望才会出现行动， 比如看到甜食信号，我们的本性喜欢甜食，向获取糖分能量，所以才会有行动， 渴望的增强与本能，社会认同有关）  </li>
-<li>行动 （行动要尽量的简单， 本文就是来做这个的）  </li>
-<li>反馈 （采取了行动后，有正反馈才会形成循环， 本文的这个行动，暂时还没有比较明显的反馈， 可能是写下一点，我的心会舒服一点，但是者好像不太好使）</li>
-</ol>
-<p>针对以上四个方面：</p>
-<ol>
-<li>每天九点吃完饭是一个信号， 吃完饭，九点多， 我会坐在电脑前， 开始写今天的知识点。  </li>
-<li>渴望， 我希望我要成为这个领域的专家，能够解决所有问题，这时候我就有更多的选择权主动权，也就是我就能够更自由  </li>
-<li>每天一点点， 完成今天的，创建好明天的文件，方便开始，每天，我坐在这，可以直接开始写知识点</li>
-<li>反馈 （各种层次的反馈，还没相好，不过还是有几个的，比如标签云里音视频的标签会逐渐变大，文章数量会变多，可能还需要一些更直接的，比如每天完成吃个香蕉，听会歌，看个搞笑视频）</li>
-</ol>
-<p>每天一点点，这个其实我之前实践过，那时候还在北京，那时看了《微习惯》的结果，我现在发现，微习惯就是这里所说的行动的部分。那时候使用一个《Loop》来打卡，可以说我的吉他入门就是这样养成的，但是后来我那些习惯又没了，为什么？ 读 《Atomic Habits》会得到答案，因为环境改变了，环境属于信号阶段。在北京的时候，下半回家十点，回去就开始行动，下班回家就是个信号，但是后来离开北京，回家待了段时间，那个信号就没了。所以那时后特别想稳定下来，那时候虽然不知道这个道理，但是向稳定下来是对的。</p>
-<h1 id="那今天的知识点："><a href="#那今天的知识点：" class="headerlink" title="那今天的知识点："></a>那今天的知识点：</h1><p>一个音视频文件的解码过程如下：</p>
-<p>音视频文件 -&gt; 解封装(Extractor) -&gt; 解码(MediaCodec) -&gt; 原始音视频数据</p>
-<p>一个音视频文件的编码过程如下：</p>
-<p>原始音视频数据 -&gt; 编码(MediaCodec) -&gt; 封装(Muxer) -&gt; 音视频文件</p>
-<p>明天：每天一点点音视频相关_音视频文件概述</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/AtomicHabitss%E5%AE%9E%E8%B7%B5-%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3/" data-id="ckan8u2rz005vxeno9zh5bm36" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AtomicHabits/" rel="tag">AtomicHabits</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%80%E5%A7%8B/" rel="tag">开始</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
 
     </footer>
   </div>
@@ -618,7 +612,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -671,6 +665,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -684,10 +682,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

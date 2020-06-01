@@ -71,6 +71,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-touch-mode" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/touch-mode/" class="article-date">
+  <time datetime="2015-07-01T00:00:00.000Z" itemprop="datePublished">2015-7-1</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/touch-mode/">&lt;翻译&gt; 触摸模式(Touch Mode)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为Android设计和开发用户接口与普通的桌面环境有很大不同.因为Android运行在手机设备上,应用设计者和开发者必须处理大量的约束,而这些约束并不总是很明显.为了帮助你开发和设计更好的应用,我们正在发布一些关于用户接口的文章.在这个系列里,我们会向你介绍一些设计指导和工具,开发技巧并解释Android UI工具套件的基本原则.我们的目的很简单:帮助你去设计和开发好的用户体验.一开始,我想先介绍<em>触摸模式</em>,它是UI工具套件最重要的原则.<br><em>触摸模式<em>是</em>view hierarchy<em>的一种状态,它只受用户与手机交互的影响.单独来看,</em>触摸模式<em>是很容易理解的,它指示了用户最后一次交互是否是触屏操作.比如,当你使用G1手机时,用滚迹球选择一个</em>widget<em>会退出</em>触摸模式</em>,而当用手机点击屏幕上的按钮时又会进入<em>触摸模式</em>.当用户不在<em>触摸模式<em>时,可能会在</em>滚迹球模式</em>(tackball mode),<em>导航模式</em>(navigation mode)或者<em>键盘导航</em>(keyboard navigation).还有,与<em>触摸模式</em>直接相关的唯一的api是<a href="http://code.google.com/android/reference/android/view/View.html#isInTouchMode%28%29" target="_blank" rel="noopener">View.isInTouchMode()</a>.<br>听起来很容易对吗?奇怪的是,触摸模式是大幅简单而进入触摸模式的后果远远超过你的想象。让我们看看一些原因<br>##触屏模式,选项(Selection)和焦点(Focus)<br>为手机设计UI工具套件是困难的,因为它们要提供各种交互机制.有的设备只提供12个按键,有的会有触屏,有的需要触摸笔,有的既有触屏又有键盘.这样来看,第一款商业手机G1对Android开发者社区来说是一项福利,因为它提供了多种形式的输入:触屏,滚迹球和键盘.因为用户可以使用三种不同的机制来与应用交互,我们不得不努力解决所有可能出现的问题.<br>以ApiDemo为例,它显示一个文本项列表.用户可以通过滚迹球来导航这个列表,也可以通过手指来滚动这个列表.这时,<em>选项</em>是一个问题.如果我选择了列表顶部的一项,然后向上滑动列表,选项应该如何变化呢?它依然要在那一项上并滑出屏幕吗?这时,如果我又要用滚迹球来移动选项会发生什么?更糟糕的,如果我按下滚迹球来给予当前的选项来触发动作,而此时选项并没有显示在屏幕上,这时候又会发生什么?在仔细考虑后,我们决定移除选项(在触屏模式).<br>在触屏模式, 没有焦点和选项.一旦用户进入触屏模式,被选项不在被选中.相似的,当用户进入触屏模式,获取焦点的控件不再拥有焦点.下面的图片演示了当用户用滚迹球选择了一项后,再点击触屏,应用的反应.  </p>
+<p><img src="/touch-mode/img/list02.png" alt="has-selection"><br><img src="/touch-mode/img/list01.png" alt="no-selection"></p>
+<p>为了让用户觉得更自然,当用户离开触屏模式时,框架知道怎样恢复选项/焦点.例如上边的例子,如果用户又使用滚迹球,先前的选项又会被选中.这就可以解释一个让开发者困扰的事情:他们创建的自定义view只有在滚动一次滚迹球后,才能接受按键事件.原因就是他们的应用处于触屏模式,需要使用滚迹球退出触屏模式,恢复焦点.<br>触屏模式,选项和焦点的关系意味着你不能确定选项/焦点是否一定存在.一个初学者常犯的错误是依赖<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#getSelectedItemPosition%28%29" target="_blank" rel="noopener">ListView.getSelectedItemPosition()</a>.在触屏模式,这个方法将会返回<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#INVALID_POSITION" target="_blank" rel="noopener">INVALID_POSITION</a>.你应该使用<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#setOnItemClickListener%28android.widget.AdapterView.OnItemClickListener%29" target="_blank" rel="noopener">click listeners</a> 或者 <a href="http://code.google.com/android/reference/android/widget/ListView.html#setChoiceMode%28int%29" target="_blank" rel="noopener">choice mode</a>.  </p>
+<h2 id="在触屏模式可获取焦点"><a href="#在触屏模式可获取焦点" class="headerlink" title="在触屏模式可获取焦点"></a>在触屏模式可获取焦点</h2><p>现在,你知道在触屏模式焦点是不存在的,我必须声明这并不完全正确.Focus在触屏模式可以存在但是以一种非常特别的方式,我们叫它可获取焦点的.这种特殊的模式是为接受文本输入(如EditText)或者具有过滤功能(如ListView)的控件创造的.这就是为什么在向文本框输入文本之前不必首先用滚迹球或手指选中它.当用户点击屏幕,如果应用没有在触屏模式将会进入触屏模式.在进入触屏模式的过程中会发生什么取决于用户点击了什么和焦点在哪.如果用户点击了一个在触屏模式可获取焦点的控件,这个控件将会获取焦点.否则,现在获取焦点的控件如果在触屏模式不能获取焦点就会失去焦点.例如,在下边的图片中,当用户点击屏幕时,输入框会获取焦点.  </p>
+<p><img src="/touch-mode/img/text_field.png" alt="text-field"></p>
+<p>在触屏模式是否可以获取焦点是view的一个属性可以通过代码或者xml设置,设置时应该谨慎,因为它破坏了与Android正常行为的一致性.游戏和全屏的地图是一个设置这个属性的很好的例子.<br>下边是一个需要在触屏模式获取焦点的控件的例子.当用户点击AutoCompleteTextView的Suggestion时,焦点依然在输入框.</p>
+<p><img src="/touch-mode/img/search01.png" alt="search01"></p>
+<p>Android初学者经常会通过设置触屏模式下的获取焦点能力来”修复”不显示选项/焦点.我们希望你考虑清楚.如果使用不正确,你的应用会与系统行为不同,让用户非常不习惯.Android框架包括了所有你需要的工具来处理用户交互,你完全可以不在触屏模式设置控件的可获取焦点性.比如,简单的使用<a href="http://code.google.com/android/reference/android/widget/ListView.html#setChoiceMode%28int%29" target="_blank" rel="noopener">choice mode</a>,而不是让ListView保持它的选项.如果Android框架不适合你的需求,你可以向我们<a href="http://code.google.com/p/android/issues/list" target="_blank" rel="noopener">提意见</a>或者<a href="http://source.android.com/" target="_blank" rel="noopener">提交你的patch</a>.<br>##触屏模式的备忘录<br>应该这样:</p>
+<ul>
+<li>与核心应用保持一致</li>
+<li>如果你想保持选中状态,使用它们适当的特性(radio button, check box, ListView的选项模式)</li>
+<li>如果是写游戏,使用(focusable in touch mode)</li>
+</ul>
+<p>不应该: </p>
+<ul>
+<li>不要在触屏模式保持选中状态或者保持焦点.</li>
+</ul>
+<hr>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/touch-mode/" data-id="ckavtosnx000z22woh2211em3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-android-learning-resources" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/android-learning-resources/" class="article-date">
@@ -106,7 +166,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/android-learning-resources/" data-id="ckan8u2p1000wxeno80zkbsj6" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/android-learning-resources/" data-id="ckavtosnw000w22wo19qpgfxp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
@@ -158,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%BF%99%E5%B1%B1%E6%9C%9B%E7%9D%80%E9%82%A3%E5%B1%B1%E9%AB%98/" data-id="ckan8u2oz000txenocrrx9hrz" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%BF%99%E5%B1%B1%E6%9C%9B%E7%9D%80%E9%82%A3%E5%B1%B1%E9%AB%98/" data-id="ckavtosnu000t22woatur0aqd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E6%80%9D/" rel="tag">反思</a></li></ul>
@@ -219,7 +279,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Android%E5%A6%82%E4%BD%95%E7%BB%98%E5%88%B6Views-%E7%BF%BB%E8%AF%91-/" data-id="ckan8u2ox000rxenoe8ce6gw3" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/Android%E5%A6%82%E4%BD%95%E7%BB%98%E5%88%B6Views-%E7%BF%BB%E8%AF%91-/" data-id="ckavtosns000r22wo7d7f7tph" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -328,7 +388,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/Jenkins%E9%85%8D%E7%BD%AE%E6%94%B6%E8%8E%B7-shell/" data-id="ckan8u2ou000lxenoc0z20ynj" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/Jenkins%E9%85%8D%E7%BD%AE%E6%94%B6%E8%8E%B7-shell/" data-id="ckavtosnp000l22wo3jrzf2ym" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jenkins/" rel="tag">Jenkins</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li></ul>
@@ -380,7 +440,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%BD%93%E6%88%91%E5%BC%80%E5%A7%8B%E7%88%B1%E8%87%AA%E5%B7%B1/" data-id="ckan8u2ov000nxeno9fi315o7" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E5%BD%93%E6%88%91%E5%BC%80%E5%A7%8B%E7%88%B1%E8%87%AA%E5%B7%B1/" data-id="ckavtosnq000n22wo465d42ql" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%97/" rel="tag">诗</a></li></ul>
@@ -439,7 +499,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%8C%A0/" data-id="ckan8u2os000gxenoe8yj4jxg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E5%8C%A0/" data-id="ckavtosnm000g22wo5kqh6f60" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%A3%E5%8F%B7/" rel="tag">口号</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B5%84%E6%BA%90/" rel="tag">资源</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E8%89%BA%E5%AE%A3%E8%A8%80/" rel="tag">软件工艺宣言</a></li></ul>
@@ -498,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/gitignore/" data-id="ckan8u2oq000exeno5rfndqle" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/gitignore/" data-id="ckavtosnl000e22wobuel8i3g" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -580,7 +640,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%A7%A3%E5%86%B3github%E4%B8%8A%E8%B4%A1%E7%8C%AE%E7%9F%A9%E9%98%B5%E4%B8%8D%E6%98%BE%E7%A4%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E8%B4%A1%E7%8C%AE/" data-id="ckan8u2on000axeno7g3vhieg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%A7%A3%E5%86%B3github%E4%B8%8A%E8%B4%A1%E7%8C%AE%E7%9F%A9%E9%98%B5%E4%B8%8D%E6%98%BE%E7%A4%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E8%B4%A1%E7%8C%AE/" data-id="ckavtosni000a22wogutka5df" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/github/" rel="tag">github</a></li></ul>
@@ -628,7 +688,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%A6%81%E5%8E%BB%E6%80%BB%E7%BB%93%EF%BC%8C%E8%A6%81%E5%8E%BB%E6%B2%89%E6%B7%80%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="ckan8u2om0009xenoezlt0702" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%A6%81%E5%8E%BB%E6%80%BB%E7%BB%93%EF%BC%8C%E8%A6%81%E5%8E%BB%E6%B2%89%E6%B7%80%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="ckavtosng000922wo18aw04bu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/" rel="tag">思考总结</a></li></ul>
@@ -640,58 +700,11 @@
 
 
   
-    <article id="post-又是一个开始" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E5%8F%88%E6%98%AF%E4%B8%80%E4%B8%AA%E5%BC%80%E5%A7%8B/" class="article-date">
-  <time datetime="2015-05-17T00:00:00.000Z" itemprop="datePublished">2015-5-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E5%8F%88%E6%98%AF%E4%B8%80%E4%B8%AA%E5%BC%80%E5%A7%8B/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h2><h3 id="这又是一个开始"><a href="#这又是一个开始" class="headerlink" title="这又是一个开始"></a>这又是一个开始</h3><h3 id="关于标题"><a href="#关于标题" class="headerlink" title="关于标题"></a>关于标题</h3><p>我是个程序猿（不用过多解释了吧？不明白，那去百度一下）</p>
-<h3 id="关于副标题"><a href="#关于副标题" class="headerlink" title="关于副标题"></a>关于副标题</h3><p>副标题带了个“又”字，为什么？废话，当然是之前开始过，是。实际是开始过好多次，都没有坚持下来。</p>
-<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><p>我是一个程序员，在北京的公路边边等车边使用安卓手机，在一个叫MdReader的应用上使用一个叫MarkDown的标记语言来进行这重要的开始。</p>
-<h3 id="关于目的"><a href="#关于目的" class="headerlink" title="关于目的"></a>关于目的</h3><p>为什么呢？目的是什么？<br>作为一个程序猿，有着开源精神的程序员，不能停止思考的程序员。目的应该是想记下自己思想吧！(好像没什么因果关系，哈哈)<br>还有个目的，锻炼自己的表达能力。</p>
-<h3 id="关于内容"><a href="#关于内容" class="headerlink" title="关于内容"></a>关于内容</h3><p>作为一个程序猿，有着开源精神的程序员，不能停止思考的程序员，内容当然离不开编程，生活，学习。那么爱编程，那么爱生活，那么爱学习，所以内容会涉及的很广。从linux到Android,从C到GO,从编程技巧到编程方法论，从应用设计到算法设计，从UI设计到音乐设计(你可能会觉得有点不可理喻了，但是我兴趣的确很广泛，我是一个要成为临栈工程师的人，我是一个要成为全栈工程师的人，我是一个要成为自由开发者的人，我肯定疯了，那继续看后边)，从哲学到宗教，从认知学到健康长寿，…,真是无所不包呀！</p>
-<p>但是mac君告诉我们，要从一个点开始，所以,…</p>
-<p>hello.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> “stdio.h”</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> args[][])</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(“Hello World\n”)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E5%8F%88%E6%98%AF%E4%B8%80%E4%B8%AA%E5%BC%80%E5%A7%8B/" data-id="ckan8u2og0006xenodrgx2809" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/13/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span>
+    <a class="extend prev" rel="prev" href="/page/13/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/15/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -744,6 +757,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -757,10 +774,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

@@ -71,6 +71,85 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-the-way-to-opengl-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/the-way-to-opengl-1/" class="article-date">
+  <time datetime="2017-01-25T00:00:00.000Z" itemprop="datePublished">2017-1-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/the-way-to-opengl-1/">OpenGL登堂入室之路1--基本框架</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="声明-OpenGL-ES-版本"><a href="#声明-OpenGL-ES-版本" class="headerlink" title="声明　OpenGL ES 版本"></a>声明　OpenGL ES 版本</h2><p>这第一篇文章，我们先来构建一个Android项目，它包含了每个OpenGL ES项目必须的东西。<br>首先在AndroidManifest里添加如下：  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-feature</span> <span class="attr">android:glEsVersion</span>=<span class="string">"0x00020000"</span> <span class="attr">android:required</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里声明了应用需要OpenGL ES版本为2.0。(为什么版本要这样写呢？)<br>实际上，这个声明不是必须的，没有它也可以正常运行，他的作用是在Google Play下在应用时，Google Play会根据它，来判断设备是否能够安装该应用，比如你的手机不支持OpenGL ES 2.0，Google Play就不会让你下载该应用。  </p>
+<h2 id="两个必须"><a href="#两个必须" class="headerlink" title="两个必须"></a>两个必须</h2><p>下面开始介绍真正必须的两个东西：</p>
+<ol>
+<li>GLSurfaceView</li>
+<li>GLSurfaceView.Render</li>
+</ol>
+<p>这一个类，一个接口，就是Android框架支持OpenGL的基础。<br>我们现在先了解GLSurfaceView是一个Android 的View，负责显示，而GLSurfaceView.Render从名字我们就知道它是负责渲染的，我们之后所有的工作几乎都在Render里。<br>还应该声明的一点是Render的方法都是在另一个线程，即非UI线程来执行的，不会阻塞UI线程。  </p>
+<h2 id="动起手来"><a href="#动起手来" class="headerlink" title="动起手来"></a>动起手来</h2><p>接下来，就开始写代码了：</p>
+<p>第一步 先创建一个项目<br>第二步 在自动生成的布局文件里添加GLSurfaceView</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RelativeLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/activity_main"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingBottom</span>=<span class="string">"@dimen/activity_vertical_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingLeft</span>=<span class="string">"@dimen/activity_horizontal_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingRight</span>=<span class="string">"@dimen/activity_horizontal_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:paddingTop</span>=<span class="string">"@dimen/activity_vertical_margin"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">"com.jone.roadtoopenglonandroid.MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">android.opengl.GLSurfaceView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/surfaceView"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RelativeLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第三步 在对应的Activity里findView，找到GLSurfaceView,并且给它设置Render</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">GLSurfaceView surfaceView = (GLSurfaceView)findViewById(R.id.surfaceView);</span><br><span class="line">surfaceView.setRenderer(<span class="keyword">new</span> GLSurfaceView.Renderer() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceCreated</span><span class="params">(GL10 gl, EGLConfig config)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceCreated"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSurfaceChanged</span><span class="params">(GL10 gl, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onSurfaceChanged"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDrawFrame</span><span class="params">(GL10 gl)</span> </span>&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"onDrawFrame"</span>);</span><br><span class="line">        GLES20.glClearColor(<span class="number">1f</span>,<span class="number">1f</span>,<span class="number">0f</span>,<span class="number">1f</span>);</span><br><span class="line">        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="三个方法"><a href="#三个方法" class="headerlink" title="三个方法"></a>三个方法</h3><p>这里我们可以看到，Render接口有3个方法</p>
+<ol>
+<li>onSurfaceCreated   Surface创建后调用一次</li>
+<li>onSurfaceChanged GLSurfaceView大小改变时会调用一次，刚创建的时候也会调用一次。</li>
+<li>onDrawFrame 绘制要显示的每一帧</li>
+</ol>
+<p>我给每个方法都加了log，发现onSurfaceCreated 和 onSurfaceChanged的确是调用了一次，而onDrawFrame却不断调用  </p>
+<h3 id="渲染模式"><a href="#渲染模式" class="headerlink" title="渲染模式"></a>渲染模式</h3><p>实际上这个行为是可以改变的，通过surfaceView.setRenderMode来设置渲染的模式：</p>
+<ol>
+<li>GLSurfaceView.RENDERMODE_WHEN_DIRTY 只在创建和调用GLSurfaceView的requestRender方法时才会导致渲染，即onDrawFrame被调用</li>
+<li>GLSurfaceView.RENDERMODE_CONTINUOUSLY 见名知意，会持续渲染，说道这我们也知道，GLSurfaceView的渲染模式默认值是RENDERMODE_CONTINUOUSLY</li>
+</ol>
+<h3 id="来它两句OpenGL尝尝鲜"><a href="#来它两句OpenGL尝尝鲜" class="headerlink" title="来它两句OpenGL尝尝鲜"></a>来它两句OpenGL尝尝鲜</h3><p>你可能会发现，onDrawFrame里除了打印log，还调用两个语句。这两个语句就是OpenGL的语句了。<br>我们使用OpenGL ES2.0,所以所用使用OpenGL的地方都使用GLES20来调用静态属性或者方法。<br>你可能注意到Render的三个方法都有个参数GL10 gl，或许你已经知道，它是OpenGL ES 1.0的用法，忽略它就行了，OpenGL 2.0后都使用静态方法。  </p>
+<p>接着说这两个语句：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glClearColor(<span class="number">1f</span>,<span class="number">1f</span>,<span class="number">0f</span>,<span class="number">1f</span>);</span><br><span class="line">GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);</span><br></pre></td></tr></table></figure>
+
+<p>如果不设置，你可以试试，整个GLSurfaceView都是黑色的。而有这两句则会是黄色。为什么？<br>我们首先来说glClear的作用，从名称也可以了解一点它的作用，清空，因为onDrawFrame是多次调用的，如果不调用glClear，则每次绘制的内容都会叠加，这并不是我们期望的，而在每次绘制前glClear，则会清空上次的绘制内容。至于参数，通过标志为来标明要清空的缓存。以后会更深入的了解。<br>GLES20.glClearColor(1f,1f,0f,1f);　则决定了每次清空上次的绘制内容后显示什么颜色，参数分别为ｒｇｂａ,每个参数的取值为0~1f, 我们给ｒ，ｇ设置了１，所以是黄色，透明度设置１为不透明。  </p>
+<p>好，本文结束。</p>
+<hr>
+<p>我们的这个教程，需要你的动手做，一定要实践。代码在<a href="https://github.com/jinguoliang/RoadToOpenGLOnAndroid/tree/branch-step1" target="_blank" rel="noopener">这里</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-1/" data-id="ckavtosoh001u22woet8486y7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-the-way-to-opengl-0" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/the-way-to-opengl-0/" class="article-date">
@@ -113,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ckan8u2pl001sxenoc7b37agh" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/the-way-to-opengl-0/" data-id="ckavtosog001s22wo50yd7pv4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -193,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ckan8u30z00s2xenodahzabaf" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/opengl-1/" data-id="ckavtosz800s822wo0ythhayn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
@@ -270,7 +349,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ckan8u2pk001qxenocwn4gpbg" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/MineUbuntuEnviroment/" data-id="ckavtosof001q22woepi085mq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android-Studio/" rel="tag">Android Studio</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jekyll/" rel="tag">Jekyll</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VIM/" rel="tag">VIM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zsh/" rel="tag">zsh</a></li></ul>
@@ -316,7 +395,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/flow/" data-id="ckan8u2pe001gxeno2h47aq80" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/flow/" data-id="ckavtoso9001g22wo2ctf49qi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BF%83%E6%B5%81/" rel="tag">心流</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6/" rel="tag">读书</a></li></ul>
@@ -370,7 +449,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ckan8u2pg001lxeno7gb0fuc9" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/remoter/" data-id="ckavtosoc001l22wogd878pzk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E5%88%92/" rel="tag">计划</a></li></ul>
@@ -430,7 +509,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ckan8u2pc001dxenoh75w5e9c" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/advice-for-young-progrommer/" data-id="ckavtoso8001d22wohilx5811" class="article-share-link">Share</a>
       
       
     </footer>
@@ -506,7 +585,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%B8%80%E6%AC%A1%E6%97%85%E8%A1%8C/" data-id="ckan8u2pb0019xeno2gzq1htl" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E4%B8%80%E6%AC%A1%E6%97%85%E8%A1%8C/" data-id="ckavtoso6001922wohmiaaroq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -590,7 +669,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/AsyncTask/" data-id="ckan8u2p90016xeno29bz50sx" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/AsyncTask/" data-id="ckavtoso4001622wo0dpi0blh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li></ul>
@@ -666,70 +745,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/repo%E5%85%A8%E8%A7%A3%E4%B9%8B%E8%87%AA%E5%B7%B1%E6%90%AD%E5%BB%BArepo%E4%BB%93%E5%BA%93/" data-id="ckan8u2p40012xenoguc15fkw" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/repo%E5%85%A8%E8%A7%A3%E4%B9%8B%E8%87%AA%E5%B7%B1%E6%90%AD%E5%BB%BArepo%E4%BB%93%E5%BA%93/" data-id="ckavtosnz001222wob83jacdm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/repo/" rel="tag">repo</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-touch-mode" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/touch-mode/" class="article-date">
-  <time datetime="2015-07-01T00:00:00.000Z" itemprop="datePublished">2015-7-1</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/touch-mode/">&lt;翻译&gt; 触摸模式(Touch Mode)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>为Android设计和开发用户接口与普通的桌面环境有很大不同.因为Android运行在手机设备上,应用设计者和开发者必须处理大量的约束,而这些约束并不总是很明显.为了帮助你开发和设计更好的应用,我们正在发布一些关于用户接口的文章.在这个系列里,我们会向你介绍一些设计指导和工具,开发技巧并解释Android UI工具套件的基本原则.我们的目的很简单:帮助你去设计和开发好的用户体验.一开始,我想先介绍<em>触摸模式</em>,它是UI工具套件最重要的原则.<br><em>触摸模式<em>是</em>view hierarchy<em>的一种状态,它只受用户与手机交互的影响.单独来看,</em>触摸模式<em>是很容易理解的,它指示了用户最后一次交互是否是触屏操作.比如,当你使用G1手机时,用滚迹球选择一个</em>widget<em>会退出</em>触摸模式</em>,而当用手机点击屏幕上的按钮时又会进入<em>触摸模式</em>.当用户不在<em>触摸模式<em>时,可能会在</em>滚迹球模式</em>(tackball mode),<em>导航模式</em>(navigation mode)或者<em>键盘导航</em>(keyboard navigation).还有,与<em>触摸模式</em>直接相关的唯一的api是<a href="http://code.google.com/android/reference/android/view/View.html#isInTouchMode%28%29" target="_blank" rel="noopener">View.isInTouchMode()</a>.<br>听起来很容易对吗?奇怪的是,触摸模式是大幅简单而进入触摸模式的后果远远超过你的想象。让我们看看一些原因<br>##触屏模式,选项(Selection)和焦点(Focus)<br>为手机设计UI工具套件是困难的,因为它们要提供各种交互机制.有的设备只提供12个按键,有的会有触屏,有的需要触摸笔,有的既有触屏又有键盘.这样来看,第一款商业手机G1对Android开发者社区来说是一项福利,因为它提供了多种形式的输入:触屏,滚迹球和键盘.因为用户可以使用三种不同的机制来与应用交互,我们不得不努力解决所有可能出现的问题.<br>以ApiDemo为例,它显示一个文本项列表.用户可以通过滚迹球来导航这个列表,也可以通过手指来滚动这个列表.这时,<em>选项</em>是一个问题.如果我选择了列表顶部的一项,然后向上滑动列表,选项应该如何变化呢?它依然要在那一项上并滑出屏幕吗?这时,如果我又要用滚迹球来移动选项会发生什么?更糟糕的,如果我按下滚迹球来给予当前的选项来触发动作,而此时选项并没有显示在屏幕上,这时候又会发生什么?在仔细考虑后,我们决定移除选项(在触屏模式).<br>在触屏模式, 没有焦点和选项.一旦用户进入触屏模式,被选项不在被选中.相似的,当用户进入触屏模式,获取焦点的控件不再拥有焦点.下面的图片演示了当用户用滚迹球选择了一项后,再点击触屏,应用的反应.  </p>
-<p><img src="/touch-mode/img/list02.png" alt="has-selection"><br><img src="/touch-mode/img/list01.png" alt="no-selection"></p>
-<p>为了让用户觉得更自然,当用户离开触屏模式时,框架知道怎样恢复选项/焦点.例如上边的例子,如果用户又使用滚迹球,先前的选项又会被选中.这就可以解释一个让开发者困扰的事情:他们创建的自定义view只有在滚动一次滚迹球后,才能接受按键事件.原因就是他们的应用处于触屏模式,需要使用滚迹球退出触屏模式,恢复焦点.<br>触屏模式,选项和焦点的关系意味着你不能确定选项/焦点是否一定存在.一个初学者常犯的错误是依赖<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#getSelectedItemPosition%28%29" target="_blank" rel="noopener">ListView.getSelectedItemPosition()</a>.在触屏模式,这个方法将会返回<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#INVALID_POSITION" target="_blank" rel="noopener">INVALID_POSITION</a>.你应该使用<a href="http://code.google.com/android/reference/android/widget/AdapterView.html#setOnItemClickListener%28android.widget.AdapterView.OnItemClickListener%29" target="_blank" rel="noopener">click listeners</a> 或者 <a href="http://code.google.com/android/reference/android/widget/ListView.html#setChoiceMode%28int%29" target="_blank" rel="noopener">choice mode</a>.  </p>
-<h2 id="在触屏模式可获取焦点"><a href="#在触屏模式可获取焦点" class="headerlink" title="在触屏模式可获取焦点"></a>在触屏模式可获取焦点</h2><p>现在,你知道在触屏模式焦点是不存在的,我必须声明这并不完全正确.Focus在触屏模式可以存在但是以一种非常特别的方式,我们叫它可获取焦点的.这种特殊的模式是为接受文本输入(如EditText)或者具有过滤功能(如ListView)的控件创造的.这就是为什么在向文本框输入文本之前不必首先用滚迹球或手指选中它.当用户点击屏幕,如果应用没有在触屏模式将会进入触屏模式.在进入触屏模式的过程中会发生什么取决于用户点击了什么和焦点在哪.如果用户点击了一个在触屏模式可获取焦点的控件,这个控件将会获取焦点.否则,现在获取焦点的控件如果在触屏模式不能获取焦点就会失去焦点.例如,在下边的图片中,当用户点击屏幕时,输入框会获取焦点.  </p>
-<p><img src="/touch-mode/img/text_field.png" alt="text-field"></p>
-<p>在触屏模式是否可以获取焦点是view的一个属性可以通过代码或者xml设置,设置时应该谨慎,因为它破坏了与Android正常行为的一致性.游戏和全屏的地图是一个设置这个属性的很好的例子.<br>下边是一个需要在触屏模式获取焦点的控件的例子.当用户点击AutoCompleteTextView的Suggestion时,焦点依然在输入框.</p>
-<p><img src="/touch-mode/img/search01.png" alt="search01"></p>
-<p>Android初学者经常会通过设置触屏模式下的获取焦点能力来”修复”不显示选项/焦点.我们希望你考虑清楚.如果使用不正确,你的应用会与系统行为不同,让用户非常不习惯.Android框架包括了所有你需要的工具来处理用户交互,你完全可以不在触屏模式设置控件的可获取焦点性.比如,简单的使用<a href="http://code.google.com/android/reference/android/widget/ListView.html#setChoiceMode%28int%29" target="_blank" rel="noopener">choice mode</a>,而不是让ListView保持它的选项.如果Android框架不适合你的需求,你可以向我们<a href="http://code.google.com/p/android/issues/list" target="_blank" rel="noopener">提意见</a>或者<a href="http://source.android.com/" target="_blank" rel="noopener">提交你的patch</a>.<br>##触屏模式的备忘录<br>应该这样:</p>
-<ul>
-<li>与核心应用保持一致</li>
-<li>如果你想保持选中状态,使用它们适当的特性(radio button, check box, ListView的选项模式)</li>
-<li>如果是写游戏,使用(focusable in touch mode)</li>
-</ul>
-<p>不应该: </p>
-<ul>
-<li>不要在触屏模式保持选中状态或者保持焦点.</li>
-</ul>
-<hr>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/touch-mode/" data-id="ckan8u2p3000zxenofuh4c3hq" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
 
     </footer>
   </div>
@@ -742,7 +761,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/12/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/14/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/12/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/14/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -795,6 +814,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -808,10 +831,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

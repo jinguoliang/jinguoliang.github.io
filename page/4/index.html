@@ -71,6 +71,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点音视频-SurfaceFlinger" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/" class="article-date">
+  <time datetime="2020-04-20T09:11:37.000Z" itemprop="datePublished">2020-4-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/">每天一点点音视频_SurfaceFlinger</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>SurfaceFlinger 负责接受， 合并，然后发送图像缓存到显示屏。WindowManager 负责发送图像缓存和 Window 的元数据给 SurfaceFlinger 以便于它合并 Surface 到显示屏。</p>
+<h3 id="SurfaceFlinger"><a href="#SurfaceFlinger" class="headerlink" title="SurfaceFlinger"></a>SurfaceFlinger</h3><p>SurfaceFling 由两种方式接受图像缓存， 一种通过 BufferQueue 和 SurfaceControl, 另一种通过 ASurfaceControl， 这里只说明前一种， 因为后一种是 Android 10 新加入的，太新了（这也算个理由？？）</p>
+<p>当一个应用显示到前台时， 它会向 WindowManager 请求图像缓存， WindowManager 会 SurfaceFlinger 请求一个层， 这里的层包括一个 Surface 和一个 SurfaceConroler， Surface 里时 BufferQueue, SurafceControler 里是这一帧的元数据，比如这一层的显示位置呀什么的。SuraceFlinger 创建层发送个 WindowManager, WindowManger 把 Surface 发送个应用，但是留下 SurfaceControler 以便来控制 App 在屏幕上的显示。</p>
+<p>这里三个角色</p>
+<ol>
+<li><p>APP 请求显示 –&gt; Surface</p>
+</li>
+<li><p>WindowManager 请求层 –&gt; Surace 和 SuraceControler </p>
+</li>
+<li><p>SurfaceFlinger 制造一个层返回、</p>
+</li>
+</ol>
+<p>明天： 每天一点点音视频_SurfaceFlinger2</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/" data-id="ckavtostk009622woerqihez9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurafceFlinger/" rel="tag">SurafceFlinger</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点音视频-TextureView" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-TextureView/" class="article-date">
@@ -108,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-TextureView/" data-id="ckan8u2vc0094xeno2xmu79sk" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-TextureView/" data-id="ckavtostj009422wodfxn7fzs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TextureView/" rel="tag">TextureView</a></li></ul>
@@ -161,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E4%B8%80%E4%B8%AAAndroid%E5%BA%94%E7%94%A8%E4%B8%80%E7%94%9F%E7%9A%84%E5%BC%80%E5%A7%8B/" data-id="ckan8u2va008zxeno3g1p0tlw" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E4%B8%80%E4%B8%AAAndroid%E5%BA%94%E7%94%A8%E4%B8%80%E7%94%9F%E7%9A%84%E5%BC%80%E5%A7%8B/" data-id="ckavtosth008z22wogg0h4fno" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%A7%E5%9D%91/" rel="tag">大坑</a></li></ul>
@@ -221,7 +276,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceTexture/" data-id="ckan8u2vb0091xeno1ym80y9b" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceTexture/" data-id="ckavtosti009122wo8gxngw5k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurfaceTextue/" rel="tag">SurfaceTextue</a></li></ul>
@@ -287,7 +342,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceView/" data-id="ckan8u2v7008xxenoc7qd2t7v" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceView/" data-id="ckavtostd008x22wo7nbz6qvm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurfaceView/" rel="tag">SurfaceView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TextureView/" rel="tag">TextureView</a></li></ul>
@@ -347,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Surface%E5%92%8CSurfaceHolder/" data-id="ckan8u2v6008uxenob3tvf5oq" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Surface%E5%92%8CSurfaceHolder/" data-id="ckavtostc008u22wo3n2ncxl5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Surface/" rel="tag">Surface</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -399,7 +454,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88-Camera2%E7%9A%84%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F%E5%A4%A7%E5%B0%8F%E7%9A%84%E7%A1%AE%E5%AE%9A/" data-id="ckan8u2v2008rxenofm1fc4nr" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88-Camera2%E7%9A%84%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F%E5%A4%A7%E5%B0%8F%E7%9A%84%E7%A1%AE%E5%AE%9A/" data-id="ckavtosta008r22wo4pqafnzx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Camera2/" rel="tag">Camera2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%8F%E9%AA%8C%E4%B9%8B%E8%B0%88/" rel="tag">经验之谈</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" rel="tag">音视频</a></li></ul>
@@ -460,7 +515,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-BufferQueue/" data-id="ckan8u2uy008oxenoadjzgvy7" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-BufferQueue/" data-id="ckavtost3008o22wo7av82pxa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BufferQueue/" rel="tag">BufferQueue</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag">碎碎念</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
@@ -524,7 +579,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%9E%B6%E6%9E%84/" data-id="ckan8u2ux008lxeno739ee38b" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%9E%B6%E6%9E%84/" data-id="ckavtost1008l22wo0w1l95in" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
@@ -583,63 +638,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%95%B0%E6%8D%AE%E6%B5%81/" data-id="ckan8u2uu008ixeno9fcmhebn" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-Graphics" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/" class="article-date">
-  <time datetime="2020-04-10T09:08:06.000Z" itemprop="datePublished">2020-4-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/">每天一点点音视频_Graphics</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这个系列是讲音视频的，但是这几天会讲 Android 的 Graphics 显示，因为在项目中用到了 Surface， TextureView, SurfaceTexture 这些东西，搞不懂， 所以来学习一下。</p>
-<p>内容主要是参考了<a href="https://source.android.com/devices/graphics" target="_blank" rel="noopener">官方文档</a>，是对 Android上图像显示的架构的详细说明。</p>
-<p>Android上，应用开发者主要使用三种 API 绘制图形： Canvas， OpenGL ES， Vulkan</p>
-<p>无论使用那种 API， 都是绘制到 Surface， Surface 代表了一个缓冲队列的生产者， 消费者是 SurfaceFlinger。Android 上的每一个 Window 后面都有一个 Surface， 所有可见的 Surface 都被 SurfaceFlinger 渲染到显示屏上。</p>
-<p>Surface作为一种数据传递的载体， 连通者消费者和生产者， 生产者有很多， 比如 Camera， OpenGL， 解码器。消费者也很多， 比如 SurfaceFlinger， OpenGL， 编码器。</p>
-<p><img src="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/2020-04-10-09-24-34.png" alt></p>
-<p>这里的 Image Stream Producers 就是那些能够产生一帧一帧的图像， 可以往 Surface 写入的模块</p>
-<p>Image Stream Consumer 就是 Surface 的消费者</p>
-<p>Hardware Composer 是硬件抽象层的显示子系统。</p>
-<p>Gralloc (graphic memory allocator) 被图形生产者用来分配内存。</p>
-<p>以下是我的理解或者是猜测：</p>
-<p>Surface 在应用层，代表了底层的一个图形队列， 连接了生产者和消费者。</p>
-<p>生产者通过 Gralloc 分配内存， 然后通过绘制 API 向上面绘制，绘制完传出，如果消费者是 SurfaceFlinger， 它就会给 Hardware Composer</p>
-<p>明天： 每天一点点音视频_Graphics数据流</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics/" data-id="ckan8u2us008fxeno8k695mdp" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-Graphics%E6%95%B0%E6%8D%AE%E6%B5%81/" data-id="ckavtossu008i22woby4ugei9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
@@ -655,7 +654,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -708,6 +707,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -721,10 +724,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>

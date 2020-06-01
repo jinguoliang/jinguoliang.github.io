@@ -71,6 +71,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-每天一点点-OpenGL-概述" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/" class="article-date">
+  <time datetime="2020-04-28T09:12:59.000Z" itemprop="datePublished">2020-4-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_OpenGL_概述</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android 使用 OpenGL ES API 渲染图形。OpenGL ES 缩写为 GLES。 GLES 是 OpenGL 的适于嵌入式设备的一个版本。OpenGL 是一个渲染 API，只负责渲染。渲染到哪里呢？着要系统实现。</p>
+<p>为了创建 GLES 上下文并为 GLES 提供窗口系统， Android 使用 EGL 库。EGL 就是负责提供一个渲染的地方， GLES 会绘制到它上面。</p>
+<p>在使用 GLES 进行绘制之前， 需要创建 GL 上下文。 在 EGL 中， 这意味着要创建 EGLContext 和 EGLSurface。GLES 操作应用于当前的上下文， 当前的上下文使用 线程本地变量来存储而不是使用参数传递。渲染的代码应该在当前的 GLES 线程，而不能在 UI 线程。</p>
+<h3 id="EGLSurface"><a href="#EGLSurface" class="headerlink" title="EGLSurface"></a>EGLSurface</h3><p>EGLSurface 有两种：</p>
+<ul>
+<li>一种就是显示到屏幕上的，是被系统分配的。使用 eglCreateWindowSurface（）创建</li>
+<li>另一种是绘制到 离屏的缓冲区， 由 EGL 分配。 使用 eglCreatePbufferSurface() 创建</li>
+</ul>
+<p>EGL 相当于 GLES 的画布， 将绘制的数据传出去。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-OpenGL-%E6%A6%82%E8%BF%B0/" data-id="ckavtosu0009y22wohw7g1jq2" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EGL/" rel="tag">EGL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GLES/" rel="tag">GLES</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-每天一点点-frame-pacing" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/" class="article-date">
@@ -111,7 +162,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/" data-id="ckan8u2wa009vxenohuq5dyer" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-frame-pacing/" data-id="ckavtosty009v22wo0hpb9982" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FramePacing/" rel="tag">FramePacing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li></ul>
@@ -185,7 +236,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E8%AE%BA%E5%8F%8D%E5%A4%8D%E7%BB%83%E4%B9%A0/" data-id="ckan8u2w9009txeno7avjh1gm" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E8%AE%BA%E5%8F%8D%E5%A4%8D%E7%BB%83%E4%B9%A0/" data-id="ckavtostx009t22wobutw3cog" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%9B%E4%B8%9A/" rel="tag">创业</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E5%A4%8D/" rel="tag">反复</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
@@ -233,7 +284,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/" data-id="ckan8u2w8009qxeno2nss832s" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-VSYNC/" data-id="ckavtostw009q22woa1hf2tlb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VSYNC/" rel="tag">VSYNC</a></li></ul>
@@ -308,7 +359,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-layer-display/" data-id="ckan8u2w7009oxenofndugeuo" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-layer-display/" data-id="ckavtostu009o22wo8u4gew76" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/display/" rel="tag">display</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/graphics/" rel="tag">graphics</a></li></ul>
@@ -359,7 +410,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC1/" data-id="ckan8u2w3009mxeno1ycc691m" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC1/" data-id="ckavtostt009m22wo3w260z48" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HWC/" rel="tag">HWC</a></li></ul>
@@ -419,7 +470,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E7%BA%AA%E5%BF%B5%E4%B8%80%E6%AC%A1%E6%91%84%E5%83%8F%E5%A4%B4%E5%AF%B9%E7%84%A6%E5%8A%9F%E8%83%BD%E5%AE%8C%E6%88%90/" data-id="ckan8u2w1009jxeno38krcnyz" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E7%BA%AA%E5%BF%B5%E4%B8%80%E6%AC%A1%E6%91%84%E5%83%8F%E5%A4%B4%E5%AF%B9%E7%84%A6%E5%8A%9F%E8%83%BD%E5%AE%8C%E6%88%90/" data-id="ckavtosts009j22woc7gh4akj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Camera2/" rel="tag">Camera2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%90%9E%E7%AC%91/" rel="tag">搞笑</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%9B%8B%E7%96%BC/" rel="tag">蛋疼</a></li></ul>
@@ -472,7 +523,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC/" data-id="ckan8u2vr009gxeno7wjrctff" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-HWC/" data-id="ckavtostq009g22wo3qv07elw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HWC/" rel="tag">HWC</a></li></ul>
@@ -521,7 +572,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger3/" data-id="ckan8u2vp009cxeno0z8r7g3g" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger3/" data-id="ckavtostp009c22wo1p9fbjer" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurfaceFlinger/" rel="tag">SurfaceFlinger</a></li></ul>
@@ -568,65 +619,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger2/" data-id="ckan8u2vf0099xeno9oc3cdew" class="article-share-link">Share</a>
+      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger2/" data-id="ckavtostm009922wo1xe7gz90" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurfaceFlinger/" rel="tag">SurfaceFlinger</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-每天一点点音视频-SurfaceFlinger" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/" class="article-date">
-  <time datetime="2020-04-20T09:11:37.000Z" itemprop="datePublished">2020-4-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/">每天一点点音视频_SurfaceFlinger</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>SurfaceFlinger 负责接受， 合并，然后发送图像缓存到显示屏。WindowManager 负责发送图像缓存和 Window 的元数据给 SurfaceFlinger 以便于它合并 Surface 到显示屏。</p>
-<h3 id="SurfaceFlinger"><a href="#SurfaceFlinger" class="headerlink" title="SurfaceFlinger"></a>SurfaceFlinger</h3><p>SurfaceFling 由两种方式接受图像缓存， 一种通过 BufferQueue 和 SurfaceControl, 另一种通过 ASurfaceControl， 这里只说明前一种， 因为后一种是 Android 10 新加入的，太新了（这也算个理由？？）</p>
-<p>当一个应用显示到前台时， 它会向 WindowManager 请求图像缓存， WindowManager 会 SurfaceFlinger 请求一个层， 这里的层包括一个 Surface 和一个 SurfaceConroler， Surface 里时 BufferQueue, SurafceControler 里是这一帧的元数据，比如这一层的显示位置呀什么的。SuraceFlinger 创建层发送个 WindowManager, WindowManger 把 Surface 发送个应用，但是留下 SurfaceControler 以便来控制 App 在屏幕上的显示。</p>
-<p>这里三个角色</p>
-<ol>
-<li><p>APP 请求显示 –&gt; Surface</p>
-</li>
-<li><p>WindowManager 请求层 –&gt; Surace 和 SuraceControler </p>
-</li>
-<li><p>SurfaceFlinger 制造一个层返回、</p>
-</li>
-</ol>
-<p>明天： 每天一点点音视频_SurfaceFlinger2</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://jinguoliang.github.io/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9%E9%9F%B3%E8%A7%86%E9%A2%91-SurfaceFlinger/" data-id="ckan8u2vd0096xeno8fh2fzun" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Graphics/" rel="tag">Graphics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SurafceFlinger/" rel="tag">SurafceFlinger</a></li></ul>
 
     </footer>
   </div>
@@ -639,7 +635,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -692,6 +688,10 @@
       <ul>
         
           <li>
+            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-OpenGL-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_OpenGL_概述</a>
+          </li>
+        
+          <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AEBOX1/">每天一点点_音视频_MP4_视频数据BOX1</a>
           </li>
         
@@ -705,10 +705,6 @@
         
           <li>
             <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E6%A6%82%E8%BF%B0/">每天一点点_音视频_MP4_概述</a>
-          </li>
-        
-          <li>
-            <a href="/%E6%AF%8F%E5%A4%A9%E4%B8%80%E7%82%B9%E7%82%B9-%E9%9F%B3%E8%A7%86%E9%A2%91-MP4-%E7%BB%93%E6%9E%84%E6%9F%A5%E7%9C%8B%E5%99%A8/">每天一点点_音视频_MP4_结构查看器</a>
           </li>
         
       </ul>
